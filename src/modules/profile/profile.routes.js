@@ -3,7 +3,7 @@ import authenticate from "#middlewares/auth.js";
 import handleValidationErrors from "#middlewares/validation.js";
 import controller from "./profile.controller.js";
 import validators from "./profile.validators.js";
-import { ensureRoles } from "./profile.guards.js";
+import { ensureRoles } from "#middlewares/guards.js";
 
 const router = express.Router();
 
