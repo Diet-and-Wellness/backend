@@ -76,7 +76,8 @@ const getArticles = async (filters = {}) => {
 
   try {
     const articles = await Article.find(query)
-      .populate("author", "firstName lastName email")
+      .populate("author", "firstName lastName email phone")
+      .populate("category", "name displayName")
       .sort(sortObj)
       .skip(skip)
       .limit(Number(limit));
@@ -100,10 +101,9 @@ const getArticles = async (filters = {}) => {
 // Get article by ID
 const getArticleById = async (articleId) => {
   try {
-    const article = await Article.findById(articleId).populate(
-      "author",
-      "firstName lastName email",
-    );
+    const article = await Article.findById(articleId)
+      .populate("author", "firstName lastName email phone")
+      .populate("category", "name displayName");
 
     if (!article) {
       throw {
@@ -128,10 +128,9 @@ const getArticleById = async (articleId) => {
 // Get article by slug
 const getArticleBySlug = async (slug) => {
   try {
-    const article = await Article.findOne({ slug }).populate(
-      "author",
-      "firstName lastName email",
-    );
+    const article = await Article.findOne({ slug })
+      .populate("author", "firstName lastName email phone")
+      .populate("category", "name displayName");
 
     if (!article) {
       throw {
@@ -320,8 +319,8 @@ const getAdminArticles = async (filters = {}) => {
 
   try {
     const articles = await Article.find(query)
-      .populate("author", "firstName lastName email")
-      .sort({ createdAt: -1 })
+      .populate("author", "firstName lastName email phone")
+      .populate("category", "name displayName")
       .skip(skip)
       .limit(Number(limit));
 
@@ -350,7 +349,8 @@ const getArticlesByCategory = async (category, page = 1, limit = 10) => {
       category,
       isHidden: false,
     })
-      .populate("author", "firstName lastName email")
+      .populate("author", "firstName lastName email phone")
+      .populate("category", "name displayName")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(Number(limit));

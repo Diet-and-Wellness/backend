@@ -36,7 +36,7 @@ const articleSchema = new mongoose.Schema(
         validator: async function (value) {
           // Verify author exists
           const author = await mongoose.models.User.findById(value);
-          return author;
+          return !!author;
         },
         message: "Author must be a valid user",
       },
@@ -50,7 +50,16 @@ const articleSchema = new mongoose.Schema(
         validator: async function (value) {
           // Verify category exists and is for articles
           const category = await mongoose.models.Category.findById(value);
-          return category && category.type === "article" && category.isActive;
+          if (!category) {
+            throw new Error("Category does not exist");
+          }
+          if (category.type !== "article") {
+            throw new Error("Category must be of type 'article'");
+          }
+          if (!category.isActive) {
+            throw new Error("Category must be active");
+          }
+          return true;
         },
         message: "Category must be a valid active article category",
       },
@@ -126,6 +135,26 @@ articleSchema.methods.toJSON = function () {
   // Rename fields
   article.id = article._id;
   delete article._id;
+
+  // Transform author object
+  if (article.author && typeof article.author === "object") {
+    article.author = {
+      id: article.author._id,
+      firstName: article.author.firstName,
+      lastName: article.author.lastName,
+      email: article.author.email,
+      phone: article.author.phone,
+    };
+  }
+
+  // Transform category object
+  if (article.category && typeof article.category === "object") {
+    article.category = {
+      id: article.category._id,
+      name: article.category.name,
+      displayName: article.category.displayName,
+    };
+  }
 
   return article;
 };
