@@ -1,4 +1,8 @@
 import mongoose from "mongoose";
+import {
+  generateSlug,
+  validateTags,
+} from "#modules/articles/articles.helpers.js";
 
 const articleSchema = new mongoose.Schema(
   {
@@ -28,6 +32,14 @@ const articleSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
+      validate: {
+        validator: async function (value) {
+          // Verify author exists
+          const author = await mongoose.models.User.findById(value);
+          return author;
+        },
+        message: "Author must be a valid user",
+      },
     },
     category: {
       type: mongoose.Schema.Types.ObjectId,
@@ -71,44 +83,36 @@ articleSchema.index({ isHidden: 1, createdAt: -1 });
 
 // Create slug from title before saving
 articleSchema.pre("validate", async function () {
-  // validate author exists
-  if (this.isModified("author") || this.isNew) {
-    await validateAuthor(this.author);
-  }
+  try {
+    // Generate slug if not provided or title modified
+    if (this.isModified("title") || this.isNew) {
+      this.slug = await generateSlug(this.title, this._id);
+    }
 
-  // validate category exists
-  if (this.isModified("category") || this.isNew) {
-    await validateCategory(this.category);
-  }
-
-  // Automatic slug generation
-  if (this.isModified("title") || this.isNew) {
-    this.slug = await createSlug(this);
-  }
-  // Validate tags count
-  if (this.isModified("tags") || this.isNew) {
-    // Limit to maximum 10 tags
-    validateTags(this.tags);
+    // Validate tags
+    if (this.isModified("tags") || this.isNew) {
+      validateTags(this.tags);
+    }
+  } catch (error) {
+    throw error;
   }
 });
 
 articleSchema.pre(["findOneAndUpdate", "updateOne"], async function () {
-  const update = this.getUpdate();
+  try {
+    const update = this.getUpdate();
 
-  if (update.author) {
-    await validateAuthor(update.author);
-  }
+    // Generate slug if title is being updated
+    if (update.title) {
+      update.slug = await generateSlug(update.title, this.getQuery()._id);
+    }
 
-  if (update.category) {
-    await validateCategory(update.category);
-  }
-
-  if (update.title) {
-    update.slug = await createSlug(update, this.getQuery()._id);
-  }
-
-  if (update.tags) {
-    validateTags(update.tags);
+    // Validate tags if being updated
+    if (update.tags?.length > 0) {
+      validateTags(update.tags);
+    }
+  } catch (error) {
+    throw error;
   }
 });
 
@@ -124,66 +128,6 @@ articleSchema.methods.toJSON = function () {
   delete article._id;
 
   return article;
-};
-
-const validateAuthor = async (authorId) => {
-  const author = await mongoose.models.User.findById(authorId);
-  if (!author) {
-    throw new Error("Author not found");
-  }
-  return true;
-};
-
-const validateCategory = async (categoryId) => {
-  const category = await mongoose.models.Category.findById(categoryId);
-
-  if (!category) {
-    throw new Error("Category not found");
-  }
-
-  if (category.type !== "article" || !category.isActive) {
-    throw new Error("Category must be a valid active article category");
-  }
-
-  return true;
-};
-
-const createSlug = async (article, articleId) => {
-  let slug = article.title
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, "") // Remove special characters
-    .trim()
-    .replace(/\s+/g, "-") // Replace spaces with hyphens
-    .replace(/-+/g, "-"); // Replace multiple hyphens with single
-
-  // Check if slug already exists
-  let existingArticle = await mongoose.models.Article.findOne({
-    slug,
-    _id: { $ne: article._id || articleId },
-  });
-  let counter = 1;
-
-  while (existingArticle) {
-    if (counter === 1) {
-      slug = `${slug}-${counter}`;
-    } else {
-      slug = slug.replace(/-\d+$/, `-${counter}`);
-    }
-    existingArticle = await mongoose.models.Article.findOne({
-      slug,
-      _id: { $ne: article._id },
-    });
-    counter++;
-  }
-
-  return slug;
-};
-
-const validateTags = (tags) => {
-  if (tags.length > 10) {
-    throw new Error("Maximum 10 tags allowed");
-  }
-  return true;
 };
 
 const Article = mongoose.model("Article", articleSchema);

@@ -1,4 +1,5 @@
 import { body, query, param } from "express-validator";
+import { validateTags } from "./articles.helpers.js";
 
 // Validation for creating an article (admin only)
 const createArticle = [
@@ -27,8 +28,8 @@ const createArticle = [
     .isArray()
     .withMessage("Tags must be an array")
     .custom((value) => {
-      if (value && value.length > 10) {
-        throw new Error("Maximum 10 tags allowed");
+      if (value && value.length > 0) {
+        validateTags(value);
       }
       return true;
     }),
@@ -61,8 +62,8 @@ const updateArticle = [
     .isArray()
     .withMessage("Tags must be an array")
     .custom((value) => {
-      if (value && value.length > 10) {
-        throw new Error("Maximum 10 tags allowed");
+      if (value && value.length > 0) {
+        validateTags(value);
       }
       return true;
     }),
