@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { generateSlug } from "#modules/categories/categories.helpers.js";
 
 const categorySchema = new mongoose.Schema(
   {
@@ -45,32 +46,9 @@ const categorySchema = new mongoose.Schema(
 );
 
 // Auto-generate slug from name before saving
-categorySchema.pre("save", async function () {
-  if (this.isModified("name")) {
-    let slug = this.name
-      .toLowerCase()
-      .replace(/[^\w\s-]/g, "")
-      .trim()
-      .replace(/\s+/g, "-")
-      .replace(/-+/g, "-");
-
-    // Check if slug already exists
-    let existingCategory = await mongoose.models.Category.findOne({
-      slug,
-      _id: { $ne: this._id },
-    });
-    let counter = 1;
-
-    while (existingCategory) {
-      slug = `${slug}-${counter}`;
-      existingCategory = await mongoose.models.Category.findOne({
-        slug,
-        _id: { $ne: this._id },
-      });
-      counter++;
-    }
-
-    this.slug = slug;
+categorySchema.pre("validate", async function () {
+  if (this.isModified("name") || this.isNew) {
+    this.slug = await generateSlug(this.name);
   }
 });
 

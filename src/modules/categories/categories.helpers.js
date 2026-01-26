@@ -13,19 +13,19 @@ export const generateSlug = async (title, excludeId = null) => {
     .replace(/-+/g, "-"); // Replace multiple hyphens with single
 
   // Check if slug already exists
-  let existingArticle = await mongoose.models.Article.findOne({
+  let existingCategory = await mongoose.models.Category.findOne({
     slug,
     _id: { $ne: excludeId },
   });
 
   let counter = 1;
-  while (existingArticle) {
+  while (existingCategory) {
     if (counter === 1) {
       slug = `${slug}-${counter}`;
     } else {
       slug = slug.replace(/-\d+$/, `-${counter}`);
     }
-    existingArticle = await mongoose.models.Article.findOne({
+    existingCategory = await mongoose.models.Category.findOne({
       slug,
       _id: { $ne: excludeId },
     });
@@ -33,26 +33,4 @@ export const generateSlug = async (title, excludeId = null) => {
   }
 
   return slug;
-};
-
-export const validateTags = (tags) => {
-  if (!Array.isArray(tags)) {
-    throw new Error("Tags must be an array");
-  }
-
-  if (tags.length > 10) {
-    throw new Error("Maximum 10 tags allowed");
-  }
-
-  tags.forEach((tag, index) => {
-    if (typeof tag !== "string" || tag.trim().length === 0) {
-      throw new Error(`Tag ${index + 1}: must be a non-empty string`);
-    }
-
-    if (tag.length > 50) {
-      throw new Error(`Tag ${index + 1}: must not exceed 50 characters`);
-    }
-  });
-
-  return true;
 };
