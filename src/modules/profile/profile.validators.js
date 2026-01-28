@@ -1,5 +1,4 @@
 import { body, query, param } from "express-validator";
-import { ERROR_CODES, translate, getFieldName } from "#utils/localization.js";
 
 const updateProfile = [
   body("firstName")

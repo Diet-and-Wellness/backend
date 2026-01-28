@@ -29,6 +29,11 @@ const articleSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    language: {
+      type: String,
+      default: "en",
+      enum: ["en", "ar"],
+    },
     author: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

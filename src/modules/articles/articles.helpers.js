@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { ERROR_CODES, translate } from "#utils/localization.js";
+import arabicToLatin from "#utils/arabicToLatin.js";
 
 export const generateSlug = async (title, excludeId = null) => {
   if (!title) {
@@ -11,7 +12,12 @@ export const generateSlug = async (title, excludeId = null) => {
     throw error;
   }
 
-  let slug = title
+  // Convert Arabic characters to Latin if title contains Arabic
+  const processedTitle = /[\u0600-\u06FF]/.test(title)
+    ? arabicToLatin(title)
+    : title;
+
+  let slug = processedTitle
     .toLowerCase()
     .replace(/[^\w\s-]/g, "") // Remove special characters
     .trim()

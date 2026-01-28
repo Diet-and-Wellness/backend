@@ -24,6 +24,7 @@ const getArticles = async (req, res, next) => {
       search: req.query.search,
       sortBy: req.query.sortBy || "newest",
       showHidden: false, // Regular users don't see hidden articles
+      language: getLanguage(req) || "en", // Default to English if not specified
     };
 
     const result = await articlesService.getArticles(filters);
@@ -43,6 +44,7 @@ const getAdminArticles = async (req, res, next) => {
       search: req.query.search,
       sortBy: req.query.sortBy || "newest",
       status: req.query.status || "all", // all, active, hidden
+      language: req.query.lang || getLanguage(req) || "en", // Default to English if not specified
     };
 
     const result = await articlesService.getAdminArticles(filters);
@@ -87,6 +89,7 @@ const getArticlesByCategory = async (req, res, next) => {
       req.params.category,
       req.query.page || 1,
       req.query.limit || 10,
+      getLanguage(req) || "en", // Default to English if not specified
     );
     res.json(result);
   } catch (error) {

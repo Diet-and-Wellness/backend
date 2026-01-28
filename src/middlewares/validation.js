@@ -18,7 +18,6 @@ const handleValidationErrors = (req, res, next) => {
     // Convert validation errors to structured format
     const formattedErrors = errors.array().map((err) => {
       // Extract field name and error message
-      console.log(err, lang);
       const field = err.path || err.param;
       const msg = err.msg;
 
@@ -32,11 +31,6 @@ const handleValidationErrors = (req, res, next) => {
       else if (msg.includes("array")) code = ERROR_CODES.INVALID_ARRAY;
       else if (msg.includes("password")) code = ERROR_CODES.PASSWORD_TOO_WEAK;
 
-      console.log(
-        code,
-        lang,
-        translate(code, lang, { field: getFieldName(field, lang), ...msg[1] }),
-      );
       return {
         field: getFieldName(field, lang),
         code,

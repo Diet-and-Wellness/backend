@@ -16,6 +16,7 @@ export const ERROR_CODES = {
   FILE_REQUIRED: "FILE_REQUIRED",
   FILE_TOO_LARGE: "FILE_TOO_LARGE",
   INVALID_FILE_TYPE: "INVALID_FILE_TYPE",
+  INVALID_LANGUAGE: "INVALID_LANGUAGE",
 
   // Authentication errors (401)
   UNAUTHORIZED: "UNAUTHORIZED",
@@ -290,6 +291,8 @@ const translations = {
     [ERROR_CODES.DELETE_SUCCESS]: "{{item}} deleted successfully",
     [ERROR_CODES.RECIPE_NOT_AVAILABLE]: "Recipe not available",
     [ERROR_CODES.ARTICLE_NOT_AVAILABLE]: "Article not available",
+    [ERROR_CODES.INVALID_LANGUAGE]:
+      "Invalid language. Supported languages are: en, ar",
   },
 
   ar: {
@@ -442,6 +445,7 @@ const translations = {
     [ERROR_CODES.DELETE_SUCCESS]: "{{item}} تم حذفه بنجاح",
     [ERROR_CODES.RECIPE_NOT_AVAILABLE]: "الوصفة غير متاحة",
     [ERROR_CODES.ARTICLE_NOT_AVAILABLE]: "المقالة غير متاحة",
+    [ERROR_CODES.INVALID_LANGUAGE]: "لغة غير صحيحة. اللغات المدعومة هي: en, ar",
   },
 };
 
@@ -620,15 +624,7 @@ export const mapMongoError = (error, lang = "en") => {
 
   // Handle validation errors
   if (error.name === "ValidationError") {
-    console.log(error.errors);
     const messages = Object.keys(error.errors).map((field) => {
-      console.log(
-        error.errors[field].message || ERROR_CODES.MISSING_FIELD,
-        lang,
-        {
-          field: getFieldName(field, lang),
-        },
-      );
       return {
         field: getFieldName(field, lang),
         code: error.errors[field].message || ERROR_CODES.MISSING_FIELD,
@@ -641,7 +637,6 @@ export const mapMongoError = (error, lang = "en") => {
       };
     });
 
-    console.log(messages);
     return {
       code: ERROR_CODES.INVALID_INPUT,
       status: 400,

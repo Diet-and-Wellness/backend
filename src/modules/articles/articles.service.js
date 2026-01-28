@@ -10,6 +10,10 @@ const createArticle = async (articleData, userId) => {
     });
 
     await article.save();
+    await article.populate([
+      { path: "author", select: "firstName lastName email phone" },
+      { path: "category", select: "name displayName arDisplayName" },
+    ]);
 
     return article;
   } catch (error) {
@@ -34,6 +38,7 @@ const getArticles = async (filters = {}) => {
     search,
     sortBy = "newest",
     showHidden = false,
+    language,
   } = filters;
 
   const query = {};
@@ -46,6 +51,11 @@ const getArticles = async (filters = {}) => {
   // Apply category filter
   if (category) {
     query.category = category;
+  }
+
+  // Apply language filter
+  if (language) {
+    query.language = language;
   }
 
   // Apply search filter (search in title, description, and tags)
@@ -195,6 +205,7 @@ const updateArticle = async (articleId, updateData, user) => {
       "title",
       "description",
       "content",
+      "language",
       "category",
       "tags",
       "estimatedReadTime",
@@ -215,6 +226,10 @@ const updateArticle = async (articleId, updateData, user) => {
         runValidators: true,
       },
     );
+    await article.populate([
+      { path: "author", select: "firstName lastName email phone" },
+      { path: "category", select: "name displayName arDisplayName" },
+    ]);
 
     return updatedArticle;
   } catch (error) {
@@ -256,6 +271,11 @@ const changeArticleStatus = async (articleId, isHidden) => {
       throw error;
     }
 
+    await article.populate([
+      { path: "author", select: "firstName lastName email phone" },
+      { path: "category", select: "name displayName arDisplayName" },
+    ]);
+
     return article;
   } catch (error) {
     throw error;
@@ -271,6 +291,7 @@ const getAdminArticles = async (filters = {}) => {
     search,
     status,
     sortBy = "newest",
+    language,
   } = filters;
 
   const query = {};
@@ -278,6 +299,11 @@ const getAdminArticles = async (filters = {}) => {
   // Apply category filter
   if (category) {
     query.category = category;
+  }
+
+  // Apply language filter
+  if (language && language !== "all") {
+    query.language = language;
   }
 
   // Apply status filter (all or hidden)
@@ -326,6 +352,7 @@ const getAdminArticles = async (filters = {}) => {
     const articles = await Article.find(query)
       .populate("author", "firstName lastName email phone")
       .populate("category", "name displayName arDisplayName")
+      .sort(sortObj)
       .skip(skip)
       .limit(Number(limit));
 
@@ -346,12 +373,18 @@ const getAdminArticles = async (filters = {}) => {
 };
 
 // Get articles by category
-const getArticlesByCategory = async (category, page = 1, limit = 10) => {
+const getArticlesByCategory = async (
+  category,
+  page = 1,
+  limit = 10,
+  language = "en",
+) => {
   try {
     const skip = (page - 1) * limit;
 
     const articles = await Article.find({
       category,
+      language,
       isHidden: false,
     })
       .populate("author", "firstName lastName email phone")

@@ -1,5 +1,4 @@
 import { body, query, param } from "express-validator";
-import { ERROR_CODES, translate, getFieldName } from "#utils/localization.js";
 import { validateTags } from "./articles.helpers.js";
 
 // Validation for creating an article (admin only)
@@ -19,6 +18,10 @@ const createArticle = [
     .withMessage("REQUIRED_FIELD")
     .isLength({ min: 50 })
     .withMessage(["INVALID_LENGTH", { min: 50, max: 10000 }]),
+  body("language")
+    .optional()
+    .isIn(["en", "ar"])
+    .withMessage(["INVALID_LANGUAGE"]),
   body("category")
     .notEmpty()
     .withMessage("REQUIRED_FIELD")
@@ -54,6 +57,10 @@ const updateArticle = [
     .optional()
     .isLength({ min: 50 })
     .withMessage(["INVALID_LENGTH", { min: 50, max: 10000 }]),
+  body("language")
+    .optional()
+    .isIn(["en", "ar"])
+    .withMessage(["INVALID_LANGUAGE"]),
   body("category")
     .optional()
     .isMongoId()

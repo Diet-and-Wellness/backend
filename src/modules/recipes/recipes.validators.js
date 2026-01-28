@@ -1,11 +1,11 @@
 import { body, query, param } from "express-validator";
-import { ERROR_CODES, translate, getFieldName } from "#utils/localization.js";
 import {
   validateIngredients,
   validateInstructions,
   validateTags,
   validateNutritionInfo,
 } from "./recipes.helpers.js";
+import { RECIPE_DIFFICULTIES } from "./recipes.constants.js";
 
 // Validation for creating a recipe (admin only)
 const createRecipe = [
@@ -24,6 +24,10 @@ const createRecipe = [
     .withMessage(["REQUIRED_FIELD", { field: "content" }])
     .isLength({ min: 50 })
     .withMessage(["INVALID_LENGTH", { min: 50 }]),
+  body("language")
+    .optional()
+    .isIn(["en", "ar"])
+    .withMessage(["INVALID_LANGUAGE"]),
   body("category")
     .notEmpty()
     .withMessage(["REQUIRED_FIELD", { field: "category" }])
@@ -72,7 +76,7 @@ const createRecipe = [
     .withMessage(["INVALID_LENGTH", { field: "servings", min: 1, max: 50 }]),
   body("difficulty")
     .optional()
-    .isIn(["easy", "medium", "hard"])
+    .isIn(RECIPE_DIFFICULTIES)
     .withMessage(["INVALID_VALUE", { field: "difficulty" }]),
   body("nutritionInfo")
     .optional()
@@ -100,6 +104,10 @@ const updateRecipe = [
     .optional()
     .isLength({ min: 50 })
     .withMessage(["INVALID_LENGTH", { min: 50 }]),
+  body("language")
+    .optional()
+    .isIn(["en", "ar"])
+    .withMessage(["INVALID_LANGUAGE"]),
   body("category")
     .optional()
     .isMongoId()
@@ -148,7 +156,7 @@ const updateRecipe = [
     .withMessage(["INVALID_LENGTH", { field: "servings", min: 1, max: 50 }]),
   body("difficulty")
     .optional()
-    .isIn(["easy", "medium", "hard"])
+    .isIn(RECIPE_DIFFICULTIES)
     .withMessage(["INVALID_VALUE", { field: "difficulty" }]),
   body("nutritionInfo")
     .optional()
@@ -191,7 +199,7 @@ const getRecipes = [
     .withMessage(["INVALID_LENGTH", { min: 1, max: 100 }]),
   query("difficulty")
     .optional()
-    .isIn(["easy", "medium", "hard"])
+    .isIn(RECIPE_DIFFICULTIES)
     .withMessage(["INVALID_DIFFICULTY"]),
   query("sortBy")
     .optional()

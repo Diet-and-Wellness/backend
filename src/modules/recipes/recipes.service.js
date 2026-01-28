@@ -10,6 +10,11 @@ const createRecipe = async (recipeData, userId) => {
     });
 
     await recipe.save();
+    await recipe.populate([
+      { path: "author", select: "firstName lastName email phone" },
+      { path: "category", select: "name displayName arDisplayName" },
+    ]);
+
     return recipe;
   } catch (error) {
     if (error.code === 11000) {
@@ -34,6 +39,7 @@ const getRecipes = async (filters = {}) => {
     difficulty,
     sortBy = "newest",
     showHidden = false,
+    language,
   } = filters;
 
   const query = {};
@@ -46,6 +52,11 @@ const getRecipes = async (filters = {}) => {
   // Apply category filter
   if (category) {
     query.category = category;
+  }
+
+  // Apply language filter
+  if (language) {
+    query.language = language;
   }
 
   // Apply difficulty filter
@@ -191,6 +202,7 @@ const updateRecipe = async (recipeId, updateData, user) => {
       "title",
       "description",
       "content",
+      "language",
       "category",
       "ingredients",
       "instructions",
@@ -209,6 +221,10 @@ const updateRecipe = async (recipeId, updateData, user) => {
     });
 
     await recipe.save();
+    await recipe.populate([
+      { path: "author", select: "firstName lastName email phone" },
+      { path: "category", select: "name displayName arDisplayName" },
+    ]);
 
     return recipe;
   } catch (error) {
@@ -250,6 +266,11 @@ const changeRecipeStatus = async (recipeId, isHidden) => {
       throw error;
     }
 
+    await recipe.populate([
+      { path: "author", select: "firstName lastName email phone" },
+      { path: "category", select: "name displayName arDisplayName" },
+    ]);
+
     return recipe;
   } catch (error) {
     throw error;
@@ -267,13 +288,20 @@ const incrementViewCount = async (recipeId) => {
 
 // Get admin dashboard data (all recipes with filters)
 const getAdminRecipes = async (filters = {}) => {
-  const { page = 1, limit = 10, category, search, status } = filters;
+  const { page = 1, limit = 10, category, search, status, language } = filters;
 
   const query = {};
 
   // Apply category filter
   if (category) {
     query.category = category;
+  }
+  console.log("HERE");
+
+  // Apply language filter
+  if (language && language !== "all") {
+    console.log("HERE", language);
+    query.language = language;
   }
 
   switch (status) {
@@ -323,12 +351,18 @@ const getAdminRecipes = async (filters = {}) => {
 };
 
 // Get recipes by category
-const getRecipesByCategory = async (category, page = 1, limit = 10) => {
+const getRecipesByCategory = async (
+  category,
+  page = 1,
+  limit = 10,
+  language = "en",
+) => {
   try {
     const skip = (page - 1) * limit;
 
     const recipes = await Recipe.find({
       category,
+      language,
       isHidden: false,
     })
       .populate("author", "firstName lastName email phone")

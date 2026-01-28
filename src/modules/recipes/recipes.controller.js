@@ -25,6 +25,7 @@ const getRecipes = async (req, res, next) => {
       difficulty: req.query.difficulty,
       sortBy: req.query.sortBy || "newest",
       showHidden: false,
+      language: getLanguage(req) || "en", // Default to English if not specified
     };
 
     const result = await recipesService.getRecipes(filters);
@@ -45,6 +46,7 @@ const getAdminRecipes = async (req, res, next) => {
       difficulty: req.query.difficulty,
       sortBy: req.query.sortBy || "newest",
       status: req.query.status || "all",
+      language: req.query.lang || getLanguage(req) || "en", // Default to English if not specified
     };
 
     const result = await recipesService.getAdminRecipes(filters);
@@ -89,6 +91,7 @@ const getRecipesByCategory = async (req, res, next) => {
       req.params.category,
       req.query.page || 1,
       req.query.limit || 10,
+      getLanguage(req) || "en", // Default to English if not specified
     );
     res.json(result);
   } catch (error) {
