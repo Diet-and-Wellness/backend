@@ -1,29 +1,30 @@
 import { body } from "express-validator";
+import { ERROR_CODES, translate } from "#utils/localization.js";
 
 const signup = [
   body("firstName")
     .notEmpty()
-    .withMessage("First name is required")
+    .withMessage(["REQUIRED_FIELD", { field: "firstName" }])
     .isLength({ min: 2 })
-    .withMessage("First name must be at least 2 characters long"),
+    .withMessage(["INVALID_LENGTH", { min: 2 }]),
   body("lastName")
     .notEmpty()
-    .withMessage("Last name is required")
+    .withMessage(["REQUIRED_FIELD", { field: "lastName" }])
     .isLength({ min: 2 })
-    .withMessage("Last name must be at least 2 characters long"),
+    .withMessage(["INVALID_LENGTH", { min: 2 }]),
   body("email")
     .notEmpty()
-    .withMessage("Email is required")
+    .withMessage(["REQUIRED_FIELD", { field: "email" }])
     .isEmail()
-    .withMessage("Email is invalid"),
+    .withMessage(["INVALID_EMAIL"]),
   body("phone")
     .notEmpty()
-    .withMessage("Phone number is required")
+    .withMessage(["REQUIRED_FIELD", { field: "phone" }])
     .isMobilePhone("ar-EG")
-    .withMessage("Phone number is invalid Egyptian format"),
+    .withMessage(["INVALID_PHONE_FORMAT"]),
   body("password")
     .isLength({ min: 6 })
-    .withMessage("Password must be at least 6 characters long"),
+    .withMessage(["INVALID_LENGTH", { min: 6 }]),
   //   body("role")
   //     .optional()
   //     .isIn(["customer", "specialist", "admin"])
@@ -50,62 +51,66 @@ const login = [
   // one of email and phone is required
   body().custom((value, { req }) => {
     if (!req?.body?.email && !req?.body?.phone) {
-      throw new Error("Either email or phone is required");
+      throw ["EITHER_EMAIL_OR_PHONE_REQUIRED"];
     }
     return true;
   }),
-  body("password").notEmpty().withMessage("Password is required"),
+  body("password")
+    .notEmpty()
+    .withMessage(["REQUIRED_FIELD", { field: "password" }]),
 ];
 
 const sendOtp = [
   body("email")
     .notEmpty()
-    .withMessage("Email is required")
+    .withMessage(["REQUIRED_FIELD", { field: "email" }])
     .isEmail()
-    .withMessage("Email is invalid"),
+    .withMessage(["INVALID_EMAIL"]),
 ];
 
 const verifyOtp = [
   body("email")
     .notEmpty()
-    .withMessage("Email is required")
+    .withMessage(["REQUIRED_FIELD", { field: "email" }])
     .isEmail()
-    .withMessage("Email is invalid"),
+    .withMessage(["INVALID_EMAIL"]),
   body("code")
     .notEmpty()
-    .withMessage("OTP code is required")
+    .withMessage(["REQUIRED_FIELD", { field: "code" }])
     .isLength({ min: 6, max: 6 })
-    .withMessage("OTP code must be 6 digits"),
+    .withMessage(["INVALID_LENGTH", { min: 6, max: 6 }]),
 ];
 
 const refreshToken = [
-  body("refreshToken").notEmpty().withMessage("Refresh token is required"),
+  body("refreshToken")
+    .notEmpty()
+    .withMessage(["REQUIRED_FIELD", { field: "refreshToken" }]),
 ];
 
 const forgotPassword = [
   body("email")
     .notEmpty()
-    .withMessage("Email is required")
+    .withMessage(["REQUIRED_FIELD", { field: "email" }])
     .isEmail()
-    .withMessage("Email is invalid"),
+    .withMessage(["INVALID_EMAIL"]),
 ];
 
 const resetPassword = [
   body("email")
     .notEmpty()
-    .withMessage("Email is required")
+    .withMessage(["REQUIRED_FIELD", { field: "email" }])
     .isEmail()
-    .withMessage("Email is invalid"),
+    .withMessage(["INVALID_EMAIL"]),
   body("code")
     .notEmpty()
-    .withMessage("OTP code is required")
+    .withMessage(["REQUIRED_FIELD", { field: "code" }])
     .isLength({ min: 6, max: 6 })
-    .withMessage("OTP code must be 6 digits"),
+    .withMessage(["INVALID_LENGTH", { min: 6, max: 6 }]),
   body("password")
     .notEmpty()
-    .withMessage("Password is required")
+    .withMessage(["REQUIRED_FIELD", { field: "password" }])
     .isLength({ min: 6 })
-    .withMessage("Password must be at least 6 characters long"),
+    .withMessage(["INVALID_LENGTH", { min: 6, max: 50 }]),
 ];
 
 const logout = [];

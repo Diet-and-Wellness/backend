@@ -1,4 +1,5 @@
 import Category from "#models/category.js";
+import { ERROR_CODES, translate } from "#utils/localization.js";
 
 // Get all categories (with type filter)
 const getCategories = async (type, page = 1, limit = 20) => {
@@ -35,10 +36,12 @@ const getCategories = async (type, page = 1, limit = 20) => {
 const getCategoriesByType = async (type, page = 1, limit = 20) => {
   try {
     if (!["article", "recipe"].includes(type)) {
-      throw {
-        message: "Invalid category type",
-        status: 400,
-      };
+      const error = new Error(
+        translate(ERROR_CODES.INVALID_CATEGORY_TYPE, "en"),
+      );
+      error.code = ERROR_CODES.INVALID_CATEGORY_TYPE;
+      error.status = 400;
+      throw error;
     }
 
     const skip = (page - 1) * limit;
@@ -70,10 +73,10 @@ const getCategoryById = async (categoryId) => {
     const category = await Category.findById(categoryId);
 
     if (!category) {
-      throw {
-        message: "Category not found",
-        status: 404,
-      };
+      const error = new Error(translate(ERROR_CODES.CATEGORY_NOT_FOUND, "en"));
+      error.code = ERROR_CODES.CATEGORY_NOT_FOUND;
+      error.status = 404;
+      throw error;
     }
 
     return category;
@@ -88,10 +91,10 @@ const getCategoryBySlug = async (slug) => {
     const category = await Category.findOne({ slug });
 
     if (!category) {
-      throw {
-        message: "Category not found",
-        status: 404,
-      };
+      const error = new Error(translate(ERROR_CODES.CATEGORY_NOT_FOUND, "en"));
+      error.code = ERROR_CODES.CATEGORY_NOT_FOUND;
+      error.status = 404;
+      throw error;
     }
 
     return category;
@@ -110,10 +113,12 @@ const createCategory = async (categoryData) => {
     });
 
     if (existingCategory) {
-      throw {
-        message: `Category "${categoryData.name}" already exists for type "${categoryData.type}"`,
-        status: 409,
-      };
+      const error = new Error(
+        translate(ERROR_CODES.CATEGORY_ALREADY_EXISTS, "en"),
+      );
+      error.code = ERROR_CODES.CATEGORY_ALREADY_EXISTS;
+      error.status = 409;
+      throw error;
     }
 
     const category = new Category(categoryData);
@@ -122,10 +127,10 @@ const createCategory = async (categoryData) => {
     return category;
   } catch (error) {
     if (error.code === 11000) {
-      throw {
-        message: "Category with this name or slug already exists",
-        status: 409,
-      };
+      const err = new Error(translate(ERROR_CODES.SLUG_ALREADY_EXISTS, "en"));
+      err.code = ERROR_CODES.SLUG_ALREADY_EXISTS;
+      err.status = 409;
+      throw err;
     }
     throw error;
   }
@@ -147,10 +152,10 @@ const updateCategory = async (categoryId, updateData) => {
     );
 
     if (!category) {
-      throw {
-        message: "Category not found",
-        status: 404,
-      };
+      const error = new Error(translate(ERROR_CODES.CATEGORY_NOT_FOUND, "en"));
+      error.code = ERROR_CODES.CATEGORY_NOT_FOUND;
+      error.status = 404;
+      throw error;
     }
 
     return category;
@@ -168,24 +173,24 @@ const deleteCategory = async (categoryId) => {
     );
 
     if (articleCount > 0) {
-      throw {
-        message: `Cannot delete category. ${articleCount} article(s) are using this category`,
-        status: 409,
-      };
+      const error = new Error(
+        translate(ERROR_CODES.CATEGORY_IN_USE, "en", { count: articleCount }),
+      );
+      error.code = ERROR_CODES.CATEGORY_IN_USE;
+      error.status = 409;
+      throw error;
     }
 
     const category = await Category.findByIdAndDelete(categoryId);
 
     if (!category) {
-      throw {
-        message: "Category not found",
-        status: 404,
-      };
+      const error = new Error(translate(ERROR_CODES.CATEGORY_NOT_FOUND, "en"));
+      error.code = ERROR_CODES.CATEGORY_NOT_FOUND;
+      error.status = 404;
+      throw error;
     }
 
-    return {
-      message: "Category deleted successfully",
-    };
+    return true;
   } catch (error) {
     throw error;
   }
@@ -201,10 +206,10 @@ const updateCategoryStatus = async (categoryId, isActive) => {
     );
 
     if (!category) {
-      throw {
-        message: "Category not found",
-        status: 404,
-      };
+      const error = new Error(translate(ERROR_CODES.CATEGORY_NOT_FOUND, "en"));
+      error.code = ERROR_CODES.CATEGORY_NOT_FOUND;
+      error.status = 404;
+      throw error;
     }
 
     return category;

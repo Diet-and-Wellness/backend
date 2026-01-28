@@ -1,3 +1,4 @@
+import { translate, getLanguage, getFieldName } from "#utils/localization.js";
 import categoriesService from "./categories.service.js";
 
 // Get all active categories (optional type filter)
@@ -79,7 +80,11 @@ const deleteCategory = async (req, res, next) => {
     const result = await categoriesService.deleteCategory(
       req.params.categoryId,
     );
-    res.json(result);
+    res.json({
+      message: translate("DELETE_SUCCESS", getLanguage(req), {
+        item: getFieldName("category", getLanguage(req)),
+      }),
+    });
   } catch (error) {
     next(error);
   }

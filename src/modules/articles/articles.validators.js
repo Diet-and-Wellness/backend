@@ -1,42 +1,43 @@
 import { body, query, param } from "express-validator";
+import { ERROR_CODES, translate, getFieldName } from "#utils/localization.js";
 import { validateTags } from "./articles.helpers.js";
 
 // Validation for creating an article (admin only)
 const createArticle = [
   body("title")
     .notEmpty()
-    .withMessage("Title is required")
+    .withMessage("REQUIRED_FIELD")
     .isLength({ min: 5, max: 200 })
-    .withMessage("Title must be between 5 and 200 characters"),
+    .withMessage(["INVALID_LENGTH", { min: 5, max: 200 }]),
   body("description")
     .notEmpty()
-    .withMessage("Description is required")
+    .withMessage("REQUIRED_FIELD")
     .isLength({ min: 10, max: 500 })
-    .withMessage("Description must be between 10 and 500 characters"),
+    .withMessage(["INVALID_LENGTH", { min: 10, max: 500 }]),
   body("content")
     .notEmpty()
-    .withMessage("Content is required")
+    .withMessage("REQUIRED_FIELD")
     .isLength({ min: 50 })
-    .withMessage("Content must be at least 50 characters"),
+    .withMessage(["INVALID_LENGTH", { min: 50, max: 10000 }]),
   body("category")
     .notEmpty()
-    .withMessage("Category is required")
+    .withMessage("REQUIRED_FIELD")
     .isMongoId()
-    .withMessage("Category must be a valid category ID"),
+    .withMessage(["INVALID_MONGO_ID_FORMAT", { field: "category" }]),
   body("tags")
     .optional()
     .isArray()
-    .withMessage("Tags must be an array")
+    .withMessage(["TAGS_REQUIRED"])
     .custom((value) => {
       if (value && value.length > 0) {
-        validateTags(value);
+        validateTags(value, true);
       }
       return true;
     }),
   body("estimatedReadTime")
     .optional()
     .isInt({ min: 1, max: 120 })
-    .withMessage("Estimated read time must be between 1 and 120 minutes"),
+    .withMessage(["ESTIMATED_READ_TIME_INVALID", { min: 1, max: 120 }]),
 ];
 
 // Validation for updating an article
@@ -44,42 +45,42 @@ const updateArticle = [
   body("title")
     .optional()
     .isLength({ min: 5, max: 200 })
-    .withMessage("Title must be between 5 and 200 characters"),
+    .withMessage(["INVALID_LENGTH", { min: 5, max: 200 }]),
   body("description")
     .optional()
     .isLength({ min: 10, max: 500 })
-    .withMessage("Description must be between 10 and 500 characters"),
+    .withMessage(["INVALID_LENGTH", { min: 10, max: 500 }]),
   body("content")
     .optional()
     .isLength({ min: 50 })
-    .withMessage("Content must be at least 50 characters"),
+    .withMessage(["INVALID_LENGTH", { min: 50, max: 10000 }]),
   body("category")
     .optional()
     .isMongoId()
-    .withMessage("Category must be a valid category ID"),
+    .withMessage(["INVALID_MONGO_ID_FORMAT", { field: "category" }]),
   body("tags")
     .optional()
     .isArray()
-    .withMessage("Tags must be an array")
+    .withMessage(["TAGS_REQUIRED"])
     .custom((value) => {
       if (value && value.length > 0) {
-        validateTags(value);
+        validateTags(value, true);
       }
       return true;
     }),
   body("estimatedReadTime")
     .optional()
     .isInt({ min: 1, max: 120 })
-    .withMessage("Estimated read time must be between 1 and 120 minutes"),
+    .withMessage(["ESTIMATED_READ_TIME_INVALID"]),
 ];
 
 // Validation for hiding articles
 const changeArticleStatus = [
   body("isHidden")
     .notEmpty()
-    .withMessage("isHidden is required")
+    .withMessage(["REQUIRED_FIELD"])
     .isBoolean()
-    .withMessage("isHidden must be a boolean"),
+    .withMessage(["INVALID_BOOLEAN_VALUE"]),
 ];
 
 // Validation for getting articles with filters
@@ -87,56 +88,54 @@ const getArticles = [
   query("page")
     .optional()
     .isInt({ min: 1 })
-    .withMessage("Page must be a positive integer"),
+    .withMessage(["INVALID_PAGE_NUMBER"]),
   query("limit")
     .optional()
     .isInt({ min: 1, max: 100 })
-    .withMessage("Limit must be between 1 and 100"),
+    .withMessage(["INVALID_LIMIT_NUMBER"]),
   query("category")
     .optional()
     .isMongoId()
-    .withMessage("Category must be a valid category ID"),
+    .withMessage(["INVALID_MONGO_ID_FORMAT", { field: "category" }]),
   query("search")
     .optional()
     .isLength({ min: 1, max: 100 })
-    .withMessage("Search term must be between 1 and 100 characters"),
+    .withMessage(["INVALID_LENGTH", { min: 1, max: 100 }]),
   query("sortBy")
     .optional()
     .isIn(["newest", "oldest", "mostViewed", "trending"])
-    .withMessage("Invalid sort option"),
+    .withMessage(["INVALID_SORT_OPTION"]),
   query("status")
     .optional()
     .isIn(["active", "inactive", "all"])
-    .withMessage("Invalid status option"),
+    .withMessage(["INVALID_STATUS_OPTION"]),
 ];
 
 // Validation for article ID
 const articleId = [
   param("articleId")
     .notEmpty()
-    .withMessage("Article ID is required")
+    .withMessage(["REQUIRED_FIELD"])
     .isMongoId()
-    .withMessage("Article ID must be a valid MongoDB ID"),
+    .withMessage(["INVALID_MONGO_ID_FORMAT", { field: "article" }]),
 ];
 
 // Validation for category ID
 const categoryId = [
   param("category")
     .notEmpty()
-    .withMessage("Category is required")
+    .withMessage(["REQUIRED_FIELD"])
     .isMongoId()
-    .withMessage("Category must be a valid MongoDB ID"),
+    .withMessage(["INVALID_MONGO_ID_FORMAT", { field: "category" }]),
 ];
 
 // Validation for slug
 const articleSlug = [
   param("slug")
     .notEmpty()
-    .withMessage("Slug is required")
+    .withMessage(["REQUIRED_FIELD"])
     .matches(/^[a-z0-9-]+$/)
-    .withMessage(
-      "Slug must contain only lowercase letters, numbers, and hyphens",
-    ),
+    .withMessage(["INVALID_SLUG_FORMAT"]),
 ];
 
 export default {

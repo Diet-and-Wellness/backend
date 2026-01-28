@@ -10,6 +10,7 @@ import {
   RECIPE_UNITS,
   RECIPE_DIFFICULTIES,
 } from "#modules/recipes/recipes.constants.js";
+import { translate, ERROR_CODES } from "#utils/localization.js";
 
 const recipeSchema = new mongoose.Schema(
   {
@@ -57,14 +58,24 @@ const recipeSchema = new mongoose.Schema(
         validator: async function (value) {
           // Verify category exists and is for recipes
           const category = await mongoose.models.Category.findById(value);
+
           if (!category) {
-            throw new Error("Category does not exist");
+            const error = new Error(["CATEGORY_NOT_FOUND"]);
+            error.code = ERROR_CODES.CATEGORY_NOT_FOUND;
+            error.status = 400;
+            throw error;
           }
           if (category.type !== "recipe") {
-            throw new Error("Category must be of type 'recipe'");
+            const error = new Error(["CATEGORY_INVALID_TYPE_RECIPE"]);
+            error.code = ERROR_CODES.CATEGORY_INVALID_TYPE_RECIPE;
+            error.status = 400;
+            throw error;
           }
           if (!category.isActive) {
-            throw new Error("Category must be active");
+            const error = new Error(["CATEGORY_INACTIVE"]);
+            error.code = ERROR_CODES.CATEGORY_INACTIVE;
+            error.status = 400;
+            throw error;
           }
           return true;
         },

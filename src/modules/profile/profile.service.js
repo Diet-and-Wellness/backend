@@ -1,9 +1,15 @@
 import User from "#models/user.js";
+import { ERROR_CODES, translate, getLanguage } from "#utils/localization.js";
 
 // Get user's own profile
 const getProfile = async (userId) => {
   const user = await User.findById(userId);
-  if (!user) throw new Error("User not found");
+  if (!user) {
+    const error = new Error(translate(ERROR_CODES.USER_NOT_FOUND, "en"));
+    error.code = ERROR_CODES.USER_NOT_FOUND;
+    error.status = 404;
+    throw error;
+  }
   return user;
 };
 
@@ -42,8 +48,6 @@ const searchProfiles = async (query, requesterRole) => {
 
   const skip = (query.page - 1) * query.limit || 0;
   const limit = query.limit || 10;
-
-  console.log("Filters applied:", filters);
 
   const users = await User.find(filters)
     .limit(limit)
@@ -88,14 +92,24 @@ const updateProfile = async (userId, updateData) => {
     runValidators: true,
   });
 
-  if (!updatedUser) throw new Error("User not found");
+  if (!updatedUser) {
+    const error = new Error(translate(ERROR_CODES.USER_NOT_FOUND, "en"));
+    error.code = ERROR_CODES.USER_NOT_FOUND;
+    error.status = 404;
+    throw error;
+  }
   return updatedUser;
 };
 
 // Admin: Create specialist profile
 const createSpecialistProfile = async (specialistData, requesterRole) => {
   const exists = await User.findOne({ email: specialistData.email });
-  if (exists) throw new Error("Email already exists");
+  if (exists) {
+    const error = new Error(translate(ERROR_CODES.EMAIL_ALREADY_EXISTS, "en"));
+    error.code = ERROR_CODES.EMAIL_ALREADY_EXISTS;
+    error.status = 409;
+    throw error;
+  }
 
   const specialist = await User.create({
     firstName: specialistData.firstName,
@@ -117,41 +131,58 @@ const createSpecialistProfile = async (specialistData, requesterRole) => {
 // Admin: Activate specialist
 const activateSpecialist = async (specialistId, requesterRole) => {
   const specialist = await User.findById(specialistId);
-  if (!specialist) throw new Error("Specialist not found");
-  if (specialist.role !== "specialist")
-    throw new Error("User is not a specialist");
+  if (!specialist) {
+    const error = new Error(translate(ERROR_CODES.SPECIALIST_NOT_FOUND, "en"));
+    error.code = ERROR_CODES.SPECIALIST_NOT_FOUND;
+    error.status = 404;
+    throw error;
+  }
+  if (specialist.role !== "specialist") {
+    const error = new Error(translate(ERROR_CODES.USER_NOT_SPECIALIST, "en"));
+    error.code = ERROR_CODES.USER_NOT_SPECIALIST;
+    error.status = 400;
+    throw error;
+  }
 
   specialist.specialistInfo.status = "active";
   await specialist.save();
 
-  return {
-    message: "Specialist activated successfully",
-    specialist,
-  };
+  return specialist;
 };
 
 // Admin: Deactivate specialist
 const deactivateSpecialist = async (specialistId, requesterRole) => {
   const specialist = await User.findById(specialistId);
-  if (!specialist) throw new Error("Specialist not found");
-  if (specialist.role !== "specialist")
-    throw new Error("User is not a specialist");
+  if (!specialist) {
+    const error = new Error(translate(ERROR_CODES.SPECIALIST_NOT_FOUND, "en"));
+    error.code = ERROR_CODES.SPECIALIST_NOT_FOUND;
+    error.status = 404;
+    throw error;
+  }
+  if (specialist.role !== "specialist") {
+    const error = new Error(translate(ERROR_CODES.USER_NOT_SPECIALIST, "en"));
+    error.code = ERROR_CODES.USER_NOT_SPECIALIST;
+    error.status = 400;
+    throw error;
+  }
 
   specialist.specialistInfo.status = "inactive";
   await specialist.save();
 
-  return {
-    message: "Specialist deactivated successfully",
-    specialist,
-  };
+  return specialist;
 };
 
 const deleteProfile = async (userId, requesterRole) => {
   const user = await User.findById(userId);
-  if (!user) throw new Error("User not found");
+  if (!user) {
+    const error = new Error(translate(ERROR_CODES.USER_NOT_FOUND, "en"));
+    error.code = ERROR_CODES.USER_NOT_FOUND;
+    error.status = 404;
+    throw error;
+  }
 
   await user.deleteOne();
-  return { message: "Profile deleted successfully" };
+  return true;
 };
 
 export default {

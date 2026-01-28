@@ -1,4 +1,5 @@
 import recipesService from "./recipes.service.js";
+import { getLanguage, translate } from "#utils/localization.js";
 
 // Admin: Create a new recipe
 const createRecipe = async (req, res, next) => {
@@ -41,6 +42,8 @@ const getAdminRecipes = async (req, res, next) => {
       limit: req.query.limit || 10,
       category: req.query.category,
       search: req.query.search,
+      difficulty: req.query.difficulty,
+      sortBy: req.query.sortBy || "newest",
       status: req.query.status || "all",
     };
 
@@ -99,7 +102,7 @@ const updateRecipe = async (req, res, next) => {
     const result = await recipesService.updateRecipe(
       req.params.recipeId,
       req.body,
-      req.user.user_id,
+      req.user,
     );
     res.json(result);
   } catch (error) {
@@ -111,7 +114,11 @@ const updateRecipe = async (req, res, next) => {
 const deleteRecipe = async (req, res, next) => {
   try {
     const result = await recipesService.deleteRecipe(req.params.recipeId);
-    res.json(result);
+    res.json({
+      message: translate("DELETE_SUCCESS", getLanguage(req), {
+        item: translate("recipe", getLanguage(req)),
+      }),
+    });
   } catch (error) {
     next(error);
   }

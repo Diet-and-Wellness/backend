@@ -1,4 +1,5 @@
 import Article from "#models/article.js";
+import { ERROR_CODES, translate } from "#utils/localization.js";
 
 // Create a new article (admin only)
 const createArticle = async (articleData, userId) => {
@@ -13,10 +14,12 @@ const createArticle = async (articleData, userId) => {
     return article;
   } catch (error) {
     if (error.code === 11000) {
-      throw {
-        message: "An article with this title already exists",
-        status: 409,
-      };
+      const err = new Error(
+        translate(ERROR_CODES.DUPLICATE_TITLE, "en", { type: "article" }),
+      );
+      err.code = ERROR_CODES.DUPLICATE_TITLE;
+      err.status = 409;
+      throw err;
     }
     throw error;
   }
@@ -106,17 +109,17 @@ const getArticleById = async (articleId) => {
       .populate("category", "name displayName");
 
     if (!article) {
-      throw {
-        message: "Article not found",
-        status: 404,
-      };
+      const err = new Error(translate(ERROR_CODES.ARTICLE_NOT_FOUND, "en"));
+      err.code = ERROR_CODES.ARTICLE_NOT_FOUND;
+      err.status = 404;
+      throw err;
     }
 
     if (article.isHidden) {
-      throw {
-        message: "Article is hidden",
-        status: 404,
-      };
+      const err = new Error(translate(ERROR_CODES.ARTICLE_NOT_AVAILABLE, "en"));
+      err.code = ERROR_CODES.ARTICLE_NOT_AVAILABLE;
+      err.status = 404;
+      throw err;
     }
 
     return article;
@@ -133,17 +136,19 @@ const getArticleBySlug = async (slug) => {
       .populate("category", "name displayName");
 
     if (!article) {
-      throw {
-        message: "Article not found",
-        status: 404,
-      };
+      const error = new Error(translate(ERROR_CODES.ARTICLE_NOT_FOUND, "en"));
+      error.code = ERROR_CODES.ARTICLE_NOT_FOUND;
+      error.status = 404;
+      throw error;
     }
 
     if (article.isHidden) {
-      throw {
-        message: "Article is not available",
-        status: 404,
-      };
+      const error = new Error(
+        translate(ERROR_CODES.ARTICLE_NOT_AVAILABLE, "en"),
+      );
+      error.code = ERROR_CODES.ARTICLE_NOT_AVAILABLE;
+      error.status = 404;
+      throw error;
     }
 
     return article;
@@ -162,25 +167,27 @@ const incrementViewCount = async (articleId) => {
 };
 
 // Update article (admin only)
-const updateArticle = async (articleId, updateData, userId) => {
+const updateArticle = async (articleId, updateData, user) => {
   try {
     // Find article and verify it exists and user is author (or admin can update any)
     const article = await Article.findById(articleId);
 
     if (!article) {
-      throw {
-        message: "Article not found",
-        status: 404,
-      };
+      const error = new Error(translate(ERROR_CODES.ARTICLE_NOT_FOUND, "en"));
+      error.code = ERROR_CODES.ARTICLE_NOT_FOUND;
+      error.status = 404;
+      throw error;
     }
 
     // Allow updates only by article author or admin
     // Note: admin check should be done in controller via ensureRoles middleware
-    if (article.author.toString() !== userId) {
-      throw {
-        message: "You are not authorized to update this article",
-        status: 403,
-      };
+    if (article.author.toString() !== user.user_id && user.role !== "admin") {
+      const error = new Error(
+        translate(ERROR_CODES.INSUFFICIENT_PERMISSIONS, "en"),
+      );
+      error.code = ERROR_CODES.INSUFFICIENT_PERMISSIONS;
+      error.status = 403;
+      throw error;
     }
 
     // Fields that can be updated
@@ -221,15 +228,13 @@ const deleteArticle = async (articleId) => {
     const article = await Article.findByIdAndDelete(articleId);
 
     if (!article) {
-      throw {
-        message: "Article not found",
-        status: 404,
-      };
+      const error = new Error(translate(ERROR_CODES.ARTICLE_NOT_FOUND, "en"));
+      error.code = ERROR_CODES.ARTICLE_NOT_FOUND;
+      error.status = 404;
+      throw error;
     }
 
-    return {
-      message: "Article deleted successfully",
-    };
+    return true;
   } catch (error) {
     throw error;
   }
@@ -245,10 +250,10 @@ const changeArticleStatus = async (articleId, isHidden) => {
     );
 
     if (!article) {
-      throw {
-        message: "Article not found",
-        status: 404,
-      };
+      const error = new Error(translate(ERROR_CODES.ARTICLE_NOT_FOUND, "en"));
+      error.code = ERROR_CODES.ARTICLE_NOT_FOUND;
+      error.status = 404;
+      throw error;
     }
 
     return article;

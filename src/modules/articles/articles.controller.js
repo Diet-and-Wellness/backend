@@ -1,4 +1,5 @@
 import articlesService from "./articles.service.js";
+import { getLanguage, translate } from "#utils/localization.js";
 
 // Admin: Create a new article
 const createArticle = async (req, res, next) => {
@@ -99,7 +100,7 @@ const updateArticle = async (req, res, next) => {
     const result = await articlesService.updateArticle(
       req.params.articleId,
       req.body,
-      req.user.user_id,
+      req.user,
     );
     res.json(result);
   } catch (error) {
@@ -111,7 +112,11 @@ const updateArticle = async (req, res, next) => {
 const deleteArticle = async (req, res, next) => {
   try {
     const result = await articlesService.deleteArticle(req.params.articleId);
-    res.json(result);
+    res.json({
+      message: translate("DELETE_SUCCESS", getLanguage(req), {
+        item: translate("article", getLanguage(req)),
+      }),
+    });
   } catch (error) {
     next(error);
   }

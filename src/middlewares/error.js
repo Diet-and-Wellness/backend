@@ -1,10 +1,94 @@
-const errorHandler = (err, req, res, next) => {
-  console.error(err);
+/**
+ * Centralized error handling middleware
+ * Handles all types of errors: validation, MongoDB, authentication, and generic
+ * Returns localized, structured error responses
+ */
 
-  res.status(err.status || 400).json({
+import {
+  getLanguage,
+  translate,
+  ERROR_CODES,
+  mapMongoError,
+} from "#utils/localization.js";
+
+const errorHandler = (err, req, res, next) => {
+  const lang = getLanguage(req);
+  let errorResponse = {
     success: false,
-    message: err.message || "Something went wrong",
+    code: ERROR_CODES.INTERNAL_SERVER_ERROR,
+    message: translate(ERROR_CODES.INTERNAL_SERVER_ERROR, lang),
+  };
+  let statusCode = 500;
+
+  // Log error for debugging
+  console.error("[ERROR]", {
+    code: err.code,
+    message: err.message,
+    stack: err.stack,
+    name: err.name,
+    err: err.errors,
   });
+
+  // Handle custom app errors (with code property)
+  if (err.code && err.status) {
+    errorResponse = {
+      success: false,
+      code: err.code,
+      message: translate(err.code, lang),
+    };
+    statusCode = err.status;
+  }
+  // Handle MongoDB errors
+  else if (err.name && ["ValidationError", "CastError"].includes(err.name)) {
+    const mongoError = mapMongoError(err, lang);
+    if (mongoError) {
+      errorResponse = {
+        success: false,
+        code: err.code || mongoError.code,
+        errors: mongoError.errors,
+      };
+      statusCode = mongoError.status;
+    }
+  }
+  // Handle duplicate key error (MongoDB 11000)
+  else if (err.code === 11000) {
+    const mongoError = mapMongoError(err, lang);
+    if (mongoError) {
+      errorResponse = {
+        success: false,
+        code: mongoError.code,
+        message: mongoError.message,
+      };
+      statusCode = mongoError.status;
+    }
+  }
+  // Handle JWT errors
+  else if (err.name === "JsonWebTokenError") {
+    errorResponse = {
+      success: false,
+      code: ERROR_CODES.INVALID_TOKEN,
+      message: translate(ERROR_CODES.INVALID_TOKEN, lang),
+    };
+    statusCode = 401;
+  } else if (err.name === "TokenExpiredError") {
+    errorResponse = {
+      success: false,
+      code: ERROR_CODES.TOKEN_EXPIRED,
+      message: translate(ERROR_CODES.TOKEN_EXPIRED, lang),
+    };
+    statusCode = 401;
+  }
+  // Handle standard HTTP errors with status
+  else if (err.status) {
+    statusCode = err.status;
+    errorResponse = {
+      success: false,
+      code: err.code || ERROR_CODES.INTERNAL_SERVER_ERROR,
+      message: err.message,
+    };
+  }
+
+  res.status(statusCode).json(errorResponse);
 };
 
 export default errorHandler;

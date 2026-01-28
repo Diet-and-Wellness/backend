@@ -3,6 +3,7 @@ import {
   generateSlug,
   validateTags,
 } from "#modules/articles/articles.helpers.js";
+import { translate, ERROR_CODES } from "#utils/localization.js";
 
 const articleSchema = new mongoose.Schema(
   {
@@ -51,13 +52,29 @@ const articleSchema = new mongoose.Schema(
           // Verify category exists and is for articles
           const category = await mongoose.models.Category.findById(value);
           if (!category) {
-            throw new Error("Category does not exist");
+            const error = new Error(
+              translate(ERROR_CODES.CATEGORY_NOT_FOUND, "en"),
+            );
+            error.code = ERROR_CODES.CATEGORY_NOT_FOUND;
+            error.status = 404;
+            throw error;
           }
           if (category.type !== "article") {
-            throw new Error("Category must be of type 'article'");
+            const error = new Error(
+              translate(ERROR_CODES.CATEGORY_INVALID_TYPE_ARTICLE, "en"),
+            );
+            error.code = ERROR_CODES.CATEGORY_INVALID_TYPE_ARTICLE;
+            error.status = 400;
+
+            throw error;
           }
           if (!category.isActive) {
-            throw new Error("Category must be active");
+            const error = new Error(
+              translate(ERROR_CODES.CATEGORY_INACTIVE, "en"),
+            );
+            error.code = ERROR_CODES.CATEGORY_INACTIVE;
+            error.status = 400;
+            throw error;
           }
           return true;
         },

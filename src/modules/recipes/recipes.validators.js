@@ -1,4 +1,5 @@
 import { body, query, param } from "express-validator";
+import { ERROR_CODES, translate, getFieldName } from "#utils/localization.js";
 import {
   validateIngredients,
   validateInstructions,
@@ -10,76 +11,76 @@ import {
 const createRecipe = [
   body("title")
     .notEmpty()
-    .withMessage("Title is required")
+    .withMessage(["REQUIRED_FIELD", { field: "title" }])
     .isLength({ min: 5, max: 200 })
-    .withMessage("Title must be between 5 and 200 characters"),
+    .withMessage(["INVALID_LENGTH", { min: 5, max: 200 }]),
   body("description")
     .notEmpty()
-    .withMessage("Description is required")
+    .withMessage(["REQUIRED_FIELD", { field: "description" }])
     .isLength({ min: 10, max: 500 })
-    .withMessage("Description must be between 10 and 500 characters"),
+    .withMessage(["INVALID_LENGTH", { min: 10, max: 500 }]),
   body("content")
     .notEmpty()
-    .withMessage("Content is required")
+    .withMessage(["REQUIRED_FIELD", { field: "content" }])
     .isLength({ min: 50 })
-    .withMessage("Content must be at least 50 characters"),
+    .withMessage(["INVALID_LENGTH", { min: 50 }]),
   body("category")
     .notEmpty()
-    .withMessage("Category is required")
+    .withMessage(["REQUIRED_FIELD", { field: "category" }])
     .isMongoId()
-    .withMessage("Category must be a valid category ID"),
+    .withMessage(["INVALID_MONGO_ID_FORMAT", { field: "category" }]),
   body("ingredients")
     .notEmpty()
-    .withMessage("Ingredients are required")
+    .withMessage(["REQUIRED_FIELD", { field: "ingredients" }])
     .isArray({ min: 1 })
-    .withMessage("At least one ingredient is required")
+    .withMessage(["INVALID_ARRAY", { field: "ingredients" }])
     .custom((value) => {
-      validateIngredients(value);
+      validateIngredients(value, true);
       return true;
     }),
   body("instructions")
     .optional()
     .isArray()
-    .withMessage("Instructions must be an array")
+    .withMessage(["INVALID_ARRAY", { field: "instructions" }])
     .custom((value) => {
       if (value && value.length > 0) {
-        validateInstructions(value);
+        validateInstructions(value, true);
       }
       return true;
     }),
   body("tags")
     .optional()
     .isArray()
-    .withMessage("Tags must be an array")
+    .withMessage(["INVALID_ARRAY", { field: "tags" }])
     .custom((value) => {
       if (value && value.length > 0) {
-        validateTags(value);
+        validateTags(value, true);
       }
       return true;
     }),
   body("prepTime")
     .optional()
     .isInt({ min: 0, max: 480 })
-    .withMessage("Prep time must be between 0 and 480 minutes"),
+    .withMessage(["INVALID_LENGTH", { field: "prepTime", min: 0, max: 480 }]),
   body("cookTime")
     .optional()
     .isInt({ min: 0, max: 480 })
-    .withMessage("Cook time must be between 0 and 480 minutes"),
+    .withMessage(["INVALID_LENGTH", { field: "cookTime", min: 0, max: 480 }]),
   body("servings")
     .optional()
     .isInt({ min: 1, max: 50 })
-    .withMessage("Servings must be between 1 and 50"),
+    .withMessage(["INVALID_LENGTH", { field: "servings", min: 1, max: 50 }]),
   body("difficulty")
     .optional()
     .isIn(["easy", "medium", "hard"])
-    .withMessage("Difficulty must be easy, medium, or hard"),
+    .withMessage(["INVALID_VALUE", { field: "difficulty" }]),
   body("nutritionInfo")
     .optional()
     .isObject()
-    .withMessage("Nutrition info must be an object")
+    .withMessage(["INVALID_INPUT", { field: "nutritionInfo" }])
     .custom((value) => {
       if (value) {
-        validateNutritionInfo(value);
+        validateNutritionInfo(value, true);
       }
       return true;
     }),
@@ -90,72 +91,72 @@ const updateRecipe = [
   body("title")
     .optional()
     .isLength({ min: 5, max: 200 })
-    .withMessage("Title must be between 5 and 200 characters"),
+    .withMessage(["INVALID_LENGTH", { min: 5, max: 200 }]),
   body("description")
     .optional()
     .isLength({ min: 10, max: 500 })
-    .withMessage("Description must be between 10 and 500 characters"),
+    .withMessage(["INVALID_LENGTH", { min: 10, max: 500 }]),
   body("content")
     .optional()
     .isLength({ min: 50 })
-    .withMessage("Content must be at least 50 characters"),
+    .withMessage(["INVALID_LENGTH", { min: 50 }]),
   body("category")
     .optional()
     .isMongoId()
-    .withMessage("Category must be a valid category ID"),
+    .withMessage(["INVALID_MONGO_ID_FORMAT", { field: "category" }]),
   body("ingredients")
     .optional()
     .isArray({ min: 1 })
-    .withMessage("At least one ingredient is required")
+    .withMessage(["INVALID_ARRAY", { field: "ingredients" }])
     .custom((value) => {
       if (value) {
-        validateIngredients(value);
+        validateIngredients(value, true);
       }
       return true;
     }),
   body("instructions")
     .optional()
     .isArray()
-    .withMessage("Instructions must be an array")
+    .withMessage(["INVALID_ARRAY", { field: "instructions" }])
     .custom((value) => {
       if (value && value.length > 0) {
-        validateInstructions(value);
+        validateInstructions(value, true);
       }
       return true;
     }),
   body("tags")
     .optional()
     .isArray()
-    .withMessage("Tags must be an array")
+    .withMessage(["INVALID_ARRAY", { field: "tags" }])
     .custom((value) => {
-      if (value && value.length > 10) {
-        throw new Error("Maximum 10 tags allowed");
+      if (value && value.length > 0) {
+        validateTags(value, true);
       }
       return true;
     }),
   body("prepTime")
     .optional()
     .isInt({ min: 0, max: 480 })
-    .withMessage("Prep time must be between 0 and 480 minutes"),
+    .withMessage(["INVALID_LENGTH", { field: "prepTime", min: 0, max: 480 }]),
   body("cookTime")
     .optional()
     .isInt({ min: 0, max: 480 })
-    .withMessage("Cook time must be between 0 and 480 minutes"),
+    .withMessage(["INVALID_LENGTH", { field: "cookTime", min: 0, max: 480 }]),
   body("servings")
     .optional()
     .isInt({ min: 1, max: 50 })
-    .withMessage("Servings must be between 1 and 50"),
+    .withMessage(["INVALID_LENGTH", { field: "servings", min: 1, max: 50 }]),
   body("difficulty")
     .optional()
     .isIn(["easy", "medium", "hard"])
-    .withMessage("Difficulty must be easy, medium, or hard"),
+    .withMessage(["INVALID_VALUE", { field: "difficulty" }]),
   body("nutritionInfo")
     .optional()
     .isObject()
-    .withMessage("Nutrition info must be an object")
+    .withMessage(["INVALID_INPUT", { field: "nutritionInfo" }])
     .custom((value) => {
       if (value) {
-        validateNutritionInfo(value);
+        validateNutritionInfo(value, true);
       }
       return true;
     }),
@@ -165,9 +166,9 @@ const updateRecipe = [
 const changeRecipeStatus = [
   body("isHidden")
     .notEmpty()
-    .withMessage("isHidden is required")
+    .withMessage(["REQUIRED_FIELD", { field: "isHidden" }])
     .isBoolean()
-    .withMessage("isHidden must be a boolean"),
+    .withMessage(["INVALID_BOOLEAN_VALUE", { field: "isHidden" }]),
 ];
 
 // Validation for getting recipes with filters
@@ -175,56 +176,58 @@ const getRecipes = [
   query("page")
     .optional()
     .isInt({ min: 1 })
-    .withMessage("Page must be a positive integer"),
+    .withMessage(["INVALID_PAGE_NUMBER"]),
   query("limit")
     .optional()
     .isInt({ min: 1, max: 100 })
-    .withMessage("Limit must be between 1 and 100"),
+    .withMessage(["INVALID_LIMIT_NUMBER", { min: 1, max: 100 }]),
   query("category")
     .optional()
     .isMongoId()
-    .withMessage("Category must be a valid category ID"),
+    .withMessage(["INVALID_MONGO_ID_FORMAT", { field: "category" }]),
   query("search")
     .optional()
     .isLength({ min: 1, max: 100 })
-    .withMessage("Search term must be between 1 and 100 characters"),
+    .withMessage(["INVALID_LENGTH", { min: 1, max: 100 }]),
   query("difficulty")
     .optional()
     .isIn(["easy", "medium", "hard"])
-    .withMessage("Invalid difficulty"),
+    .withMessage(["INVALID_DIFFICULTY"]),
   query("sortBy")
     .optional()
     .isIn(["newest", "oldest", "mostViewed", "trending"])
-    .withMessage("Invalid sort option"),
+    .withMessage(["INVALID_SORT_OPTION"]),
+  query("status")
+    .optional()
+    .isIn(["active", "inactive", "all"])
+    .withMessage(["INVALID_STATUS_OPTION"]),
 ];
 
 // Validation for recipe ID
 const recipeId = [
   param("recipeId")
     .notEmpty()
-    .withMessage("Recipe ID is required")
+    .withMessage(["REQUIRED_FIELD", { field: "recipeId" }])
     .isMongoId()
-    .withMessage("Recipe ID must be a valid MongoDB ID"),
+    .withMessage(["INVALID_MONGO_ID_FORMAT", { field: "recipe" }]),
 ];
 
 // Validation for category ID
 const categoryId = [
   param("category")
     .notEmpty()
-    .withMessage("Category is required")
+    .withMessage(["REQUIRED_FIELD", { field: "category" }])
     .isMongoId()
-    .withMessage("Category must be a valid MongoDB ID"),
+    .withMessage(["INVALID_MONGO_ID_FORMAT", { field: "category" }]),
 ];
 
 // Validation for slug
 const recipeSlug = [
   param("slug")
     .notEmpty()
-    .withMessage("Slug is required")
+    .withMessage(["REQUIRED_FIELD", { field: "slug" }])
     .matches(/^[a-z0-9-]+$/)
-    .withMessage(
-      "Slug must contain only lowercase letters, numbers, and hyphens",
-    ),
+    .withMessage(["INVALID_SLUG_FORMAT"]),
 ];
 
 export default {

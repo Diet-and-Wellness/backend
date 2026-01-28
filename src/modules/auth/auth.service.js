@@ -5,6 +5,7 @@ import generateOTP from "#utils/otp.js";
 import jwt from "#utils/jwt.js";
 import sendEmail from "#utils/email.js";
 import { otpEmailTemplate } from "#utils/emailTemplates.js";
+import { ERROR_CODES, translate } from "#utils/localization.js";
 
 const sendOtp = async ({ email }) => {
   // Delete any existing OTP for this user
@@ -26,7 +27,7 @@ const sendOtp = async ({ email }) => {
     html: otpEmailTemplate(otp),
   });
 
-  return { message: "OTP sent to email", email };
+  return email;
 };
 
 const verifyOtp = async ({ email, code }) => {
@@ -37,29 +38,49 @@ const verifyOtp = async ({ email, code }) => {
     expiresAt: { $gt: new Date() },
   });
 
-  if (!otp) throw new Error("Invalid or expired OTP");
+  if (!otp) {
+    const error = new Error(translate(ERROR_CODES.OTP_INVALID, "en"));
+    error.code = ERROR_CODES.OTP_INVALID;
+    error.status = 400;
+    throw error;
+  }
 
   // Mark OTP as verified
   otp.verified = true;
   otp.expiresAt = new Date(Date.now() + 1 * 60 * 60 * 1000);
   await otp.save();
 
-  return { message: "Email verified successfully" };
+  return true;
 };
 
 const signup = async ({ firstName, lastName, email, password, phone }) => {
   const exists = await User.findOne({ email });
-  if (exists) throw new Error("Email already exists");
+  if (exists) {
+    const error = new Error(translate(ERROR_CODES.EMAIL_ALREADY_EXISTS, "en"));
+    error.code = ERROR_CODES.EMAIL_ALREADY_EXISTS;
+    error.status = 409;
+    throw error;
+  }
 
   const existsPhone = await User.findOne({ phone });
-  if (existsPhone) throw new Error("Phone number already exists");
+  if (existsPhone) {
+    const error = new Error(translate(ERROR_CODES.PHONE_ALREADY_EXISTS, "en"));
+    error.code = ERROR_CODES.PHONE_ALREADY_EXISTS;
+    error.status = 409;
+    throw error;
+  }
 
   const otp = await Otp.findOne({
     email,
     purpose: "verify_account",
     verified: true,
   });
-  if (!otp) throw new Error("Please verify your email first");
+  if (!otp) {
+    const error = new Error(translate(ERROR_CODES.EMAIL_NOT_VERIFIED, "en"));
+    error.code = ERROR_CODES.EMAIL_NOT_VERIFIED;
+    error.status = 400;
+    throw error;
+  }
 
   const user = await User.create({
     firstName,
@@ -79,10 +100,20 @@ const login = async ({ email, phone, password }) => {
   const user = await User.findOne({
     $or: [{ email: identifier }, { phone: identifier }],
   });
-  if (!user) throw new Error("Invalid credentials");
+  if (!user) {
+    const error = new Error(translate(ERROR_CODES.INVALID_CREDENTIALS, "en"));
+    error.code = ERROR_CODES.INVALID_CREDENTIALS;
+    error.status = 401;
+    throw error;
+  }
 
   const match = await user.comparePassword(password);
-  if (!match) throw new Error("Invalid credentials");
+  if (!match) {
+    const error = new Error(translate(ERROR_CODES.INVALID_CREDENTIALS, "en"));
+    error.code = ERROR_CODES.INVALID_CREDENTIALS;
+    error.status = 401;
+    throw error;
+  }
 
   const refreshToken = jwt.signRefreshToken({ id: user._id });
   user.refreshToken = refreshToken;
@@ -100,9 +131,11 @@ const refreshToken = async ({ refreshToken }) => {
 
   const user = await User.findById(payload.user_id);
 
-  console.log(user, payload, refreshToken);
   if (!user || user.refreshToken !== refreshToken) {
-    throw new Error("Invalid refresh token");
+    const error = new Error(translate(ERROR_CODES.INVALID_REFRESH_TOKEN, "en"));
+    error.code = ERROR_CODES.INVALID_REFRESH_TOKEN;
+    error.status = 401;
+    throw error;
   }
 
   const accessToken = jwt.signAccessToken({
@@ -115,7 +148,12 @@ const refreshToken = async ({ refreshToken }) => {
 
 const forgotPassword = async ({ email }) => {
   const user = await User.findOne({ email });
-  if (!user) throw new Error("Email not found");
+  if (!user) {
+    const error = new Error(translate(ERROR_CODES.EMAIL_NOT_FOUND, "en"));
+    error.code = ERROR_CODES.EMAIL_NOT_FOUND;
+    error.status = 404;
+    throw error;
+  }
 
   const otp = generateOTP();
 
@@ -133,7 +171,7 @@ const forgotPassword = async ({ email }) => {
     html: otpEmailTemplate(otp, "reset_password"),
   });
 
-  return { message: "OTP sent to email", email };
+  return email;
 };
 
 const resetPassword = async ({ email, code, password }) => {
@@ -144,17 +182,27 @@ const resetPassword = async ({ email, code, password }) => {
     expiresAt: { $gt: new Date() },
   });
 
-  if (!otp) throw new Error("Invalid or expired OTP");
+  if (!otp) {
+    const error = new Error(translate(ERROR_CODES.OTP_INVALID, "en"));
+    error.code = ERROR_CODES.OTP_INVALID;
+    error.status = 400;
+    throw error;
+  }
 
   const user = await User.findOne({ email });
-  if (!user) throw new Error("User not found");
+  if (!user) {
+    const error = new Error(translate(ERROR_CODES.USER_NOT_FOUND, "en"));
+    error.code = ERROR_CODES.USER_NOT_FOUND;
+    error.status = 404;
+    throw error;
+  }
 
   user.passwordHash = password;
   await user.save();
 
   await Otp.deleteMany({ email, purpose: "reset_password" });
 
-  return { message: "Password reset successfully" };
+  return true;
 };
 
 const logout = async (userId) => {

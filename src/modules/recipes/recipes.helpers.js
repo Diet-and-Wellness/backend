@@ -1,9 +1,15 @@
 import mongoose from "mongoose";
 import { RECIPE_UNITS } from "#modules/recipes/recipes.constants.js";
+import { ERROR_CODES, translate } from "#utils/localization.js";
 
 export const generateSlug = async (title, excludeId = null) => {
   if (!title) {
-    throw new Error("Title is required to generate slug");
+    const error = new Error(
+      translate(ERROR_CODES.SLUG_GENERATION_FAILED, "en"),
+    );
+    error.code = ERROR_CODES.SLUG_GENERATION_FAILED;
+    error.status = 400;
+    throw error;
   }
 
   let slug = title
@@ -36,51 +42,126 @@ export const generateSlug = async (title, excludeId = null) => {
   return slug;
 };
 
-export const validateIngredients = (ingredients) => {
+export const validateIngredients = (ingredients, validation = false) => {
   if (!Array.isArray(ingredients) || ingredients.length === 0) {
-    throw new Error("At least one ingredient is required");
+    if (validation) {
+      throw [ERROR_CODES.REQUIRED_FIELD, { field: "ingredients" }];
+    }
+
+    const error = new Error(translate(ERROR_CODES.INGREDIENTS_REQUIRED, "en"));
+    error.code = ERROR_CODES.INGREDIENTS_REQUIRED;
+    error.status = 400;
+    throw error;
   }
 
   if (ingredients.length > 50) {
-    throw new Error("Maximum 50 ingredients allowed");
+    if (validation) {
+      throw [ERROR_CODES.MAX_INGREDIENTS_EXCEEDED];
+    }
+
+    const error = new Error(
+      translate(ERROR_CODES.MAX_INGREDIENTS_EXCEEDED, "en"),
+    );
+    error.code = ERROR_CODES.MAX_INGREDIENTS_EXCEEDED;
+    error.status = 400;
+    throw error;
   }
 
   ingredients.forEach((ingredient, index) => {
     if (!ingredient.name || typeof ingredient.name !== "string") {
-      throw new Error(
-        `Ingredient ${index + 1}: name is required and must be a string`,
+      if (validation) {
+        throw [ERROR_CODES.INGREDIENT_NAME_INVALID, { index: index + 1 }];
+      }
+
+      const error = new Error(
+        translate(ERROR_CODES.INGREDIENT_NAME_INVALID, "en", {
+          index: index + 1,
+        }),
       );
+      error.code = ERROR_CODES.INGREDIENT_NAME_INVALID;
+      error.status = 400;
+      throw error;
     }
 
     if (!ingredient.quantity || typeof ingredient.quantity !== "string") {
-      throw new Error(
-        `Ingredient ${index + 1}: quantity is required and must be a string`,
+      if (validation) {
+        throw [ERROR_CODES.INGREDIENT_QUANTITY_INVALID, { index: index + 1 }];
+      }
+
+      const error = new Error(
+        translate(ERROR_CODES.INGREDIENT_QUANTITY_INVALID, "en", {
+          index: index + 1,
+        }),
       );
+      error.code = ERROR_CODES.INGREDIENT_QUANTITY_INVALID;
+      error.status = 400;
+      throw error;
     }
 
     if (ingredient.name.length < 2 || ingredient.name.length > 100) {
-      throw new Error(
-        `Ingredient ${index + 1}: name must be between 2 and 100 characters`,
+      if (validation) {
+        throw [
+          ERROR_CODES.INGREDIENT_NAME_LENGTH_INVALID,
+          { index: index + 1 },
+        ];
+      }
+
+      const error = new Error(
+        translate(ERROR_CODES.INGREDIENT_NAME_LENGTH_INVALID, "en", {
+          index: index + 1,
+        }),
       );
+      error.code = ERROR_CODES.INGREDIENT_NAME_LENGTH_INVALID;
+      error.status = 400;
+      throw error;
     }
 
     if (ingredient.unit && !RECIPE_UNITS.includes(ingredient.unit)) {
-      throw new Error(
-        `Ingredient ${index + 1}: invalid unit. Must be one of ${RECIPE_UNITS.join(", ")}`,
+      if (validation) {
+        throw [
+          ERROR_CODES.INGREDIENT_UNIT_INVALID,
+          { index: index + 1, units: RECIPE_UNITS.join(", ") },
+        ];
+      }
+
+      const error = new Error(
+        translate(ERROR_CODES.INGREDIENT_UNIT_INVALID, "en", {
+          index: index + 1,
+          units: RECIPE_UNITS.join(", "),
+        }),
       );
+      error.code = ERROR_CODES.INGREDIENT_UNIT_INVALID;
+      error.status = 400;
+      throw error;
     }
   });
 
   return true;
 };
 
-export const validateInstructions = (instructions) => {
+export const validateInstructions = (instructions, validation = false) => {
   if (!Array.isArray(instructions) || instructions.length === 0) {
-    throw new Error("Instructions must be an array");
+    if (validation) {
+      throw [ERROR_CODES.INSTRUCTIONS_REQUIRED];
+    }
+
+    const error = new Error(translate(ERROR_CODES.INSTRUCTIONS_REQUIRED, "en"));
+    error.code = ERROR_CODES.INSTRUCTIONS_REQUIRED;
+    error.status = 400;
+    throw error;
   }
 
   if (instructions.length > 200) {
-    throw new Error("Maximum 200 instruction steps allowed");
+    if (validation) {
+      throw [ERROR_CODES.MAX_INSTRUCTIONS_EXCEEDED];
+    }
+
+    const error = new Error(
+      translate(ERROR_CODES.MAX_INSTRUCTIONS_EXCEEDED, "en"),
+    );
+    error.code = ERROR_CODES.MAX_INSTRUCTIONS_EXCEEDED;
+    error.status = 400;
+    throw error;
   }
 
   instructions.forEach((instruction, index) => {
@@ -88,24 +169,57 @@ export const validateInstructions = (instructions) => {
       !instruction.description ||
       typeof instruction.description !== "string"
     ) {
-      throw new Error(
-        `Step ${index + 1}: description is required and must be a string`,
+      if (validation) {
+        throw [
+          ERROR_CODES.INSTRUCTION_DESCRIPTION_INVALID,
+          { index: index + 1 },
+        ];
+      }
+
+      const error = new Error(
+        translate(ERROR_CODES.INSTRUCTION_DESCRIPTION_INVALID, "en", {
+          index: index + 1,
+        }),
       );
+      error.code = ERROR_CODES.INSTRUCTION_DESCRIPTION_INVALID;
+      error.status = 400;
+      throw error;
     }
 
     if (instruction.description.length < 5) {
-      throw new Error(
-        `Step ${index + 1}: description must be at least 5 characters`,
+      if (validation) {
+        throw [
+          ERROR_CODES.INSTRUCTION_DESCRIPTION_TOO_SHORT,
+          { index: index + 1 },
+        ];
+      }
+
+      const error = new Error(
+        translate(ERROR_CODES.INSTRUCTION_DESCRIPTION_TOO_SHORT, "en", {
+          index: index + 1,
+        }),
       );
+      error.code = ERROR_CODES.INSTRUCTION_DESCRIPTION_TOO_SHORT;
+      error.status = 400;
+      throw error;
     }
   });
 
   return true;
 };
 
-export const validateNutritionInfo = (nutritionInfo) => {
+export const validateNutritionInfo = (nutritionInfo, validation = false) => {
   if (!nutritionInfo || typeof nutritionInfo !== "object") {
-    throw new Error("Nutrition info must be an object");
+    if (validation) {
+      throw [ERROR_CODES.NUTRITION_INFO_INVALID];
+    }
+
+    const error = new Error(
+      translate(ERROR_CODES.NUTRITION_INFO_INVALID, "en"),
+    );
+    error.code = ERROR_CODES.NUTRITION_INFO_INVALID;
+    error.status = 400;
+    throw error;
   }
 
   const validFields = ["calories", "protein", "carbs", "fat", "fiber"];
@@ -113,33 +227,83 @@ export const validateNutritionInfo = (nutritionInfo) => {
 
   fields.forEach((field) => {
     if (!validFields.includes(field)) {
-      throw new Error(`Invalid nutrition field: ${field}`);
+      if (validation) {
+        throw [ERROR_CODES.NUTRITION_FIELD_INVALID, { field }];
+      }
+
+      const error = new Error(
+        translate(ERROR_CODES.NUTRITION_FIELD_INVALID, "en", { field }),
+      );
+      error.code = ERROR_CODES.NUTRITION_FIELD_INVALID;
+      error.status = 400;
+      throw error;
     }
 
     if (typeof nutritionInfo[field] !== "number" || nutritionInfo[field] < 0) {
-      throw new Error(`${field} must be a non-negative number`);
+      if (validation) {
+        throw [ERROR_CODES.NUTRITION_FIELD_VALUE_INVALID, { field }];
+      }
+
+      const error = new Error(
+        translate(ERROR_CODES.NUTRITION_FIELD_VALUE_INVALID, "en", { field }),
+      );
+      error.code = ERROR_CODES.NUTRITION_FIELD_VALUE_INVALID;
+      error.status = 400;
+      throw error;
     }
   });
 
   return true;
 };
 
-export const validateTags = (tags) => {
+export const validateTags = (tags, validation = false) => {
   if (!Array.isArray(tags)) {
-    throw new Error("Tags must be an array");
+    if (validation) {
+      throw [ERROR_CODES.TAGS_REQUIRED];
+    }
+
+    const error = new Error(translate(ERROR_CODES.TAGS_REQUIRED, "en"));
+    error.code = ERROR_CODES.TAGS_REQUIRED;
+    error.status = 400;
+    throw error;
   }
 
   if (tags.length > 10) {
-    throw new Error("Maximum 10 tags allowed");
+    if (validation) {
+      throw [ERROR_CODES.MAX_TAGS_EXCEEDED];
+    }
+
+    const error = new Error(translate(ERROR_CODES.MAX_TAGS_EXCEEDED, "en"));
+    error.code = ERROR_CODES.MAX_TAGS_EXCEEDED;
+    error.status = 400;
+    throw error;
   }
 
   tags.forEach((tag, index) => {
     if (typeof tag !== "string" || tag.trim().length === 0) {
-      throw new Error(`Tag ${index + 1}: must be a non-empty string`);
+      if (validation) {
+        throw [ERROR_CODES.TAG_INVALID, { index: index + 1 }];
+      }
+
+      const error = new Error(
+        translate(ERROR_CODES.TAG_INVALID, "en", { index: index + 1 }),
+      );
+      error.code = ERROR_CODES.TAG_INVALID;
+      error.status = 400;
+      throw error;
     }
 
     if (tag.length > 50) {
-      throw new Error(`Tag ${index + 1}: must not exceed 50 characters`);
+      if (validation) {
+        throw [ERROR_CODES.TAG_LENGTH_INVALID, { index: index + 1 }];
+      }
+
+      const error = new Error(
+        translate(ERROR_CODES.TAG_LENGTH_INVALID, "en", { index: index + 1 }),
+      );
+      error.code = ERROR_CODES.TAG_LENGTH_INVALID;
+      error.status = 400;
+      throw error;
     }
   });
 

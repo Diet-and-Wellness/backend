@@ -1,3 +1,4 @@
+import { getLanguage, translate } from "#utils/localization.js";
 import profileService from "./profile.service.js";
 
 // Get current user's profile
@@ -66,7 +67,10 @@ const activateSpecialist = async (req, res, next) => {
       req.params.specialistId,
       req.user.role,
     );
-    res.json(result);
+    res.json({
+      message: translate("SPECIALIST_ACTIVATED_SUCCESS", getLanguage(req)),
+      data: result,
+    });
   } catch (error) {
     next(error);
   }
@@ -79,7 +83,10 @@ const deactivateSpecialist = async (req, res, next) => {
       req.params.specialistId,
       req.user.role,
     );
-    res.json(result);
+    res.json({
+      message: translate("SPECIALIST_DEACTIVATED_SUCCESS", getLanguage(req)),
+      data: result,
+    });
   } catch (error) {
     next(error);
   }
@@ -92,7 +99,9 @@ const deleteProfile = async (req, res, next) => {
       req.params.userId,
       req.user.role,
     );
-    res.json(result);
+    res.json({
+      message: translate("PROFILE_DELETED_SUCCESS", getLanguage(req)),
+    });
   } catch (error) {
     next(error);
   }

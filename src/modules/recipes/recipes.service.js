@@ -1,4 +1,5 @@
 import Recipe from "#models/recipe.js";
+import { ERROR_CODES, translate } from "#utils/localization.js";
 
 // Create a new recipe (admin only)
 const createRecipe = async (recipeData, userId) => {
@@ -12,10 +13,12 @@ const createRecipe = async (recipeData, userId) => {
     return recipe;
   } catch (error) {
     if (error.code === 11000) {
-      throw {
-        message: "A recipe with this title already exists",
-        status: 409,
-      };
+      const err = new Error(
+        translate(ERROR_CODES.DUPLICATE_TITLE, "en", { type: "recipe" }),
+      );
+      err.code = ERROR_CODES.DUPLICATE_TITLE;
+      err.status = 409;
+      throw err;
     }
     throw error;
   }
@@ -111,17 +114,19 @@ const getRecipeById = async (recipeId) => {
       .populate("category", "name displayName");
 
     if (!recipe) {
-      throw {
-        message: "Recipe not found",
-        status: 404,
-      };
+      const error = new Error(translate(ERROR_CODES.RECIPE_NOT_FOUND, "en"));
+      error.code = ERROR_CODES.RECIPE_NOT_FOUND;
+      error.status = 404;
+      throw error;
     }
 
     if (recipe.isHidden) {
-      throw {
-        message: "Recipe is hidden",
-        status: 404,
-      };
+      const error = new Error(
+        translate(ERROR_CODES.RECIPE_NOT_AVAILABLE, "en"),
+      );
+      error.code = ERROR_CODES.RECIPE_NOT_AVAILABLE;
+      error.status = 404;
+      throw error;
     }
 
     return recipe;
@@ -138,17 +143,19 @@ const getRecipeBySlug = async (slug) => {
       .populate("category", "name displayName");
 
     if (!recipe) {
-      throw {
-        message: "Recipe not found",
-        status: 404,
-      };
+      const error = new Error(translate(ERROR_CODES.RECIPE_NOT_FOUND, "en"));
+      error.code = ERROR_CODES.RECIPE_NOT_FOUND;
+      error.status = 404;
+      throw error;
     }
 
     if (recipe.isHidden) {
-      throw {
-        message: "Recipe is not available",
-        status: 404,
-      };
+      const error = new Error(
+        translate(ERROR_CODES.RECIPE_NOT_AVAILABLE, "en"),
+      );
+      error.code = ERROR_CODES.RECIPE_NOT_AVAILABLE;
+      error.status = 404;
+      throw error;
     }
 
     return recipe;
@@ -158,23 +165,25 @@ const getRecipeBySlug = async (slug) => {
 };
 
 // Update recipe (admin only)
-const updateRecipe = async (recipeId, updateData, userId) => {
+const updateRecipe = async (recipeId, updateData, user) => {
   try {
     const recipe = await Recipe.findById(recipeId);
 
     if (!recipe) {
-      throw {
-        message: "Recipe not found",
-        status: 404,
-      };
+      const error = new Error(translate(ERROR_CODES.RECIPE_NOT_FOUND, "en"));
+      error.code = ERROR_CODES.RECIPE_NOT_FOUND;
+      error.status = 404;
+      throw error;
     }
 
     // Only admin or author can update
-    if (recipe.author.toString() !== userId && !userId.isAdmin) {
-      throw {
-        message: "You don't have permission to update this recipe",
-        status: 403,
-      };
+    if (recipe.author.toString() !== user.user_id && user.role !== "admin") {
+      const error = new Error(
+        translate(ERROR_CODES.INSUFFICIENT_PERMISSIONS, "en"),
+      );
+      error.code = ERROR_CODES.INSUFFICIENT_PERMISSIONS;
+      error.status = 403;
+      throw error;
     }
 
     // Update allowed fields
@@ -213,15 +222,13 @@ const deleteRecipe = async (recipeId) => {
     const recipe = await Recipe.findByIdAndDelete(recipeId);
 
     if (!recipe) {
-      throw {
-        message: "Recipe not found",
-        status: 404,
-      };
+      const error = new Error(translate(ERROR_CODES.RECIPE_NOT_FOUND, "en"));
+      error.code = ERROR_CODES.RECIPE_NOT_FOUND;
+      error.status = 404;
+      throw error;
     }
 
-    return {
-      message: "Article deleted successfully",
-    };
+    return true;
   } catch (error) {
     throw error;
   }
@@ -237,18 +244,13 @@ const changeRecipeStatus = async (recipeId, isHidden) => {
     );
 
     if (!recipe) {
-      throw {
-        message: "Recipe not found",
-        status: 404,
-      };
+      const error = new Error(translate(ERROR_CODES.RECIPE_NOT_FOUND, "en"));
+      error.code = ERROR_CODES.RECIPE_NOT_FOUND;
+      error.status = 404;
+      throw error;
     }
 
-    const action = isHidden ? "hidden" : "shown";
-
-    return {
-      message: `Recipe ${action} successfully`,
-      data: recipe,
-    };
+    return recipe;
   } catch (error) {
     throw error;
   }
@@ -274,10 +276,12 @@ const getAdminRecipes = async (filters = {}) => {
     query.category = category;
   }
 
-  // Apply status filter (all or hidden)
   switch (status) {
-    case "hidden":
+    case "inactive":
       query.isHidden = true;
+      break;
+    case "active":
+      query.isHidden = false;
       break;
     case "all":
     default:

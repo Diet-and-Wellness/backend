@@ -1,8 +1,14 @@
 import mongoose from "mongoose";
+import { ERROR_CODES, translate } from "#utils/localization.js";
 
 export const generateSlug = async (title, excludeId = null) => {
   if (!title) {
-    throw new Error("Title is required to generate slug");
+    const error = new Error(
+      translate(ERROR_CODES.SLUG_GENERATION_FAILED, "en"),
+    );
+    error.code = ERROR_CODES.SLUG_GENERATION_FAILED;
+    error.status = 400;
+    throw error;
   }
 
   let slug = title
@@ -35,22 +41,52 @@ export const generateSlug = async (title, excludeId = null) => {
   return slug;
 };
 
-export const validateTags = (tags) => {
+export const validateTags = (tags, validation = false) => {
   if (!Array.isArray(tags)) {
-    throw new Error("Tags must be an array");
+    if (validation) {
+      throw [ERROR_CODES.INVALID_ARRAY, { field: "tags" }];
+    }
+    const error = new Error(translate(ERROR_CODES.TAGS_REQUIRED, "en"));
+    error.code = ERROR_CODES.TAGS_REQUIRED;
+    error.status = 400;
+    throw error;
   }
 
   if (tags.length > 10) {
-    throw new Error("Maximum 10 tags allowed");
+    if (validation) {
+      throw [ERROR_CODES.MAX_TAGS_EXCEEDED];
+    }
+    const error = new Error(translate(ERROR_CODES.MAX_TAGS_EXCEEDED, "en"));
+    error.code = ERROR_CODES.MAX_TAGS_EXCEEDED;
+    error.status = 400;
+    throw error;
   }
 
   tags.forEach((tag, index) => {
     if (typeof tag !== "string" || tag.trim().length === 0) {
-      throw new Error(`Tag ${index + 1}: must be a non-empty string`);
+      if (validation) {
+        throw [ERROR_CODES.TAG_INVALID, { index: index + 1 }];
+      }
+
+      const error = new Error(
+        translate(ERROR_CODES.TAG_INVALID, "en", { index: index + 1 }),
+      );
+      error.code = ERROR_CODES.TAG_INVALID;
+      error.status = 400;
+      throw error;
     }
 
     if (tag.length > 50) {
-      throw new Error(`Tag ${index + 1}: must not exceed 50 characters`);
+      if (validation) {
+        throw [ERROR_CODES.TAG_LENGTH_INVALID, { index: index + 1 }];
+      }
+
+      const error = new Error(
+        translate(ERROR_CODES.TAG_LENGTH_INVALID, "en", { index: index + 1 }),
+      );
+      error.code = ERROR_CODES.TAG_LENGTH_INVALID;
+      error.status = 400;
+      throw error;
     }
   });
 

@@ -1,9 +1,13 @@
+import { getLanguage, translate } from "#utils/localization.js";
 import authService from "./auth.service.js";
 
 const sendOtp = async (req, res, next) => {
   try {
     const result = await authService.sendOtp(req.body);
-    res.json(result);
+    res.json({
+      message: translate("OTP_SENT_SUCCESS", getLanguage(req)),
+      data: result,
+    });
   } catch (error) {
     next(error);
   }
@@ -12,7 +16,9 @@ const sendOtp = async (req, res, next) => {
 const verifyOtp = async (req, res, next) => {
   try {
     const result = await authService.verifyOtp(req.body);
-    res.json(result);
+    res.json({
+      message: translate("OTP_VERIFIED_SUCCESS", getLanguage(req)),
+    });
   } catch (error) {
     next(error);
   }
@@ -48,7 +54,7 @@ const refreshToken = async (req, res, next) => {
 const logout = async (req, res, next) => {
   try {
     await authService.logout(req.user.user_id);
-    res.json({ message: "Logged out successfully" });
+    res.json({ message: translate("LOGOUT_SUCCESS", getLanguage(req)) });
   } catch (error) {
     next(error);
   }
@@ -57,7 +63,10 @@ const logout = async (req, res, next) => {
 const forgotPassword = async (req, res, next) => {
   try {
     const result = await authService.forgotPassword(req.body);
-    res.json(result);
+    res.json({
+      message: translate("OTP_SENT_SUCCESS", getLanguage(req)),
+      data: result,
+    });
   } catch (error) {
     next(error);
   }
@@ -66,7 +75,9 @@ const forgotPassword = async (req, res, next) => {
 const resetPassword = async (req, res, next) => {
   try {
     const result = await authService.resetPassword(req.body);
-    res.json(result);
+    res.json({
+      message: translate("PASSWORD_RESET_SUCCESS", getLanguage(req)),
+    });
   } catch (error) {
     next(error);
   }
