@@ -12,6 +12,10 @@ const createCategory = [
     .withMessage(["REQUIRED_FIELD"])
     .isLength({ min: 2, max: 100 })
     .withMessage(["INVALID_LENGTH", { min: 2, max: 100 }]),
+  body("arDisplayName")
+    .optional()
+    .isLength({ min: 2, max: 100 })
+    .withMessage(["INVALID_LENGTH", { min: 2, max: 100 }]),
   body("type")
     .notEmpty()
     .withMessage(["REQUIRED_FIELD"])
@@ -34,6 +38,10 @@ const updateCategory = [
     .isLength({ min: 2, max: 50 })
     .withMessage(["INVALID_LENGTH", { min: 2, max: 50 }]),
   body("displayName")
+    .optional()
+    .isLength({ min: 2, max: 100 })
+    .withMessage(["INVALID_LENGTH", { min: 2, max: 100 }]),
+  body("arDisplayName")
     .optional()
     .isLength({ min: 2, max: 100 })
     .withMessage(["INVALID_LENGTH", { min: 2, max: 100 }]),

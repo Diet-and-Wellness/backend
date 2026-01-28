@@ -170,6 +170,7 @@ articleSchema.methods.toJSON = function () {
       id: article.category._id,
       name: article.category.name,
       displayName: article.category.displayName,
+      arDisplayName: article.category.arDisplayName,
     };
   }
 

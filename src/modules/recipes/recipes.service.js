@@ -85,7 +85,7 @@ const getRecipes = async (filters = {}) => {
   try {
     const recipes = await Recipe.find(query)
       .populate("author", "firstName lastName email phone")
-      .populate("category", "name displayName")
+      .populate("category", "name displayName arDisplayName")
       .sort(sortObj)
       .skip(skip)
       .limit(Number(limit));
@@ -111,7 +111,7 @@ const getRecipeById = async (recipeId) => {
   try {
     const recipe = await Recipe.findById(recipeId)
       .populate("author", "firstName lastName email phone")
-      .populate("category", "name displayName");
+      .populate("category", "name displayName arDisplayName");
 
     if (!recipe) {
       const error = new Error(translate(ERROR_CODES.RECIPE_NOT_FOUND, "en"));
@@ -140,7 +140,7 @@ const getRecipeBySlug = async (slug) => {
   try {
     const recipe = await Recipe.findOne({ slug })
       .populate("author", "firstName lastName email phone")
-      .populate("category", "name displayName");
+      .populate("category", "name displayName arDisplayName");
 
     if (!recipe) {
       const error = new Error(translate(ERROR_CODES.RECIPE_NOT_FOUND, "en"));
@@ -301,7 +301,7 @@ const getAdminRecipes = async (filters = {}) => {
   try {
     const recipes = await Recipe.find(query)
       .populate("author", "firstName lastName email phone")
-      .populate("category", "name displayName")
+      .populate("category", "name displayName arDisplayName")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(Number(limit));
@@ -332,7 +332,7 @@ const getRecipesByCategory = async (category, page = 1, limit = 10) => {
       isHidden: false,
     })
       .populate("author", "firstName lastName email phone")
-      .populate("category", "name displayName")
+      .populate("category", "name displayName arDisplayName")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(Number(limit));

@@ -80,7 +80,7 @@ const getArticles = async (filters = {}) => {
   try {
     const articles = await Article.find(query)
       .populate("author", "firstName lastName email phone")
-      .populate("category", "name displayName")
+      .populate("category", "name displayName arDisplayName")
       .sort(sortObj)
       .skip(skip)
       .limit(Number(limit));
@@ -106,7 +106,7 @@ const getArticleById = async (articleId) => {
   try {
     const article = await Article.findById(articleId)
       .populate("author", "firstName lastName email phone")
-      .populate("category", "name displayName");
+      .populate("category", "name displayName arDisplayName");
 
     if (!article) {
       const err = new Error(translate(ERROR_CODES.ARTICLE_NOT_FOUND, "en"));
@@ -133,7 +133,7 @@ const getArticleBySlug = async (slug) => {
   try {
     const article = await Article.findOne({ slug })
       .populate("author", "firstName lastName email phone")
-      .populate("category", "name displayName");
+      .populate("category", "name displayName arDisplayName");
 
     if (!article) {
       const error = new Error(translate(ERROR_CODES.ARTICLE_NOT_FOUND, "en"));
@@ -325,7 +325,7 @@ const getAdminArticles = async (filters = {}) => {
   try {
     const articles = await Article.find(query)
       .populate("author", "firstName lastName email phone")
-      .populate("category", "name displayName")
+      .populate("category", "name displayName arDisplayName")
       .skip(skip)
       .limit(Number(limit));
 
@@ -355,7 +355,7 @@ const getArticlesByCategory = async (category, page = 1, limit = 10) => {
       isHidden: false,
     })
       .populate("author", "firstName lastName email phone")
-      .populate("category", "name displayName")
+      .populate("category", "name displayName arDisplayName")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(Number(limit));

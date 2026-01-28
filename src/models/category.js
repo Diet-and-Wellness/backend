@@ -16,6 +16,10 @@ const categorySchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    arDisplayName: {
+      type: String,
+      trim: true,
+    },
     description: {
       type: String,
       trim: true,

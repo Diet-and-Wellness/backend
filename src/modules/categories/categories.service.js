@@ -140,11 +140,12 @@ const createCategory = async (categoryData) => {
 const updateCategory = async (categoryId, updateData) => {
   try {
     // Prevent updating type
-    const { name, displayName, description, order, type } = updateData;
+    const { name, displayName, arDisplayName, description, order, type } =
+      updateData;
 
     const category = await Category.findByIdAndUpdate(
       categoryId,
-      { name, displayName, description, order },
+      { name, displayName, arDisplayName, description, order },
       {
         new: true,
         runValidators: true,

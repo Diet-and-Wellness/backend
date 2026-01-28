@@ -261,6 +261,7 @@ recipeSchema.methods.toJSON = function () {
       id: recipe.category._id,
       name: recipe.category.name,
       displayName: recipe.category.displayName,
+      arDisplayName: recipe.category.arDisplayName,
     };
   }
 
