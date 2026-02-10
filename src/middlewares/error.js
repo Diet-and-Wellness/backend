@@ -38,6 +38,16 @@ const errorHandler = (err, req, res, next) => {
     };
     statusCode = err.status;
   }
+  //  handle PayMob API errors
+  else if (err.name === "PayMobError") {
+    errorResponse = {
+      success: false,
+      code: ERROR_CODES.PAYMOB_API_ERROR,
+      message: translate(ERROR_CODES.PAYMOB_API_ERROR, lang),
+      errors: err.errors || [],
+    };
+    statusCode = 400;
+  }
   // Handle MongoDB errors
   else if (err.name && ["ValidationError", "CastError"].includes(err.name)) {
     const mongoError = mapMongoError(err, lang);
@@ -46,6 +56,7 @@ const errorHandler = (err, req, res, next) => {
         success: false,
         code: err.code || mongoError.code,
         errors: mongoError.errors,
+        message: mongoError.message,
       };
       statusCode = mongoError.status;
     }

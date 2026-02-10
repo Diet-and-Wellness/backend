@@ -132,6 +132,37 @@ export const ERROR_CODES = {
   RECIPE_NOT_AVAILABLE: "RECIPE_NOT_AVAILABLE",
   ARTICLE_NOT_AVAILABLE: "ARTICLE_NOT_AVAILABLE",
   INVALID_VALUE: "INVALID_VALUE",
+
+  // Subscription-specific errors
+  SUBSCRIPTION_NOT_FOUND: "SUBSCRIPTION_NOT_FOUND",
+  USER_SUBSCRIPTION_NOT_FOUND: "USER_SUBSCRIPTION_NOT_FOUND",
+  ORDER_NOT_FOUND: "ORDER_NOT_FOUND",
+  NO_ACTIVE_SUBSCRIPTION: "NO_ACTIVE_SUBSCRIPTION",
+  SUBSCRIPTION_REQUIRED: "SUBSCRIPTION_REQUIRED",
+  PAYMENT_VERIFICATION_FAILED: "PAYMENT_VERIFICATION_FAILED",
+  WEBHOOK_VERIFICATION_FAILED: "WEBHOOK_VERIFICATION_FAILED",
+  INVALID_ORDER_ID: "INVALID_ORDER_ID",
+  INVALID_SUBSCRIPTION_ID: "INVALID_SUBSCRIPTION_ID",
+  PAYMOB_API_ERROR: "PAYMOB_API_ERROR",
+  SUBSCRIPTION_CREATED: "SUBSCRIPTION_CREATED",
+  PAYMENT_INITIATED: "PAYMENT_INITIATED",
+  PAYMENT_SUCCESS: "PAYMENT_SUCCESS",
+  SUBSCRIPTION_CANCELLED: "SUBSCRIPTION_CANCELLED",
+  RENEWAL_INITIATED: "RENEWAL_INITIATED",
+  WEBHOOK_PROCESSED: "WEBHOOK_PROCESSED",
+  SUBSCRIPTION_ALREADY_EXISTS: "SUBSCRIPTION_ALREADY_EXISTS",
+  SUBSCRIPTION_EXPIRED: "SUBSCRIPTION_EXPIRED",
+  SUBSCRIPTION_NAME_INVALID: "SUBSCRIPTION_NAME_INVALID",
+  SUBSCRIPTION_DISPLAY_NAME_REQUIRED: "SUBSCRIPTION_DISPLAY_NAME_REQUIRED",
+  SUBSCRIPTION_DURATION_INVALID: "SUBSCRIPTION_DURATION_INVALID",
+  SUBSCRIPTION_PRICE_INVALID: "SUBSCRIPTION_PRICE_INVALID",
+  SUBSCRIPTION_FEATURES_INVALID: "SUBSCRIPTION_FEATURES_INVALID",
+  PAYMENT_FAILED: "PAYMENT_FAILED",
+  ORDER_EXPIRED: "ORDER_EXPIRED",
+  SUBSCRIPTION_UPDATED: "SUBSCRIPTION_UPDATED",
+  SUBSCRIPTION_DELETED: "SUBSCRIPTION_DELETED",
+  PAYMENT_PENDING: "PAYMENT_PENDING",
+  PAYMENT_STATUS: "PAYMENT_STATUS",
 };
 
 // Translation dictionary - easily extensible
@@ -293,6 +324,48 @@ const translations = {
     [ERROR_CODES.ARTICLE_NOT_AVAILABLE]: "Article not available",
     [ERROR_CODES.INVALID_LANGUAGE]:
       "Invalid language. Supported languages are: en, ar",
+
+    // Subscription errors
+    [ERROR_CODES.SUBSCRIPTION_NOT_FOUND]: "Subscription plan not found",
+    [ERROR_CODES.USER_SUBSCRIPTION_NOT_FOUND]: "User not subscribed before",
+    [ERROR_CODES.ORDER_NOT_FOUND]: "Order not found",
+    [ERROR_CODES.NO_ACTIVE_SUBSCRIPTION]: "No active subscription found",
+    [ERROR_CODES.SUBSCRIPTION_REQUIRED]:
+      "You need an active subscription to access this resource",
+    [ERROR_CODES.PAYMENT_VERIFICATION_FAILED]: "Payment verification failed",
+    [ERROR_CODES.WEBHOOK_VERIFICATION_FAILED]:
+      "Webhook signature verification failed",
+    [ERROR_CODES.INVALID_ORDER_ID]: "Invalid order ID format",
+    [ERROR_CODES.INVALID_SUBSCRIPTION_ID]: "Invalid subscription ID format",
+    [ERROR_CODES.PAYMOB_API_ERROR]: "Error communicating with payment gateway",
+    [ERROR_CODES.SUBSCRIPTION_CREATED]:
+      "Subscription plan created successfully",
+    [ERROR_CODES.PAYMENT_INITIATED]: "Payment initiated successfully",
+    [ERROR_CODES.PAYMENT_SUCCESS]:
+      "Payment successful and subscription activated",
+    [ERROR_CODES.SUBSCRIPTION_CANCELLED]: "Subscription cancelled successfully",
+    [ERROR_CODES.RENEWAL_INITIATED]: "Renewal payment initiated successfully",
+    [ERROR_CODES.WEBHOOK_PROCESSED]: "Webhook processed successfully",
+    [ERROR_CODES.SUBSCRIPTION_ALREADY_EXISTS]:
+      "Subscription plan with this name already exists",
+    [ERROR_CODES.SUBSCRIPTION_EXPIRED]: "Subscription has expired",
+    [ERROR_CODES.SUBSCRIPTION_NAME_INVALID]:
+      "Plan name must be one of: 1_month, 3_months, 6_months, 12_months",
+    [ERROR_CODES.SUBSCRIPTION_DISPLAY_NAME_REQUIRED]:
+      "Display name is required and must be 2-50 characters",
+    [ERROR_CODES.SUBSCRIPTION_DURATION_INVALID]:
+      "Duration must be between 1 and 730 days",
+    [ERROR_CODES.SUBSCRIPTION_PRICE_INVALID]: "Price must be a positive number",
+    [ERROR_CODES.SUBSCRIPTION_FEATURES_INVALID]:
+      "Features must be an array of strings",
+    [ERROR_CODES.PAYMENT_FAILED]: "Payment failed. Please try again",
+    [ERROR_CODES.ORDER_EXPIRED]: "Order has expired",
+    [ERROR_CODES.SUBSCRIPTION_UPDATED]:
+      "Subscription plan updated successfully",
+    [ERROR_CODES.SUBSCRIPTION_DELETED]:
+      "Subscription plan deleted successfully",
+    [ERROR_CODES.PAYMENT_PENDING]: "Payment is still pending",
+    [ERROR_CODES.PAYMENT_STATUS]: "Payment status: {{status}}",
   },
 
   ar: {
@@ -446,6 +519,43 @@ const translations = {
     [ERROR_CODES.RECIPE_NOT_AVAILABLE]: "الوصفة غير متاحة",
     [ERROR_CODES.ARTICLE_NOT_AVAILABLE]: "المقالة غير متاحة",
     [ERROR_CODES.INVALID_LANGUAGE]: "لغة غير صحيحة. اللغات المدعومة هي: en, ar",
+
+    // Subscription errors
+    [ERROR_CODES.SUBSCRIPTION_NOT_FOUND]: "خطة الاشتراك غير موجودة",
+    [ERROR_CODES.USER_SUBSCRIPTION_NOT_FOUND]: "المستخدم لم يشتركss من قبل",
+    [ERROR_CODES.ORDER_NOT_FOUND]: "الطلب غير موجود",
+    [ERROR_CODES.NO_ACTIVE_SUBSCRIPTION]: "لا توجد اشتراكات نشطة",
+    [ERROR_CODES.SUBSCRIPTION_REQUIRED]:
+      "تحتاج إلى اشتراك نشط للوصول إلى هذا المورد",
+    [ERROR_CODES.PAYMENT_VERIFICATION_FAILED]: "فشل التحقق من الدفع",
+    [ERROR_CODES.WEBHOOK_VERIFICATION_FAILED]: "فشل التحقق من توقيع الخطاف",
+    [ERROR_CODES.INVALID_ORDER_ID]: "صيغة معرف الطلب غير صحيحة",
+    [ERROR_CODES.INVALID_SUBSCRIPTION_ID]: "صيغة معرف الاشتراك غير صحيحة",
+    [ERROR_CODES.PAYMOB_API_ERROR]: "حدث خطأ في الاتصال بوسيط الدفع",
+    [ERROR_CODES.SUBSCRIPTION_CREATED]: "تم إنشاء خطة الاشتراك بنجاح",
+    [ERROR_CODES.PAYMENT_INITIATED]: "تم بدء الدفع بنجاح",
+    [ERROR_CODES.PAYMENT_SUCCESS]: "نجح الدفع وتم تفعيل الاشتراك",
+    [ERROR_CODES.SUBSCRIPTION_CANCELLED]: "تم إلغاء الاشتراك بنجاح",
+    [ERROR_CODES.RENEWAL_INITIATED]: "تم بدء دفع التجديد بنجاح",
+    [ERROR_CODES.WEBHOOK_PROCESSED]: "تم معالجة الخطاف بنجاح",
+    [ERROR_CODES.SUBSCRIPTION_ALREADY_EXISTS]:
+      "خطة اشتراك بهذا الاسم موجودة بالفعل",
+    [ERROR_CODES.SUBSCRIPTION_EXPIRED]: "انتهت صلاحية الاشتراك",
+    [ERROR_CODES.SUBSCRIPTION_NAME_INVALID]:
+      "يجب أن يكون اسم الخطة أحدًا من: 1_month, 3_months, 6_months, 12_months",
+    [ERROR_CODES.SUBSCRIPTION_DISPLAY_NAME_REQUIRED]:
+      "اسم العرض مطلوب ويجب أن يكون بين 2-50 حرفًا",
+    [ERROR_CODES.SUBSCRIPTION_DURATION_INVALID]:
+      "يجب أن تكون المدة بين 1 و 730 يومًا",
+    [ERROR_CODES.SUBSCRIPTION_PRICE_INVALID]: "يجب أن يكون السعر رقمًا موجبًا",
+    [ERROR_CODES.SUBSCRIPTION_FEATURES_INVALID]:
+      "يجب أن تكون الميزات مصفوفة من السلاسل النصية",
+    [ERROR_CODES.PAYMENT_FAILED]: "فشل الدفع. يرجى المحاولة مرة أخرى",
+    [ERROR_CODES.ORDER_EXPIRED]: "انتهت صلاحية الطلب",
+    [ERROR_CODES.SUBSCRIPTION_UPDATED]: "تم تحديث خطة الاشتراك بنجاح",
+    [ERROR_CODES.SUBSCRIPTION_DELETED]: "تم حذف خطة الاشتراك بنجاح",
+    [ERROR_CODES.PAYMENT_PENDING]: "الدفع لا يزال معلقًا",
+    [ERROR_CODES.PAYMENT_STATUS]: "حالة الدفع: {{status}}",
   },
 };
 
@@ -506,6 +616,13 @@ export const fieldNames = {
     carbs: "Carbohydrates",
     fiber: "Fiber",
     isHidden: "Is hidden",
+    name: "Name",
+    displayName: "Display name",
+    price: "Price",
+    durationInDays: "Duration in days",
+    reason: "Reason",
+    subscriptionPlan: "Subscription plan",
+    userSubscriptionId: "User subscription ID",
   },
   ar: {
     firstName: "الاسم الأول",
@@ -543,6 +660,13 @@ export const fieldNames = {
     carbs: "الكربوهيدرات",
     fiber: "الألياف",
     isHidden: "مخفي",
+    name: "الاسم",
+    displayName: "اسم العرض",
+    price: "السعر",
+    durationInDays: "المدة بالأيام",
+    reason: "السبب",
+    subscriptionPlan: "خطة الاشتراك",
+    userSubscriptionId: "معرف الاشتراك الخاص بالمستخدم",
   },
 };
 

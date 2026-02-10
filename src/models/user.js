@@ -103,7 +103,6 @@ userSchema.pre("save", async function () {
 
 // Instance method
 userSchema.methods.comparePassword = function (password) {
-  console.log("Comparing password:", password, "with hash:", this.passwordHash);
   return bcrypt.compare(password, this.passwordHash);
 };
 

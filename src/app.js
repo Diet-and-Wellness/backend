@@ -10,7 +10,19 @@ const app = express();
 
 // Middleware setup
 app.use(cors());
-app.use(express.json());
+
+// Raw body for Paymob webhook HMAC verification
+// Must be before express.json() for webhook endpoint
+app.use(
+  express.json({
+    verify: (req, res, buf) => {
+      // Store raw body for webhook verification
+      if (req.path === "/api/subscriptions/webhook") {
+        req.rawBody = buf.toString("utf8");
+      }
+    },
+  }),
+);
 
 // Logging middleware
 // app.use(morgan("dev"));
