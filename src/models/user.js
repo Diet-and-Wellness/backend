@@ -29,13 +29,17 @@ const userSchema = new mongoose.Schema(
     passwordHash: {
       type: String,
       required: true,
+      select: false, // Security: Hide by default - explicitly select if needed
     },
     role: {
       type: String,
       enum: ["customer", "specialist", "admin"],
       default: "customer",
     },
-    refreshToken: { type: String },
+    refreshToken: {
+      type: String,
+      select: false, // Security: Hide by default - explicitly select if needed
+    },
 
     // this points to the assessment result document
     assessment: {

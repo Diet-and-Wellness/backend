@@ -6,6 +6,7 @@ const env = {
   environment: process.env.ENVIRONMENT || "development",
   port: process.env.PORT || 5000,
   dbUrl: process.env.MONGO_URI,
+  dbName: process.env.DB_NAME,
   jwtSecret: process.env.JWT_SECRET,
 
   googleAppPassword: process.env.GOOGLE_APP_PASSWORD,

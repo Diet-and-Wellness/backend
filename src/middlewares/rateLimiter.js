@@ -1,6 +1,5 @@
-/**
- * Rate Limiting Middleware - Prevents brute force, DDoS, and API abuse
- */
+// Rate Limiting Middleware - Prevents brute force, DDoS, and API abuse
+import env from "#config/env.js";
 
 import rateLimit, { ipKeyGenerator } from "express-rate-limit";
 import { getLanguage, translate, ERROR_CODES } from "#utils/localization.js";
@@ -39,7 +38,7 @@ export const strictLoginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 3,
   keyGenerator,
-  skip: (req) => process.env.ENVIRONMENT === "test",
+  skip: (req) => env.environment === "test",
   handler: createRateLimitHandler("15"),
   standardHeaders: true,
   legacyHeaders: false,
@@ -50,7 +49,7 @@ export const moderateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 5,
   keyGenerator,
-  skip: (req) => process.env.ENVIRONMENT === "test",
+  skip: (req) => env.environment === "test",
   handler: createRateLimitHandler("15"),
   standardHeaders: true,
   legacyHeaders: false,
@@ -61,7 +60,7 @@ export const standardLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
   keyGenerator,
-  skip: (req) => process.env.ENVIRONMENT === "test",
+  skip: (req) => env.environment === "test",
   handler: createRateLimitHandler("15"),
   standardHeaders: true,
   legacyHeaders: false,
@@ -72,7 +71,7 @@ export const relaxedLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: 1000,
   keyGenerator,
-  skip: (req) => process.env.ENVIRONMENT === "test",
+  skip: (req) => env.environment === "test",
   handler: createRateLimitHandler("60"),
   standardHeaders: true,
   legacyHeaders: false,
@@ -83,7 +82,7 @@ export const emailRateLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: 2,
   keyGenerator: emailKeyGenerator,
-  skip: (req) => process.env.ENVIRONMENT === "test",
+  skip: (req) => env.environment === "test",
   handler: createRateLimitHandler("60"),
   standardHeaders: true,
   legacyHeaders: false,
@@ -96,7 +95,7 @@ export const globalLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 100,
   keyGenerator,
-  skip: (req) => process.env.ENVIRONMENT === "test",
+  skip: (req) => env.environment === "test",
   handler: createRateLimitHandler("1"),
   standardHeaders: true,
   legacyHeaders: false,
@@ -114,7 +113,7 @@ export const createCustomLimiter = (
     handler: createRateLimitHandler(`${windowMs / (1000 * 60)}`),
     standardHeaders: true,
     legacyHeaders: false,
-    skip: (req) => process.env.ENVIRONMENT === "test",
+    skip: (req) => env.environment === "test",
   });
 };
 
