@@ -3,16 +3,20 @@ import { ERROR_CODES, translate } from "#utils/localization.js";
 
 const signup = [
   body("firstName")
+    .trim()
     .notEmpty()
     .withMessage(["REQUIRED_FIELD", { field: "firstName" }])
     .isLength({ min: 2 })
     .withMessage(["INVALID_LENGTH", { min: 2 }]),
   body("lastName")
+    .trim()
     .notEmpty()
     .withMessage(["REQUIRED_FIELD", { field: "lastName" }])
     .isLength({ min: 2 })
     .withMessage(["INVALID_LENGTH", { min: 2 }]),
   body("email")
+    .trim()
+    .toLowerCase()
     .notEmpty()
     .withMessage(["REQUIRED_FIELD", { field: "email" }])
     .isEmail()
@@ -62,6 +66,8 @@ const login = [
 
 const sendOtp = [
   body("email")
+    .trim()
+    .toLowerCase()
     .notEmpty()
     .withMessage(["REQUIRED_FIELD", { field: "email" }])
     .isEmail()
@@ -70,11 +76,14 @@ const sendOtp = [
 
 const verifyOtp = [
   body("email")
+    .trim()
+    .toLowerCase()
     .notEmpty()
     .withMessage(["REQUIRED_FIELD", { field: "email" }])
     .isEmail()
     .withMessage(["INVALID_EMAIL"]),
   body("code")
+    .trim()
     .notEmpty()
     .withMessage(["REQUIRED_FIELD", { field: "code" }])
     .isLength({ min: 6, max: 6 })
@@ -89,6 +98,8 @@ const refreshToken = [
 
 const forgotPassword = [
   body("email")
+    .trim()
+    .toLowerCase()
     .notEmpty()
     .withMessage(["REQUIRED_FIELD", { field: "email" }])
     .isEmail()
@@ -97,11 +108,14 @@ const forgotPassword = [
 
 const resetPassword = [
   body("email")
+    .trim()
+    .toLowerCase()
     .notEmpty()
     .withMessage(["REQUIRED_FIELD", { field: "email" }])
     .isEmail()
     .withMessage(["INVALID_EMAIL"]),
   body("code")
+    .trim()
     .notEmpty()
     .withMessage(["REQUIRED_FIELD", { field: "code" }])
     .isLength({ min: 6, max: 6 })

@@ -10,16 +10,19 @@ import { RECIPE_DIFFICULTIES } from "./recipes.constants.js";
 // Validation for creating a recipe (admin only)
 const createRecipe = [
   body("title")
+    .trim()
     .notEmpty()
     .withMessage(["REQUIRED_FIELD", { field: "title" }])
     .isLength({ min: 5, max: 200 })
     .withMessage(["INVALID_LENGTH", { min: 5, max: 200 }]),
   body("description")
+    .trim()
     .notEmpty()
     .withMessage(["REQUIRED_FIELD", { field: "description" }])
     .isLength({ min: 10, max: 500 })
     .withMessage(["INVALID_LENGTH", { min: 10, max: 500 }]),
   body("content")
+    .trim()
     .notEmpty()
     .withMessage(["REQUIRED_FIELD", { field: "content" }])
     .isLength({ min: 50 })
@@ -93,14 +96,17 @@ const createRecipe = [
 // Validation for updating a recipe
 const updateRecipe = [
   body("title")
+    .trim()
     .optional()
     .isLength({ min: 5, max: 200 })
     .withMessage(["INVALID_LENGTH", { min: 5, max: 200 }]),
   body("description")
+    .trim()
     .optional()
     .isLength({ min: 10, max: 500 })
     .withMessage(["INVALID_LENGTH", { min: 10, max: 500 }]),
   body("content")
+    .trim()
     .optional()
     .isLength({ min: 50 })
     .withMessage(["INVALID_LENGTH", { min: 50 }]),

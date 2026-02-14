@@ -4,6 +4,7 @@ import handleValidationErrors from "#middlewares/validation.js";
 import controller from "./profile.controller.js";
 import validators from "./profile.validators.js";
 import { ensureRoles } from "#middlewares/guards.js";
+import { standardLimiter } from "#middlewares/rateLimiter.js";
 
 const router = express.Router();
 
@@ -11,11 +12,12 @@ const router = express.Router();
 router.use(authenticate);
 
 // Get current user's profile
-router.get("/", controller.getProfile);
+router.get("/", standardLimiter, controller.getProfile);
 
 // Update current user's profile
 router.put(
   "/",
+  standardLimiter,
   validators.updateProfile,
   handleValidationErrors,
   controller.updateProfile,
@@ -24,6 +26,7 @@ router.put(
 // Search and filter profiles (admin/specialists only)
 router.get(
   "/search",
+  standardLimiter,
   ensureRoles(["admin", "specialist"]),
   validators.searchProfiles,
   handleValidationErrors,
@@ -33,6 +36,7 @@ router.get(
 // Get specific user profile details (admin/specialists only)
 router.get(
   "/:userId",
+  standardLimiter,
   ensureRoles(["admin", "specialist"]),
   validators.userId,
   handleValidationErrors,
@@ -42,6 +46,7 @@ router.get(
 // Admin: Delete user profile
 router.delete(
   "/:userId",
+  standardLimiter,
   ensureRoles(["admin"]),
   validators.userId,
   handleValidationErrors,
@@ -51,6 +56,7 @@ router.delete(
 // Admin: Create specialist profile
 router.post(
   "/specialists",
+  standardLimiter,
   ensureRoles(["admin"]),
   validators.createSpecialistProfile,
   handleValidationErrors,
@@ -60,6 +66,7 @@ router.post(
 // Admin: Activate specialist
 router.patch(
   "/specialists/:specialistId/activate",
+  standardLimiter,
   ensureRoles(["admin"]),
   validators.specialistId,
   handleValidationErrors,
@@ -69,6 +76,7 @@ router.patch(
 // Admin: Deactivate specialist
 router.patch(
   "/specialists/:specialistId/deactivate",
+  standardLimiter,
   ensureRoles(["admin"]),
   validators.specialistId,
   handleValidationErrors,

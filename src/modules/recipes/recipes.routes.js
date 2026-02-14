@@ -4,6 +4,7 @@ import handleValidationErrors from "#middlewares/validation.js";
 import { ensureRoles } from "#middlewares/guards.js";
 import controller from "./recipes.controller.js";
 import validators from "./recipes.validators.js";
+import { standardLimiter, relaxedLimiter } from "#middlewares/rateLimiter.js";
 
 const router = express.Router();
 
@@ -13,6 +14,7 @@ const router = express.Router();
 router.post(
   "/admin",
   authenticate,
+  standardLimiter,
   ensureRoles(["admin"]),
   validators.createRecipe,
   handleValidationErrors,
@@ -23,6 +25,7 @@ router.post(
 router.get(
   "/admin",
   authenticate,
+  standardLimiter,
   ensureRoles(["admin"]),
   validators.getRecipes,
   handleValidationErrors,
@@ -33,6 +36,7 @@ router.get(
 router.put(
   "/admin/:recipeId",
   authenticate,
+  standardLimiter,
   ensureRoles(["admin"]),
   validators.recipeId,
   validators.updateRecipe,
@@ -44,6 +48,7 @@ router.put(
 router.delete(
   "/admin/:recipeId",
   authenticate,
+  standardLimiter,
   ensureRoles(["admin"]),
   validators.recipeId,
   handleValidationErrors,
@@ -54,6 +59,7 @@ router.delete(
 router.patch(
   "/admin/:recipeId/status",
   authenticate,
+  standardLimiter,
   ensureRoles(["admin"]),
   validators.recipeId,
   validators.changeRecipeStatus,
@@ -66,6 +72,7 @@ router.patch(
 // Get all recipes with filters and pagination
 router.get(
   "/",
+  relaxedLimiter,
   validators.getRecipes,
   handleValidationErrors,
   controller.getRecipes,
@@ -74,6 +81,7 @@ router.get(
 // Get recipes by category - MUST come before /:recipeId
 router.get(
   "/category/:category",
+  relaxedLimiter,
   validators.categoryId,
   handleValidationErrors,
   controller.getRecipesByCategory,
@@ -82,6 +90,7 @@ router.get(
 // Get recipe by slug (SEO friendly URL) - MUST come before /:recipeId
 router.get(
   "/slug/:slug",
+  relaxedLimiter,
   validators.recipeSlug,
   handleValidationErrors,
   controller.getRecipeBySlug,
@@ -90,6 +99,7 @@ router.get(
 // Get recipe by ID - MUST be after specific routes
 router.get(
   "/:recipeId",
+  relaxedLimiter,
   validators.recipeId,
   handleValidationErrors,
   controller.getRecipeById,

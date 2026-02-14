@@ -4,16 +4,19 @@ import { validateTags } from "./articles.helpers.js";
 // Validation for creating an article (admin only)
 const createArticle = [
   body("title")
+    .trim()
     .notEmpty()
     .withMessage("REQUIRED_FIELD")
     .isLength({ min: 5, max: 200 })
     .withMessage(["INVALID_LENGTH", { min: 5, max: 200 }]),
   body("description")
+    .trim()
     .notEmpty()
     .withMessage("REQUIRED_FIELD")
     .isLength({ min: 10, max: 500 })
     .withMessage(["INVALID_LENGTH", { min: 10, max: 500 }]),
   body("content")
+    .trim()
     .notEmpty()
     .withMessage("REQUIRED_FIELD")
     .isLength({ min: 50 })
@@ -47,14 +50,17 @@ const createArticle = [
 const updateArticle = [
   body("title")
     .optional()
+    .trim()
     .isLength({ min: 5, max: 200 })
     .withMessage(["INVALID_LENGTH", { min: 5, max: 200 }]),
   body("description")
     .optional()
+    .trim()
     .isLength({ min: 10, max: 500 })
     .withMessage(["INVALID_LENGTH", { min: 10, max: 500 }]),
   body("content")
     .optional()
+    .trim()
     .isLength({ min: 50 })
     .withMessage(["INVALID_LENGTH", { min: 50, max: 10000 }]),
   body("language")

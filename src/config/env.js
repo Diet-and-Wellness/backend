@@ -18,6 +18,8 @@ const env = {
   paymobWebhookSecret: process.env.PAYMOB_WEBHOOK_SECRET,
   frontendUrl: process.env.FRONTEND_URL,
   backendUrl: process.env.BACKEND_URL,
+
+  allowedOrigins: [process.env.FRONTEND_URL || "http://localhost:3000"],
 };
 
 export default env;

@@ -4,6 +4,7 @@ import handleValidationErrors from "#middlewares/validation.js";
 import { ensureRoles } from "#middlewares/guards.js";
 import controller from "./articles.controller.js";
 import validators from "./articles.validators.js";
+import { standardLimiter, relaxedLimiter } from "#middlewares/rateLimiter.js";
 
 const router = express.Router();
 
@@ -13,6 +14,7 @@ const router = express.Router();
 router.post(
   "/admin",
   authenticate,
+  standardLimiter,
   ensureRoles(["admin"]),
   validators.createArticle,
   handleValidationErrors,
@@ -23,6 +25,7 @@ router.post(
 router.get(
   "/admin",
   authenticate,
+  standardLimiter,
   ensureRoles(["admin"]),
   validators.getArticles,
   handleValidationErrors,
@@ -33,6 +36,7 @@ router.get(
 router.put(
   "/admin/:articleId",
   authenticate,
+  standardLimiter,
   ensureRoles(["admin"]),
   validators.articleId,
   validators.updateArticle,
@@ -44,6 +48,7 @@ router.put(
 router.delete(
   "/admin/:articleId",
   authenticate,
+  standardLimiter,
   ensureRoles(["admin"]),
   validators.articleId,
   handleValidationErrors,
@@ -54,6 +59,7 @@ router.delete(
 router.patch(
   "/admin/:articleId/status",
   authenticate,
+  standardLimiter,
   ensureRoles(["admin"]),
   validators.articleId,
   validators.changeArticleStatus,
@@ -65,6 +71,7 @@ router.patch(
 // Get all published articles with filters and pagination
 router.get(
   "/",
+  relaxedLimiter,
   validators.getArticles,
   handleValidationErrors,
   controller.getArticles,
@@ -73,6 +80,7 @@ router.get(
 // Get articles by category - MUST come before /:articleId
 router.get(
   "/category/:category",
+  relaxedLimiter,
   validators.categoryId,
   handleValidationErrors,
   controller.getArticlesByCategory,
@@ -81,6 +89,7 @@ router.get(
 // Get article by slug (SEO friendly URL) - MUST come before /:articleId
 router.get(
   "/slug/:slug",
+  relaxedLimiter,
   validators.articleSlug,
   handleValidationErrors,
   controller.getArticleBySlug,
@@ -89,6 +98,7 @@ router.get(
 // Get article by ID - MUST be after specific routes
 router.get(
   "/:articleId",
+  relaxedLimiter,
   validators.articleId,
   handleValidationErrors,
   controller.getArticleById,

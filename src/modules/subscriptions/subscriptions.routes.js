@@ -4,36 +4,52 @@ import * as validators from "./subscriptions.validators.js";
 import authenticate from "#middlewares/auth.js";
 import handleValidationErrors from "#middlewares/validation.js";
 import { ensureRoles } from "#middlewares/guards.js";
+import {
+  standardLimiter,
+  relaxedLimiter,
+  moderateLimiter,
+} from "#middlewares/rateLimiter.js";
 
 const router = express.Router();
 
 // ============ PUBLIC ENDPOINTS ============
 
 //Fetch all available subscription plans
-router.get("/", controller.getSubscriptions);
+router.get("/", relaxedLimiter, controller.getSubscriptions);
 
 // ============ PROTECTED ENDPOINTS (require authentication) ============
 
 // GET /api/subscriptions/me/status
-router.get("/me/status", authenticate, controller.getMySubscriptionStatus);
+router.get(
+  "/me/status",
+  authenticate,
+  standardLimiter,
+  controller.getMySubscriptionStatus,
+);
 
 // GET /api/subscriptions/me/history
 router.get(
   "/me/history",
   authenticate,
+  standardLimiter,
   validators.validateHistoryQuery,
   handleValidationErrors,
   controller.getMySubscriptionHistory,
 );
 
 // GET /api/subscriptions/me/verify
-router.get("/me/verify", authenticate, controller.verifyUserSubscription);
+router.get(
+  "/me/verify",
+  authenticate,
+  standardLimiter,
+  controller.verifyUserSubscription,
+);
 
 // POST /api/subscriptions/:subscriptionId/purchase
-// Create order and initiate payment
 router.post(
   "/:subscriptionId/purchase",
   authenticate,
+  moderateLimiter,
   validators.validatePurchaseSubscription,
   handleValidationErrors,
   controller.purchaseSubscription,
@@ -45,13 +61,13 @@ router.post(
 router.get(
   "/payment/status/:orderId",
   authenticate,
+  standardLimiter,
   validators.validatePaymentStatus,
   handleValidationErrors,
   controller.checkPaymentStatus,
 );
 
 // POST /api/subscriptions/webhook
-// Server-to-server webhook callback from Paymob, Verifies HMAC signature and updates payment status No auth required (Paymob doesn't provide JWT)
 router.post("/webhook", controller.handlePaymentWebhook);
 
 // // Cancel user's current subscription
@@ -73,11 +89,12 @@ router.post("/webhook", controller.handlePaymentWebhook);
 // );
 
 // ============ ADMIN ENDPOINTS (require admin role) ============
-// ADMIN ROUTES - GET, Create, Update, Delete subscription plans
+
 // Admin: Get all subscription plans (including inactive)
 router.get(
   "/admin",
   authenticate,
+  standardLimiter,
   ensureRoles(["admin"]),
   controller.adminGetAllSubscriptions,
 );
@@ -86,6 +103,7 @@ router.get(
 router.post(
   "/admin",
   authenticate,
+  standardLimiter,
   ensureRoles(["admin"]),
   validators.validateCreateSubscription,
   handleValidationErrors,
@@ -96,6 +114,7 @@ router.post(
 router.put(
   "/admin/:subscriptionId",
   authenticate,
+  standardLimiter,
   ensureRoles(["admin"]),
   validators.validateUpdateSubscription,
   handleValidationErrors,
@@ -106,6 +125,7 @@ router.put(
 router.delete(
   "/admin/:subscriptionId",
   authenticate,
+  standardLimiter,
   ensureRoles(["admin"]),
   validators.validateDeleteSubscription,
   handleValidationErrors,

@@ -3,18 +3,22 @@ import { body, query, param } from "express-validator";
 const updateProfile = [
   body("firstName")
     .optional()
+    .trim()
     .isLength({ min: 2 })
     .withMessage(["INVALID_LENGTH", { field: "firstName", min: 2, max: 50 }]),
   body("lastName")
     .optional()
+    .trim()
     .isLength({ min: 2 })
     .withMessage(["INVALID_LENGTH", { field: "lastName", min: 2, max: 50 }]),
   body("phone")
     .optional()
+    .trim()
     .isMobilePhone("ar-EG")
     .withMessage(["INVALID_PHONE_FORMAT"]),
   body("specialistInfo.specialization")
     .optional()
+    .trim()
     .isLength({ min: 3 })
     .withMessage([
       "INVALID_LENGTH",
@@ -28,21 +32,26 @@ const updateProfile = [
 
 const createSpecialistProfile = [
   body("firstName")
+    .trim()
     .notEmpty()
     .withMessage(["REQUIRED_FIELD", { field: "firstName" }])
     .isLength({ min: 2 })
     .withMessage(["INVALID_LENGTH", { field: "firstName", min: 2, max: 50 }]),
   body("lastName")
+    .trim()
     .notEmpty()
     .withMessage(["REQUIRED_FIELD", { field: "lastName" }])
     .isLength({ min: 2 })
     .withMessage(["INVALID_LENGTH", { field: "lastName", min: 2, max: 50 }]),
   body("email")
+    .trim()
+    .toLowerCase()
     .notEmpty()
     .withMessage(["REQUIRED_FIELD", { field: "email" }])
     .isEmail()
     .withMessage(["INVALID_EMAIL"]),
   body("phone")
+    .trim()
     .notEmpty()
     .withMessage(["REQUIRED_FIELD", { field: "phone" }])
     .isMobilePhone("ar-EG")
@@ -53,6 +62,7 @@ const createSpecialistProfile = [
     .isLength({ min: 6 })
     .withMessage(["INVALID_LENGTH", { field: "password", min: 6, max: 50 }]),
   body("specialization")
+    .trim()
     .notEmpty()
     .withMessage(["REQUIRED_FIELD", { field: "specialization" }])
     .isLength({ min: 3 })

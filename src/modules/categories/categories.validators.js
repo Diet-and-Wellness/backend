@@ -3,16 +3,19 @@ import { body, query, param } from "express-validator";
 // Create category validator
 const createCategory = [
   body("name")
+    .trim()
     .notEmpty()
     .withMessage(["REQUIRED_FIELD"])
     .isLength({ min: 2, max: 50 })
     .withMessage(["INVALID_LENGTH", { min: 2, max: 50 }]),
   body("displayName")
+    .trim()
     .notEmpty()
     .withMessage(["REQUIRED_FIELD"])
     .isLength({ min: 2, max: 100 })
     .withMessage(["INVALID_LENGTH", { min: 2, max: 100 }]),
   body("arDisplayName")
+    .trim()
     .optional()
     .isLength({ min: 2, max: 100 })
     .withMessage(["INVALID_LENGTH", { min: 2, max: 100 }]),
@@ -34,14 +37,17 @@ const createCategory = [
 // Update category validator
 const updateCategory = [
   body("name")
+    .trim()
     .optional()
     .isLength({ min: 2, max: 50 })
     .withMessage(["INVALID_LENGTH", { min: 2, max: 50 }]),
   body("displayName")
+    .trim()
     .optional()
     .isLength({ min: 2, max: 100 })
     .withMessage(["INVALID_LENGTH", { min: 2, max: 100 }]),
   body("arDisplayName")
+    .trim()
     .optional()
     .isLength({ min: 2, max: 100 })
     .withMessage(["INVALID_LENGTH", { min: 2, max: 100 }]),

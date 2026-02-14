@@ -30,6 +30,9 @@ export const ERROR_CODES = {
   INSUFFICIENT_PERMISSIONS: "INSUFFICIENT_PERMISSIONS",
   ADMIN_ONLY: "ADMIN_ONLY",
 
+  // Rate limiting errors (429)
+  TOO_MANY_REQUESTS: "TOO_MANY_REQUESTS",
+
   // Not found errors (404)
   NOT_FOUND: "NOT_FOUND",
   USER_NOT_FOUND: "USER_NOT_FOUND",
@@ -194,6 +197,10 @@ const translations = {
     [ERROR_CODES.INSUFFICIENT_PERMISSIONS]:
       "You don't have permission to perform this action",
     [ERROR_CODES.ADMIN_ONLY]: "This action is restricted to administrators",
+
+    // Rate limiting errors
+    [ERROR_CODES.TOO_MANY_REQUESTS]:
+      "Too many requests. Please try again {{field}} minutes later",
 
     // Not found errors
     [ERROR_CODES.NOT_FOUND]: "Resource not found",
@@ -395,6 +402,10 @@ const translations = {
     [ERROR_CODES.INSUFFICIENT_PERMISSIONS]:
       "ليس لديك الإذن للقيام بهذا الإجراء",
     [ERROR_CODES.ADMIN_ONLY]: "هذا الإجراء مقيد بالمسؤولين",
+
+    // Rate limiting errors
+    [ERROR_CODES.TOO_MANY_REQUESTS]:
+      "عدد كبير جداً من الطلبات. يرجى المحاولة بعد {{field}} دقيقه",
 
     // Not found errors
     [ERROR_CODES.NOT_FOUND]: "المورد غير موجود",
