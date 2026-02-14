@@ -15,7 +15,13 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "build": "npm install && node src/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prod": "pm2 start ecosystem.config.cjs",
+    "prod:stop": "pm2 stop nutrition-api",
+    "prod:restart": "pm2 restart nutrition-api",
+    "prod:logs": "pm2 logs nutrition-api",
+    "prod:monit": "pm2 monit",
+    "prod:delete": "pm2 delete nutrition-api"
   },
   "keywords": [],
   "author": "",
@@ -35,6 +41,7 @@
     "xss": "^1.0.15"
   },
   "devDependencies": {
-    "nodemon": "^3.1.11"
+    "nodemon": "^3.1.11",
+    "pm2": "^6.0.14"
   }
 }
