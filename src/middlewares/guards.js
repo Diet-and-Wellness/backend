@@ -4,11 +4,11 @@ const ensureRoles = (roles) => {
   return (req, res, next) => {
     if (!req.user || !roles.includes(req.user.role)) {
       const err = new Error(
-        translate(ERROR_CODES.UNAUTHORIZED_ACCESS, getLanguage(req)),
+        translate(ERROR_CODES.INSUFFICIENT_PERMISSIONS, getLanguage(req)),
       );
       err.status = 403;
-      err.code = ERROR_CODES.UNAUTHORIZED_ACCESS;
-      throw err;
+      err.code = ERROR_CODES.INSUFFICIENT_PERMISSIONS;
+      return next(err);
     }
     next();
   };
