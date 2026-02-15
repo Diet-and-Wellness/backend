@@ -17,6 +17,7 @@ export const ERROR_CODES = {
   FILE_TOO_LARGE: "FILE_TOO_LARGE",
   INVALID_FILE_TYPE: "INVALID_FILE_TYPE",
   INVALID_LANGUAGE: "INVALID_LANGUAGE",
+  INVALID_URL: "INVALID_URL",
 
   // Authentication errors (401)
   UNAUTHORIZED: "UNAUTHORIZED",
@@ -39,6 +40,7 @@ export const ERROR_CODES = {
   RECIPE_NOT_FOUND: "RECIPE_NOT_FOUND",
   ARTICLE_NOT_FOUND: "ARTICLE_NOT_FOUND",
   CATEGORY_NOT_FOUND: "CATEGORY_NOT_FOUND",
+  FEEDBACK_NOT_FOUND: "FEEDBACK_NOT_FOUND",
 
   // Conflict errors (409)
   DUPLICATE_ENTRY: "DUPLICATE_ENTRY",
@@ -184,6 +186,7 @@ const translations = {
     [ERROR_CODES.FILE_REQUIRED]: "File is required",
     [ERROR_CODES.FILE_TOO_LARGE]: "File size exceeds maximum limit",
     [ERROR_CODES.INVALID_FILE_TYPE]: "Invalid file type",
+    [ERROR_CODES.INVALID_URL]: "Invalid URL",
 
     // Authentication errors
     [ERROR_CODES.UNAUTHORIZED]: "Unauthorized access",
@@ -208,6 +211,7 @@ const translations = {
     [ERROR_CODES.RECIPE_NOT_FOUND]: "Recipe not found",
     [ERROR_CODES.ARTICLE_NOT_FOUND]: "Article not found",
     [ERROR_CODES.CATEGORY_NOT_FOUND]: "Category not found",
+    [ERROR_CODES.FEEDBACK_NOT_FOUND]: "Feedback not found",
 
     // Conflict errors
     [ERROR_CODES.DUPLICATE_ENTRY]: "This entry already exists",
@@ -389,6 +393,7 @@ const translations = {
     [ERROR_CODES.FILE_REQUIRED]: "الملف مطلوب",
     [ERROR_CODES.FILE_TOO_LARGE]: "حجم الملف يتجاوز الحد الأقصى",
     [ERROR_CODES.INVALID_FILE_TYPE]: "نوع ملف غير صحيح",
+    [ERROR_CODES.INVALID_URL]: "رابط غير صحيح",
 
     // Authentication errors
     [ERROR_CODES.UNAUTHORIZED]: "وصول غير مصرح به",
@@ -413,6 +418,7 @@ const translations = {
     [ERROR_CODES.RECIPE_NOT_FOUND]: "الوصفة غير موجودة",
     [ERROR_CODES.ARTICLE_NOT_FOUND]: "المقالة غير موجودة",
     [ERROR_CODES.CATEGORY_NOT_FOUND]: "الفئة غير موجودة",
+    [ERROR_CODES.FEEDBACK_NOT_FOUND]: "الملاحظات غير موجودة",
 
     // Conflict errors
     [ERROR_CODES.DUPLICATE_ENTRY]: "هذا الإدخال موجود بالفعل",
@@ -634,6 +640,9 @@ export const fieldNames = {
     reason: "Reason",
     subscriptionPlan: "Subscription plan",
     userSubscriptionId: "User subscription ID",
+    rating: "Rating",
+    review: "Review",
+    feedback: "Feedback",
   },
   ar: {
     firstName: "الاسم الأول",
@@ -678,6 +687,9 @@ export const fieldNames = {
     reason: "السبب",
     subscriptionPlan: "خطة الاشتراك",
     userSubscriptionId: "معرف الاشتراك الخاص بالمستخدم",
+    rating: "التقييم",
+    review: "المراجعة",
+    feedback: "الملاحظات",
   },
 };
 

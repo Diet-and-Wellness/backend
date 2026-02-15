@@ -87,6 +87,8 @@ const getRecipes = async (filters = {}) => {
       sortObj = { viewCount: -1, createdAt: -1 };
       break;
     case "newest":
+      sortObj = { createdAt: -1 };
+      break;
     default:
       sortObj = { createdAt: -1 };
   }

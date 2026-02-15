@@ -16,7 +16,7 @@ export const sanitizeString = (value) => {
   let sanitized = xss(value, xssOptions);
 
   // Remove NoSQL injection operators ($ and .)
-  sanitized = sanitized.replace(/[$.]/g, "");
+  sanitized = sanitized.replace(/[$]/g, "");
 
   // Trim whitespace
   sanitized = sanitized.trim();

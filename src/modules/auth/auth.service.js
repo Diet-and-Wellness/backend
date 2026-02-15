@@ -99,7 +99,7 @@ const login = async ({ email, phone, password }) => {
   const identifier = email || phone;
   const user = await User.findOne({
     $or: [{ email: identifier }, { phone: identifier }],
-  });
+  }).select("+passwordHash");
   if (!user) {
     const error = new Error(translate(ERROR_CODES.INVALID_CREDENTIALS, "en"));
     error.code = ERROR_CODES.INVALID_CREDENTIALS;
@@ -129,7 +129,7 @@ const login = async ({ email, phone, password }) => {
 const refreshToken = async ({ refreshToken }) => {
   const payload = jwt.verifyRefreshToken(refreshToken);
 
-  const user = await User.findById(payload.user_id);
+  const user = await User.findById(payload.user_id).select("+refreshToken");
 
   if (!user || user.refreshToken !== refreshToken) {
     const error = new Error(translate(ERROR_CODES.INVALID_REFRESH_TOKEN, "en"));
