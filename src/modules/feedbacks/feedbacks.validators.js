@@ -19,7 +19,6 @@ const createFeedback = [
     .withMessage(["REQUIRED_FIELD"])
     .isInt({ min: 1, max: 5 })
     .withMessage(["INVALID_RATING", { min: 1, max: 5 }]),
-  body("attachmentUrl").optional().isURL().withMessage(["INVALID_URL"]),
 ];
 
 // Validation for updating feedback (admin only)
@@ -38,7 +37,7 @@ const updateFeedback = [
     .optional()
     .isInt({ min: 1, max: 5 })
     .withMessage(["INVALID_RATING", { min: 1, max: 5 }]),
-  body("attachmentUrl").optional().isURL().withMessage(["INVALID_URL"]),
+  // Note: attachmentUrl is automatically populated by the image upload middleware
 ];
 
 // Validation for feedback ID

@@ -168,6 +168,7 @@ export const ERROR_CODES = {
   SUBSCRIPTION_DELETED: "SUBSCRIPTION_DELETED",
   PAYMENT_PENDING: "PAYMENT_PENDING",
   PAYMENT_STATUS: "PAYMENT_STATUS",
+  FILE_UPLOAD_ERROR: "FILE_UPLOAD_ERROR",
 };
 
 // Translation dictionary - easily extensible
@@ -185,7 +186,7 @@ const translations = {
     [ERROR_CODES.INVALID_ARRAY]: "{{field}} must be a valid array",
     [ERROR_CODES.FILE_REQUIRED]: "File is required",
     [ERROR_CODES.FILE_TOO_LARGE]: "File size exceeds maximum limit",
-    [ERROR_CODES.INVALID_FILE_TYPE]: "Invalid file type",
+    [ERROR_CODES.INVALID_FILE_TYPE]: "Invalid file type, allowed: {{allowed}}",
     [ERROR_CODES.INVALID_URL]: "Invalid URL",
 
     // Authentication errors
@@ -377,6 +378,7 @@ const translations = {
       "Subscription plan deleted successfully",
     [ERROR_CODES.PAYMENT_PENDING]: "Payment is still pending",
     [ERROR_CODES.PAYMENT_STATUS]: "Payment status: {{status}}",
+    [ERROR_CODES.FILE_UPLOAD_ERROR]: "File upload error",
   },
 
   ar: {
@@ -392,7 +394,8 @@ const translations = {
     [ERROR_CODES.INVALID_ARRAY]: "{{field}} يجب أن يكون مصفوفة صحيحة",
     [ERROR_CODES.FILE_REQUIRED]: "الملف مطلوب",
     [ERROR_CODES.FILE_TOO_LARGE]: "حجم الملف يتجاوز الحد الأقصى",
-    [ERROR_CODES.INVALID_FILE_TYPE]: "نوع ملف غير صحيح",
+    [ERROR_CODES.INVALID_FILE_TYPE]:
+      "نوع الملف غير صحيح، يمكن استخدام: {{allowed}}",
     [ERROR_CODES.INVALID_URL]: "رابط غير صحيح",
 
     // Authentication errors
@@ -573,6 +576,7 @@ const translations = {
     [ERROR_CODES.SUBSCRIPTION_DELETED]: "تم حذف خطة الاشتراك بنجاح",
     [ERROR_CODES.PAYMENT_PENDING]: "الدفع لا يزال معلقًا",
     [ERROR_CODES.PAYMENT_STATUS]: "حالة الدفع: {{status}}",
+    [ERROR_CODES.FILE_UPLOAD_ERROR]: "خطاء في تحميل الملف",
   },
 };
 

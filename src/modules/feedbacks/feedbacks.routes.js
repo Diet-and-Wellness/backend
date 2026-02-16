@@ -2,8 +2,10 @@ import express from "express";
 import authenticate from "#middlewares/auth.js";
 import handleValidationErrors from "#middlewares/validation.js";
 import { ensureRoles } from "#middlewares/guards.js";
+import imageUploadMiddleware from "#middlewares/imageUpload.js";
 import controller from "./feedbacks.controller.js";
 import validators from "./feedbacks.validators.js";
+import { checkFeedbackExists } from "./feedbacks.middlewares.js";
 import { standardLimiter, relaxedLimiter } from "#middlewares/rateLimiter.js";
 
 const router = express.Router();
@@ -39,6 +41,13 @@ router.put(
   validators.feedbackId,
   validators.updateFeedback,
   handleValidationErrors,
+  checkFeedbackExists,
+  (req, res, next) => {
+    req.cloudinaryOptions = { folder: "nutrition/feedbacks" };
+    next();
+  },
+  imageUploadMiddleware.upload,
+  imageUploadMiddleware.uploadToCloudinary,
   controller.updateFeedback,
 );
 
@@ -81,8 +90,15 @@ router.post(
   "/",
   authenticate,
   relaxedLimiter,
+  ensureRoles(["admin"]),
   validators.createFeedback,
   handleValidationErrors,
+  (req, res, next) => {
+    req.cloudinaryOptions = { folder: "nutrition/feedbacks" };
+    next();
+  },
+  imageUploadMiddleware.upload,
+  imageUploadMiddleware.uploadToCloudinary,
   controller.createFeedback,
 );
 

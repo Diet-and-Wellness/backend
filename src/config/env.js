@@ -18,6 +18,11 @@ const env = {
   paymobIframeId: process.env.PAYMOB_IFRAME_ID,
   paymobPaymentIntegrationId: Number(process.env.PAYMOB_PAYMENT_INTEGRATION_ID),
   paymobWebhookSecret: process.env.PAYMOB_WEBHOOK_SECRET,
+
+  cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME,
+  cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
+  cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET,
+
   frontendUrl: process.env.FRONTEND_URL,
   backendUrl: process.env.BACKEND_URL,
 

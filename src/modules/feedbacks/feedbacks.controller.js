@@ -1,5 +1,6 @@
 import feedbacksService from "./feedbacks.service.js";
 import { getLanguage, translate, getFieldName } from "#utils/localization.js";
+import cloudinaryService from "#utils/cloudinary.js";
 
 // Create a new feedback (public endpoint)
 const createFeedback = async (req, res, next) => {
@@ -8,8 +9,8 @@ const createFeedback = async (req, res, next) => {
       title: req.body.title,
       rating: req.body.rating,
       content: req.body.content,
-      attachmentUrl: req.body.attachmentUrl,
-      user: req.user?.user_id,
+      attachmentUrl: req.body.attachmentUrl || null,
+      user: req.user?.user_id || null,
     };
 
     const result = await feedbacksService.createFeedback(feedbackData);
@@ -70,14 +71,36 @@ const getFeedbackById = async (req, res, next) => {
 // Update feedback (admin only)
 const updateFeedback = async (req, res, next) => {
   try {
+    const updateData = {
+      ...(req.body.title && { title: req.body.title }),
+      ...(req.body.content && { content: req.body.content }),
+      ...(req.body.rating && { rating: req.body.rating }),
+      ...(req.body.attachmentUrl && { attachmentUrl: req.body.attachmentUrl }),
+    };
+
+    // get feedback by ID
+    const feedback = await feedbacksService.getFeedbackById(
+      req.params.feedbackId,
+    );
+    if (!feedback) {
+      const err = new Error(
+        translate(ERROR_CODES.FEEDBACK_NOT_FOUND, getLanguage(req)),
+      );
+      err.code = ERROR_CODES.FEEDBACK_NOT_FOUND;
+      err.status = 404;
+      throw err;
+    }
+
+    if (
+      feedback.attachmentUrl &&
+      updateData.attachmentUrl !== feedback.attachmentUrl
+    ) {
+      await cloudinaryService.deleteImage(feedback.attachmentUrl);
+    }
+
     const result = await feedbacksService.updateFeedback(
       req.params.feedbackId,
-      {
-        title: req.body.title,
-        content: req.body.content,
-        rating: req.body.rating,
-        attachmentUrl: req.body.attachmentUrl,
-      },
+      updateData,
     );
     res.json(result);
   } catch (error) {
@@ -88,6 +111,23 @@ const updateFeedback = async (req, res, next) => {
 // Delete feedback (admin only)
 const deleteFeedback = async (req, res, next) => {
   try {
+    // get feedback by ID
+    const feedback = await feedbacksService.getFeedbackById(
+      req.params.feedbackId,
+    );
+    if (!feedback) {
+      const err = new Error(
+        translate(ERROR_CODES.FEEDBACK_NOT_FOUND, getLanguage(req)),
+      );
+      err.code = ERROR_CODES.FEEDBACK_NOT_FOUND;
+      err.status = 404;
+      throw err;
+    }
+
+    if (feedback.attachmentUrl) {
+      await cloudinaryService.deleteImage(feedback.attachmentUrl);
+    }
+
     const result = await feedbacksService.deleteFeedback(req.params.feedbackId);
     res.json({
       message: translate("DELETE_SUCCESS", getLanguage(req), {
