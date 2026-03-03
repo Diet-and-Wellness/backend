@@ -129,6 +129,8 @@ export const ERROR_CODES = {
   PROFILE_DELETED_SUCCESS: "PROFILE_DELETED_SUCCESS",
   SPECIALIST_ACTIVATED_SUCCESS: "SPECIALIST_ACTIVATED_SUCCESS",
   SPECIALIST_DEACTIVATED_SUCCESS: "SPECIALIST_DEACTIVATED_SUCCESS",
+  CUSTOMERS_ASSIGNED_SUCCESS: "CUSTOMERS_ASSIGNED_SUCCESS",
+  INVALID_CUSTOMER_IDS: "INVALID_CUSTOMER_IDS",
   PASSWORD_RESET_SUCCESS: "PASSWORD_RESET_SUCCESS",
   OTP_SENT_SUCCESS: "OTP_SENT_SUCCESS",
   LOGOUT_SUCCESS: "LOGOUT_SUCCESS",
@@ -327,6 +329,10 @@ const translations = {
       "Specialist activated successfully",
     [ERROR_CODES.SPECIALIST_DEACTIVATED_SUCCESS]:
       "Specialist deactivated successfully",
+    [ERROR_CODES.CUSTOMERS_ASSIGNED_SUCCESS]:
+      "Customers assigned to specialist successfully",
+    [ERROR_CODES.INVALID_CUSTOMER_IDS]:
+      "One or more IDs are invalid or do not belong to customers",
     [ERROR_CODES.PASSWORD_RESET_SUCCESS]: "Password reset successfully",
     [ERROR_CODES.OTP_SENT_SUCCESS]: "OTP sent successfully",
     [ERROR_CODES.LOGOUT_SUCCESS]: "Logged out successfully",
@@ -530,6 +536,9 @@ const translations = {
     [ERROR_CODES.SPECIALIST_ACTIVATED_SUCCESS]: "تم تفعيل المتخصص بنجاح",
     [ERROR_CODES.SPECIALIST_DEACTIVATED_SUCCESS]:
       "تم إلغاء تفعيل المتخصص بنجاح",
+    [ERROR_CODES.CUSTOMERS_ASSIGNED_SUCCESS]: "تم تعيين العملاء للمتخصص بنجاح",
+    [ERROR_CODES.INVALID_CUSTOMER_IDS]:
+      "بعض المعرفات غير صالحة أو لا تنتمي لعملاء",
     [ERROR_CODES.PASSWORD_RESET_SUCCESS]: "تم إعادة تعيين كلمة المرور بنجاح",
     [ERROR_CODES.OTP_SENT_SUCCESS]: "تم إرسال كلمة المرور لمرة واحدة بنجاح",
     [ERROR_CODES.LOGOUT_SUCCESS]: "تم تسجيل الخروج بنجاح",
@@ -647,6 +656,11 @@ export const fieldNames = {
     rating: "Rating",
     review: "Review",
     feedback: "Feedback",
+    customerIds: "Customer IDs",
+    specialistId: "Specialist ID",
+    theme: "Theme",
+    language: "Language",
+    crop: "Crop",
   },
   ar: {
     firstName: "الاسم الأول",
@@ -694,6 +708,11 @@ export const fieldNames = {
     rating: "التقييم",
     review: "المراجعة",
     feedback: "الملاحظات",
+    customerIds: "معرفات العملاء",
+    specialistId: "معرف المتخصص",
+    theme: "السمة",
+    language: "اللغة",
+    crop: "القص",
   },
 };
 

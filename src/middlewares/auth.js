@@ -1,8 +1,9 @@
 import env from "#config/env.js";
 import jwt from "#utils/jwt.js";
 import { getLanguage, ERROR_CODES, translate } from "#utils/localization.js";
+import User from "#models/user.js";
 
-const authenticate = (req, res, next) => {
+const authenticate = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -19,6 +20,10 @@ const authenticate = (req, res, next) => {
     const token = authHeader.split(" ")[1];
     const decoded = jwt.verifyAccessToken(token);
     req.user = decoded;
+
+    // Update lastSeen asynchronously — do not block the request
+    User.findByIdAndUpdate(decoded.user_id, { lastSeen: new Date() }).exec();
+
     next();
   } catch {
     const lang = getLanguage(req);

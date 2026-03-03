@@ -3,7 +3,7 @@ module.exports = {
     {
       name: "nutrition-api",
       script: "./src/server.js",
-      instances: "2", // Use 1 for single-instance mode or "max" for available CPU cores
+      instances: "1", // Use 1 for single-instance mode or "max" for available CPU cores
       exec_mode: "cluster",
       //   env: {
       //     NODE_ENV: "development",

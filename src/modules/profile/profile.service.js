@@ -172,6 +172,44 @@ const deactivateSpecialist = async (specialistId, requesterRole) => {
   return specialist;
 };
 
+// Admin: Assign one or more customers to a specialist
+const assignCustomersToSpecialist = async (specialistId, customerIds) => {
+  const specialist = await User.findById(specialistId);
+  if (!specialist) {
+    const error = new Error(translate(ERROR_CODES.SPECIALIST_NOT_FOUND, "en"));
+    error.code = ERROR_CODES.SPECIALIST_NOT_FOUND;
+    error.status = 404;
+    throw error;
+  }
+  if (specialist.role !== "specialist") {
+    const error = new Error(translate(ERROR_CODES.USER_NOT_SPECIALIST, "en"));
+    error.code = ERROR_CODES.USER_NOT_SPECIALIST;
+    error.status = 400;
+    throw error;
+  }
+
+  // Validate all provided IDs are customers
+  const customers = await User.find({
+    _id: { $in: customerIds },
+    role: "customer",
+  }).select("_id");
+
+  if (customers.length !== customerIds.length) {
+    const error = new Error(translate(ERROR_CODES.INVALID_CUSTOMER_IDS, "en"));
+    error.code = ERROR_CODES.INVALID_CUSTOMER_IDS;
+    error.status = 400;
+    throw error;
+  }
+
+  // Assign all customers to the specialist
+  await User.updateMany(
+    { _id: { $in: customerIds } },
+    { specialist: specialistId },
+  );
+
+  return { assignedCount: customerIds.length };
+};
+
 const deleteProfile = async (userId, requesterRole) => {
   const user = await User.findById(userId);
   if (!user) {
@@ -193,4 +231,5 @@ export default {
   deleteProfile,
   activateSpecialist,
   deactivateSpecialist,
+  assignCustomersToSpecialist,
 };

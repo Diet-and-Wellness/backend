@@ -19,6 +19,14 @@ const createFeedback = [
     .withMessage(["REQUIRED_FIELD"])
     .isInt({ min: 1, max: 5 })
     .withMessage(["INVALID_RATING", { min: 1, max: 5 }]),
+  body("theme")
+    .optional()
+    .isIn(["light", "dark"])
+    .withMessage(["INVALID_VALUE", { field: "theme", values: "light, dark" }]),
+  body("crop")
+    .optional()
+    .isIn(["full", "cropped"])
+    .withMessage(["INVALID_VALUE", { field: "crop", values: "full, cropped" }]),
 ];
 
 // Validation for updating feedback (admin only)
@@ -37,6 +45,14 @@ const updateFeedback = [
     .optional()
     .isInt({ min: 1, max: 5 })
     .withMessage(["INVALID_RATING", { min: 1, max: 5 }]),
+  body("theme")
+    .optional()
+    .isIn(["light", "dark"])
+    .withMessage(["INVALID_VALUE", { field: "theme", values: "light, dark" }]),
+  body("crop")
+    .optional()
+    .isIn(["full", "cropped"])
+    .withMessage(["INVALID_VALUE", { field: "crop", values: "full, cropped" }]),
   // Note: attachmentUrl is automatically populated by the image upload middleware
 ];
 

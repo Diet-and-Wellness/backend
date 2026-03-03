@@ -122,6 +122,19 @@ const specialistId = [
     .withMessage(["INVALID_MONGO_ID_FORMAT", { field: "specialist" }]),
 ];
 
+const assignCustomersToSpecialist = [
+  param("specialistId")
+    .isMongoId()
+    .withMessage(["INVALID_MONGO_ID_FORMAT", { field: "specialistId" }]),
+  body("customerIds")
+    .notEmpty()
+    .withMessage(["REQUIRED_FIELD"])
+    .isArray({ min: 1 })
+    .withMessage(["INVALID_ARRAY", { field: "customerIds" }])
+    .custom((ids) => ids.every((id) => /^[a-f\d]{24}$/i.test(id)))
+    .withMessage(["INVALID_MONGO_ID_FORMAT", { field: "customerIds" }]),
+];
+
 const userId = [
   param("userId")
     .isMongoId()
@@ -134,4 +147,5 @@ export default {
   searchProfiles,
   specialistId,
   userId,
+  assignCustomersToSpecialist,
 };

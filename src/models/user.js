@@ -41,6 +41,11 @@ const userSchema = new mongoose.Schema(
       select: false, // Security: Hide by default - explicitly select if needed
     },
 
+    lastSeen: {
+      type: Date,
+      default: null,
+    },
+
     // this points to the assessment result document
     assessment: {
       type: mongoose.Schema.Types.ObjectId,
@@ -121,6 +126,11 @@ userSchema.methods.toJSON = function () {
   // Rename fields
   user.id = user._id;
   delete user._id;
+
+  // Format lastSeen
+  if (user.lastSeen) {
+    user.lastSeen = user.lastSeen.toISOString();
+  }
 
   // Remove specialist and assessment if not customer
   if (user.role !== "customer") {

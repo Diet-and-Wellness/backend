@@ -39,6 +39,16 @@ const feedbackSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    theme: {
+      type: String,
+      enum: ["light", "dark"],
+      default: "light",
+    },
+    crop: {
+      type: String,
+      enum: ["full", "cropped"],
+      default: "full",
+    },
   },
   {
     timestamps: true,

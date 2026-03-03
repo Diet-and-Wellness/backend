@@ -11,6 +11,8 @@ const createFeedback = async (req, res, next) => {
       content: req.body.content,
       attachmentUrl: req.body.attachmentUrl || null,
       user: req.user?.user_id || null,
+      ...(req.body.theme !== undefined && { theme: req.body.theme }),
+      ...(req.body.crop !== undefined && { crop: req.body.crop }),
     };
 
     const result = await feedbacksService.createFeedback(feedbackData);
@@ -76,6 +78,8 @@ const updateFeedback = async (req, res, next) => {
       ...(req.body.content && { content: req.body.content }),
       ...(req.body.rating && { rating: req.body.rating }),
       ...(req.body.attachmentUrl && { attachmentUrl: req.body.attachmentUrl }),
+      ...(req.body.theme !== undefined && { theme: req.body.theme }),
+      ...(req.body.crop !== undefined && { crop: req.body.crop }),
     };
 
     // get feedback by ID

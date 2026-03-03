@@ -83,4 +83,14 @@ router.patch(
   controller.deactivateSpecialist,
 );
 
+// Admin: Assign customers to a specialist
+router.patch(
+  "/specialists/:specialistId/assign-customers",
+  standardLimiter,
+  ensureRoles(["admin"]),
+  validators.assignCustomersToSpecialist,
+  handleValidationErrors,
+  controller.assignCustomersToSpecialist,
+);
+
 export default router;

@@ -92,6 +92,22 @@ const deactivateSpecialist = async (req, res, next) => {
   }
 };
 
+// Admin: Assign customers to a specialist
+const assignCustomersToSpecialist = async (req, res, next) => {
+  try {
+    const result = await profileService.assignCustomersToSpecialist(
+      req.params.specialistId,
+      req.body.customerIds,
+    );
+    res.json({
+      message: translate("CUSTOMERS_ASSIGNED_SUCCESS", getLanguage(req)),
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Admin: Delete profile
 const deleteProfile = async (req, res, next) => {
   try {
@@ -115,5 +131,6 @@ export default {
   createSpecialistProfile,
   activateSpecialist,
   deactivateSpecialist,
+  assignCustomersToSpecialist,
   deleteProfile,
 };
