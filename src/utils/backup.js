@@ -83,4 +83,108 @@ const pruneOldBackups = async () => {
   }
 };
 
+/**
+ * Restore the database from a backup directory.
+ *
+ * @param {string} [backupName] - The backup folder name inside `backups/`
+ *   (e.g. "2026-05-15T02-00-00"). Omit to restore from the most recent backup.
+ *
+ * Usage:
+ *   node --input-type=module -e '
+ *     import { restoreDB } from "#utils/backup.js";
+ *     await restoreDB("2026-05-15T02-00-00");
+ *   '
+ */
+const restoreDB = async (backupName) => {
+  let sourceDir;
+
+  if (backupName) {
+    sourceDir = path.join(BACKUP_ROOT, backupName);
+  } else {
+    // Find the most recent backup folder
+    let entries;
+    try {
+      entries = await readdir(BACKUP_ROOT);
+    } catch {
+      throw new Error(`Backup directory not found: ${BACKUP_ROOT}`);
+    }
+
+    const dirs = [];
+    for (const entry of entries) {
+      const fullPath = path.join(BACKUP_ROOT, entry);
+      try {
+        const info = await stat(fullPath);
+        if (info.isDirectory()) dirs.push({ name: entry, mtime: info.mtimeMs });
+      } catch {
+        // skip
+      }
+    }
+
+    if (dirs.length === 0) throw new Error("No backups found to restore from.");
+
+    dirs.sort((a, b) => b.mtime - a.mtime);
+    sourceDir = path.join(BACKUP_ROOT, dirs[0].name);
+    console.log(
+      `ℹ️  No backup name given — using most recent: ${dirs[0].name}`,
+    );
+  }
+
+  // Verify the directory exists
+  try {
+    await stat(sourceDir);
+  } catch {
+    throw new Error(`Backup not found: ${sourceDir}`);
+  }
+
+  console.log(`♻️  Restoring from: ${sourceDir}`);
+
+  await new Promise((resolve, reject) => {
+    // --drop drops each collection before restoring so the restore is clean
+    const args = ["--uri", env.dbUrl, "--drop", "--dir", sourceDir];
+    if (env.dbName) args.push("--nsInclude", `${env.dbName}.*`);
+
+    const proc = spawn("mongorestore", args, { stdio: "pipe" });
+
+    proc.stderr.on("data", (data) => {
+      // mongorestore writes progress to stderr — not an error
+      process.stdout.write(`[restore] ${data}`);
+    });
+
+    proc.on("close", (code) => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(new Error(`mongorestore exited with code ${code}`));
+      }
+    });
+
+    proc.on("error", (err) => {
+      if (err.code === "ENOENT") {
+        reject(
+          new Error(
+            "mongorestore not found. Install MongoDB Database Tools: https://www.mongodb.com/try/download/database-tools",
+          ),
+        );
+      } else {
+        reject(err);
+      }
+    });
+  });
+
+  console.log("✅ Restore completed successfully.");
+};
+
+// # Restore from a specific backup
+// node --input-type=module -e '
+//   import { restoreDB } from "#utils/backup.js";
+//   await restoreDB("2026-05-15T02-00-00");
+// '
+
+// # Restore from the most recent backup (omit the argument)
+// node --input-type=module -e '
+//   import { restoreDB } from "#utils/backup.js";
+//   await restoreDB();
+// '
+
+export { restoreDB };
 export default runBackup;
