@@ -4,6 +4,7 @@ import morgan from "morgan";
 import helmet from "helmet";
 
 import routes from "./routes.js";
+import connectDB from "#config/db.js";
 import languageMiddleware from "#middlewares/language.js";
 import sanitizationMiddleware from "#middlewares/sanitization.js";
 import errorHandler from "#middlewares/error.js";
@@ -140,6 +141,18 @@ app.use(languageMiddleware);
 app.use(globalLimiter);
 
 // Routes setup
+// Ensure DB is connected before handling any request.
+// On a VPS this is a no-op (connectDB already ran in server.js at startup).
+// On Vercel (serverless) this connects on the first request of each cold start.
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.use("/api", routes);
 
 // Error handling middleware - MUST come last

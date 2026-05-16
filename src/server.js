@@ -15,11 +15,13 @@ const PORT = env.port;
       console.log(`🚀 Server running on port ${PORT}`);
     });
 
-    // Daily backup at 02:00 AM server time
-    cron.schedule("0 2 * * *", () => {
-      console.log("⏰ Running daily backup...");
-      runBackup();
-    });
+    // Daily backup at 02:00 AM server time (not applicable in serverless environments)
+    if (!process.env.VERCEL) {
+      cron.schedule("0 2 * * *", () => {
+        console.log("⏰ Running daily backup...");
+        runBackup();
+      });
+    }
   } catch (err) {
     console.error("Failed to start server:", err);
     process.exit(1);
