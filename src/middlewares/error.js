@@ -34,7 +34,7 @@ const errorHandler = (err, req, res, next) => {
     errorResponse = {
       success: false,
       code: err.code,
-      message: translate(err.code, lang),
+      message: translate(err.code, lang, err.params || {}),
     };
     statusCode = err.status;
   }

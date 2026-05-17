@@ -4,11 +4,11 @@ import { ERROR_CODES } from "#utils/localization.js";
 export const validateSubscriptionId = param("subscriptionId")
   .trim()
   .notEmpty()
-  .withMessage([ERROR_CODES.REQUIRED_FIELD, { field: "Subscription ID" }])
+  .withMessage([ERROR_CODES.REQUIRED_FIELD, { field: "subscriptionId" }])
   .isMongoId()
   .withMessage([
     ERROR_CODES.INVALID_MONGO_ID_FORMAT,
-    { field: "Subscription ID" },
+    { field: "subscriptionId" },
   ]);
 
 export const validatePurchaseSubscription = [validateSubscriptionId];
@@ -22,9 +22,8 @@ export const validateCancelSubscription = [
     .isLength({ max: 500 })
     .withMessage([
       ERROR_CODES.INVALID_LENGTH,
-      "en",
       {
-        field: "Reason",
+        field: "reason",
         min: 0,
         max: 500,
       },
@@ -73,9 +72,8 @@ export const validateCreateSubscription = [
     .isLength({ max: 500 })
     .withMessage([
       ERROR_CODES.INVALID_LENGTH,
-      "en",
       {
-        field: "Description",
+        field: "description",
         min: 0,
         max: 500,
       },
@@ -118,9 +116,8 @@ export const validateUpdateSubscription = [
     .isLength({ max: 500 })
     .withMessage([
       ERROR_CODES.INVALID_LENGTH,
-      "en",
       {
-        field: "Description",
+        field: "description",
         min: 0,
         max: 500,
       },
@@ -147,7 +144,7 @@ export const validatePaymentStatus = [
   param("orderId")
     .trim()
     .notEmpty()
-    .withMessage([ERROR_CODES.REQUIRED_FIELD, { field: "Order ID" }])
+    .withMessage([ERROR_CODES.REQUIRED_FIELD, { field: "orderId" }])
     .isMongoId()
-    .withMessage([ERROR_CODES.INVALID_MONGO_ID_FORMAT, { field: "Order ID" }]),
+    .withMessage([ERROR_CODES.INVALID_MONGO_ID_FORMAT, { field: "orderId" }]),
 ];

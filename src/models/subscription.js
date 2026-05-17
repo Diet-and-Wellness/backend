@@ -44,6 +44,10 @@ const subscriptionSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    mostPopular: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true },
 );

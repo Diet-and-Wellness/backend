@@ -6,6 +6,7 @@ import articlesRoutes from "#modules/articles/articles.routes.js";
 import recipesRoutes from "#modules/recipes/recipes.routes.js";
 import subscriptionsRoutes from "#modules/subscriptions/subscriptions.routes.js";
 import feedbacksRoutes from "#modules/feedbacks/feedbacks.routes.js";
+import assessmentsRoutes from "#modules/assessments/assessments.routes.js";
 
 const router = express.Router();
 
@@ -16,6 +17,7 @@ router.use("/articles", articlesRoutes);
 router.use("/recipes", recipesRoutes);
 router.use("/feedbacks", feedbacksRoutes);
 router.use("/subscriptions", subscriptionsRoutes);
+router.use("/assessments", assessmentsRoutes);
 
 // Health check route
 router.get("/health", (req, res) => {

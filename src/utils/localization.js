@@ -139,6 +139,7 @@ export const ERROR_CODES = {
   RECIPE_NOT_AVAILABLE: "RECIPE_NOT_AVAILABLE",
   ARTICLE_NOT_AVAILABLE: "ARTICLE_NOT_AVAILABLE",
   INVALID_VALUE: "INVALID_VALUE",
+  INVALID_RANGE_VALUE: "INVALID_RANGE_VALUE",
 
   // Subscription-specific errors
   SUBSCRIPTION_NOT_FOUND: "SUBSCRIPTION_NOT_FOUND",
@@ -171,6 +172,30 @@ export const ERROR_CODES = {
   PAYMENT_PENDING: "PAYMENT_PENDING",
   PAYMENT_STATUS: "PAYMENT_STATUS",
   FILE_UPLOAD_ERROR: "FILE_UPLOAD_ERROR",
+
+  // Assessment errors
+  ASSESSMENT_FORM_NOT_FOUND: "ASSESSMENT_FORM_NOT_FOUND",
+  ASSESSMENT_SECTION_NOT_FOUND: "ASSESSMENT_SECTION_NOT_FOUND",
+  ASSESSMENT_QUESTION_NOT_FOUND: "ASSESSMENT_QUESTION_NOT_FOUND",
+  NO_ACTIVE_ASSESSMENT_FORM: "NO_ACTIVE_ASSESSMENT_FORM",
+  ASSESSMENT_INCOMPLETE_SUBMISSION: "ASSESSMENT_INCOMPLETE_SUBMISSION",
+  ASSESSMENT_INVALID_CHOICE: "ASSESSMENT_INVALID_CHOICE",
+  ASSESSMENT_NO_MATCHING_RESULT_RANGE: "ASSESSMENT_NO_MATCHING_RESULT_RANGE",
+  CANNOT_DELETE_ACTIVE_FORM: "CANNOT_DELETE_ACTIVE_FORM",
+  ASSESSMENT_CONDITION_INVALID: "ASSESSMENT_CONDITION_INVALID",
+  ASSESSMENT_SECTION_NOT_IN_FORM: "ASSESSMENT_SECTION_NOT_IN_FORM",
+  ASSESSMENT_SECTION_ALREADY_SUBMITTED: "ASSESSMENT_SECTION_ALREADY_SUBMITTED",
+  ASSESSMENT_NO_DRAFT_SUBMISSION: "ASSESSMENT_NO_DRAFT_SUBMISSION",
+  ASSESSMENT_ALREADY_COMPLETED: "ASSESSMENT_ALREADY_COMPLETED",
+  ASSESSMENT_SECTIONS_INCOMPLETE: "ASSESSMENT_SECTIONS_INCOMPLETE",
+  ASSESSMENT_NO_RESULT_RANGES: "ASSESSMENT_NO_RESULT_RANGES",
+  ASSESSMENT_FORM_HAS_NO_SECTIONS: "ASSESSMENT_FORM_HAS_NO_SECTIONS",
+  ASSESSMENT_FORM_HAS_EMPTY_SECTIONS: "ASSESSMENT_FORM_HAS_EMPTY_SECTIONS",
+  ASSESSMENT_MISSING_VISIBLE_ANSWER: "ASSESSMENT_MISSING_VISIBLE_ANSWER",
+  ASSESSMENT_NOT_FOUND: "ASSESSMENT_NOT_FOUND",
+  ASSESSMENT_RESULT_RANGES_INVALID: "ASSESSMENT_RESULT_RANGES_INVALID",
+  ASSESSMENT_FORM_DELETED: "ASSESSMENT_FORM_DELETED",
+  ASSESSMENT_SECTION_DELETED: "ASSESSMENT_SECTION_DELETED",
 };
 
 // Translation dictionary - easily extensible
@@ -181,6 +206,8 @@ const translations = {
     [ERROR_CODES.MISSING_FIELD]: "Required field is missing: {{field}}",
     [ERROR_CODES.INVALID_FORMAT]: "Invalid format for {{field}}",
     [ERROR_CODES.INVALID_VALUE]: "Invalid value for {{field}}",
+    [ERROR_CODES.INVALID_RANGE_VALUE]:
+      "{{field}} must be between {{min}} and {{max}}",
     [ERROR_CODES.INVALID_MONGO_ID]: "Invalid ID format",
     [ERROR_CODES.INVALID_EMAIL]: "Invalid email address",
     [ERROR_CODES.PASSWORD_TOO_WEAK]:
@@ -385,6 +412,48 @@ const translations = {
     [ERROR_CODES.PAYMENT_PENDING]: "Payment is still pending",
     [ERROR_CODES.PAYMENT_STATUS]: "Payment status: {{status}}",
     [ERROR_CODES.FILE_UPLOAD_ERROR]: "File upload error",
+
+    // Assessment errors
+    [ERROR_CODES.ASSESSMENT_FORM_NOT_FOUND]: "Assessment form not found",
+    [ERROR_CODES.ASSESSMENT_SECTION_NOT_FOUND]: "Assessment section not found",
+    [ERROR_CODES.ASSESSMENT_QUESTION_NOT_FOUND]:
+      "Assessment question not found",
+    [ERROR_CODES.NO_ACTIVE_ASSESSMENT_FORM]: "No active assessment form found",
+    [ERROR_CODES.ASSESSMENT_INCOMPLETE_SUBMISSION]:
+      "All sections must be answered before submitting",
+    [ERROR_CODES.ASSESSMENT_INVALID_CHOICE]:
+      'Invalid choice for question "{{question}}"',
+    [ERROR_CODES.ASSESSMENT_NO_MATCHING_RESULT_RANGE]:
+      'No result range configured for the calculated score in section "{{section}}"',
+    [ERROR_CODES.CANNOT_DELETE_ACTIVE_FORM]:
+      "Cannot delete the currently active form",
+    [ERROR_CODES.ASSESSMENT_CONDITION_INVALID]:
+      "Question condition references an invalid question or choice",
+    [ERROR_CODES.ASSESSMENT_SECTION_NOT_IN_FORM]:
+      "Section does not belong to the active assessment form",
+    [ERROR_CODES.ASSESSMENT_SECTION_ALREADY_SUBMITTED]:
+      "This section has already been submitted",
+    [ERROR_CODES.ASSESSMENT_NO_DRAFT_SUBMISSION]:
+      "No in-progress assessment found. Start by submitting the first section",
+    [ERROR_CODES.ASSESSMENT_ALREADY_COMPLETED]:
+      "Assessment has already been completed and submitted",
+    [ERROR_CODES.ASSESSMENT_SECTIONS_INCOMPLETE]:
+      "Not all sections have been answered. Missing: {{sections}}",
+    [ERROR_CODES.ASSESSMENT_NO_RESULT_RANGES]:
+      'Section "{{section}}" has no result ranges configured',
+    [ERROR_CODES.ASSESSMENT_FORM_HAS_EMPTY_SECTIONS]:
+      'Cannot activate form: section "{{section}}" has no questions',
+    [ERROR_CODES.ASSESSMENT_FORM_HAS_NO_SECTIONS]:
+      "Cannot activate form: no sections available",
+    [ERROR_CODES.ASSESSMENT_MISSING_VISIBLE_ANSWER]:
+      "Answer missing for question ({{question}})",
+    [ERROR_CODES.ASSESSMENT_NOT_FOUND]: "Assessment result not found",
+    [ERROR_CODES.ASSESSMENT_RESULT_RANGES_INVALID]:
+      "Result ranges must start at 0, end at exactly 10, be contiguous with no gaps or overlaps",
+    [ERROR_CODES.ASSESSMENT_FORM_DELETED]:
+      "Assessment form deleted successfully",
+    [ERROR_CODES.ASSESSMENT_SECTION_DELETED]:
+      "Assessment section deleted successfully",
   },
 
   ar: {
@@ -393,6 +462,8 @@ const translations = {
     [ERROR_CODES.MISSING_FIELD]: "الحقل المطلوب مفقود: {{field}}",
     [ERROR_CODES.INVALID_FORMAT]: "صيغة غير صحيحة للحقل {{field}}",
     [ERROR_CODES.INVALID_VALUE]: "قيمة غير صحيحة للحقل {{field}}",
+    [ERROR_CODES.INVALID_RANGE_VALUE]:
+      "{{field}} يجب أن يكون بين {{min}} و{{max}}",
     [ERROR_CODES.INVALID_MONGO_ID]: "صيغة المعرف غير صحيحة",
     [ERROR_CODES.INVALID_EMAIL]: "عنوان بريد إلكتروني غير صحيح",
     [ERROR_CODES.PASSWORD_TOO_WEAK]:
@@ -586,6 +657,44 @@ const translations = {
     [ERROR_CODES.PAYMENT_PENDING]: "الدفع لا يزال معلقًا",
     [ERROR_CODES.PAYMENT_STATUS]: "حالة الدفع: {{status}}",
     [ERROR_CODES.FILE_UPLOAD_ERROR]: "خطاء في تحميل الملف",
+
+    // Assessment errors
+    [ERROR_CODES.ASSESSMENT_FORM_NOT_FOUND]: "نموذج التقييم غير موجود",
+    [ERROR_CODES.ASSESSMENT_SECTION_NOT_FOUND]: "قسم التقييم غير موجود",
+    [ERROR_CODES.ASSESSMENT_QUESTION_NOT_FOUND]: "سؤال التقييم غير موجود",
+    [ERROR_CODES.NO_ACTIVE_ASSESSMENT_FORM]: "لا يوجد نموذج تقييم نشط",
+    [ERROR_CODES.ASSESSMENT_INCOMPLETE_SUBMISSION]:
+      "يجب الإجابة على جميع الأقسام قبل الإرسال",
+    [ERROR_CODES.ASSESSMENT_INVALID_CHOICE]:
+      'خيار غير صحيح للسؤال "{{question}}"',
+    [ERROR_CODES.ASSESSMENT_NO_MATCHING_RESULT_RANGE]:
+      'لا يوجد نطاق نتيجة مُهيأ للنتيجة المحسوبة في القسم "{{section}}"',
+    [ERROR_CODES.CANNOT_DELETE_ACTIVE_FORM]: "لا يمكن حذف النموذج النشط حاليًا",
+    [ERROR_CODES.ASSESSMENT_CONDITION_INVALID]:
+      "شرط السؤال يشير إلى سؤال أو خيار غير صحيح",
+    [ERROR_CODES.ASSESSMENT_SECTION_NOT_IN_FORM]:
+      "القسم لا ينتمي إلى نموذج التقييم النشط",
+    [ERROR_CODES.ASSESSMENT_SECTION_ALREADY_SUBMITTED]:
+      "تم إرسال هذا القسم بالفعل",
+    [ERROR_CODES.ASSESSMENT_NO_DRAFT_SUBMISSION]:
+      "لا يوجد تقييم قيد التقدم. ابدأ بإرسال القسم الأول",
+    [ERROR_CODES.ASSESSMENT_ALREADY_COMPLETED]:
+      "تم إكمال التقييم وإرساله بالفعل",
+    [ERROR_CODES.ASSESSMENT_SECTIONS_INCOMPLETE]:
+      "لم تتم الإجابة على جميع الأقسام. المفقودة: {{sections}}",
+    [ERROR_CODES.ASSESSMENT_NO_RESULT_RANGES]:
+      'القسم "{{section}}" لا يحتوي على نطاقات نتائج مُهيأة',
+    [ERROR_CODES.ASSESSMENT_FORM_HAS_EMPTY_SECTIONS]:
+      'لا يمكن تفعيل النموذج: القسم "{{section}}" لا يحتوي على أسئلة',
+    [ERROR_CODES.ASSESSMENT_FORM_HAS_NO_SECTIONS]:
+      "لا يمكن تفعيل النموذج: لا توجد أقسام متاحة",
+    [ERROR_CODES.ASSESSMENT_MISSING_VISIBLE_ANSWER]:
+      "إجابة مفقودة للسؤال ({{question}})",
+    [ERROR_CODES.ASSESSMENT_NOT_FOUND]: "نتيجة التقييم غير موجودة",
+    [ERROR_CODES.ASSESSMENT_RESULT_RANGES_INVALID]:
+      "يجب أن تبدأ نطاقات النتائج من 0 وتنتهي عند 10 بالضبط وتكون متتالية بدون فجوات أو تداخل",
+    [ERROR_CODES.ASSESSMENT_FORM_DELETED]: "تم حذف نموذج التقييم بنجاح",
+    [ERROR_CODES.ASSESSMENT_SECTION_DELETED]: "تم حذف قسم التقييم بنجاح",
   },
 };
 
@@ -661,6 +770,35 @@ export const fieldNames = {
     theme: "Theme",
     language: "Language",
     crop: "Crop",
+    order: "Order",
+    formId: "Form ID",
+    sectionId: "Section ID",
+    questionId: "Question ID",
+    userId: "User ID",
+    subscriptionId: "Subscription ID",
+    orderId: "Order ID",
+    choiceId: "Choice ID",
+    recipeId: "Recipe ID",
+    feedbackId: "Feedback ID",
+    minScore: "Minimum score",
+    maxScore: "Maximum score",
+    score: "Score",
+    resultRanges: "Result ranges",
+    recommendations: "Recommendations",
+    "recommendation.en": "Recommendation (English)",
+    "recommendation.ar": "Recommendation (Arabic)",
+    condition: "Condition",
+    "condition.questionId": "Condition question ID",
+    "condition.choiceIds": "Condition choice IDs",
+    "condition.choiceId": "Condition choice ID",
+    choices: "Choices",
+    "choice text": "Choice text",
+    answers: "Answers",
+    sections: "Sections",
+    text: "Text",
+    nutritionInfo: "Nutrition info",
+    slug: "Slug",
+    updates: "Updates",
   },
   ar: {
     firstName: "الاسم الأول",
@@ -713,6 +851,37 @@ export const fieldNames = {
     theme: "السمة",
     language: "اللغة",
     crop: "القص",
+    order: "الطلب",
+    formId: "معرف النموذج",
+    sectionId: "معرف القسم",
+    questionId: "معرف السؤال",
+    userId: "معرف المستخدم",
+    subscriptionId: "معرف الاشتراك",
+    orderId: "معرف الطلب",
+    choiceId: "معرف الخيار",
+    recipeId: "معرف الوصفة",
+    feedbackId: "معرف التغذية الراجعة",
+    minScore: "الحد الأدنى للنتيجة",
+    maxScore: "الحد الأقصى للنتيجة",
+    score: "النتيجة",
+    resultRanges: "نطاقات النتائج",
+    recommendations: "التوصيات",
+    "recommendation.en": "التوصية (إنجليزي)",
+    "recommendation.ar": "التوصية (عربي)",
+    condition: "الشرط",
+    "condition.questionId": "معرف سؤال الشرط",
+    "condition.choiceIds": "معرفات خيارات الشرط",
+    "condition.choiceId": "معرف خيار الشرط",
+    choices: "الخيارات",
+    "choice text": "نص الخيار",
+    answers: "الإجابات",
+    sections: "الأقسام",
+    text: "النص",
+    nutritionInfo: "معلومات التغذية",
+    slug: "الرابط المختصر",
+    updates: "التحديثات",
+    "text.en": "النص (إنجليزي)",
+    "text.ar": "النص (عربي)",
   },
 };
 
