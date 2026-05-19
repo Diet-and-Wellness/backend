@@ -4,9 +4,11 @@ import { getLanguage, ERROR_CODES, translate } from "#utils/localization.js";
 import User from "#models/user.js";
 
 const authenticate = async (req, res, next) => {
-  const authHeader = req.headers.authorization;
+  // HTTP-only cookie is the only accepted auth mechanism.
+  // Bearer token header fallback is intentionally disabled.
+  const token = req.cookies?.accessToken;
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  if (!token) {
     const lang = getLanguage(req);
 
     return res.status(401).json({
@@ -17,7 +19,6 @@ const authenticate = async (req, res, next) => {
   }
 
   try {
-    const token = authHeader.split(" ")[1];
     const decoded = jwt.verifyAccessToken(token);
     req.user = decoded;
 

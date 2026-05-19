@@ -90,11 +90,9 @@ const verifyOtp = [
     .withMessage(["INVALID_LENGTH", { min: 6, max: 6 }]),
 ];
 
-const refreshToken = [
-  body("refreshToken")
-    .notEmpty()
-    .withMessage(["REQUIRED_FIELD", { field: "refreshToken" }]),
-];
+// Refresh token is read exclusively from the httpOnly cookie.
+// No body field is accepted or validated.
+const refreshToken = [];
 
 const forgotPassword = [
   body("email")

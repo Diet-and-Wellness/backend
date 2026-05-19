@@ -1,4 +1,5 @@
 import { getLanguage, translate } from "#utils/localization.js";
+import { setCookies, clearCookies } from "#utils/cookies.js";
 import authService from "./auth.service.js";
 
 const sendOtp = async (req, res, next) => {
@@ -36,7 +37,12 @@ const signup = async (req, res, next) => {
 const login = async (req, res, next) => {
   try {
     const result = await authService.login(req.body);
-    res.json(result);
+    setCookies(res, {
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken,
+    });
+    // Tokens are delivered via httpOnly cookies only — not exposed in the body.
+    res.json({ success: true });
   } catch (error) {
     next(error);
   }
@@ -44,8 +50,25 @@ const login = async (req, res, next) => {
 
 const refreshToken = async (req, res, next) => {
   try {
-    const result = await authService.refreshToken(req.body);
-    res.json(result);
+    // HTTP-only cookie is the only accepted source for the refresh token.
+    // Body fallback is intentionally disabled.
+    const token = req.cookies?.refreshToken;
+    if (!token) {
+      const lang = getLanguage(req);
+      return res.status(401).json({
+        success: false,
+        code: "INVALID_REFRESH_TOKEN",
+        message: translate("INVALID_REFRESH_TOKEN", lang),
+      });
+    }
+    const result = await authService.refreshToken(token);
+    // Rotate cookies: set new access + refresh token cookies
+    setCookies(res, {
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken,
+    });
+    // Tokens are delivered via httpOnly cookies only — not exposed in the body.
+    res.json({ success: true });
   } catch (error) {
     next(error);
   }
@@ -54,6 +77,8 @@ const refreshToken = async (req, res, next) => {
 const logout = async (req, res, next) => {
   try {
     await authService.logout(req.user.user_id);
+    // Clear both httpOnly cookies regardless of which auth method the client used
+    clearCookies(res);
     res.json({ message: translate("LOGOUT_SUCCESS", getLanguage(req)) });
   } catch (error) {
     next(error);

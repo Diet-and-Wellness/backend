@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import helmet from "helmet";
 
@@ -120,6 +121,10 @@ app.use(
     },
   }),
 );
+
+// Cookie parsing — must come after express.json so both body and cookies are
+// available to all route handlers and middleware
+app.use(cookieParser());
 
 // Security: Input Sanitization Middleware
 // Prevents XSS attacks and NoSQL injection by sanitizing request bodies

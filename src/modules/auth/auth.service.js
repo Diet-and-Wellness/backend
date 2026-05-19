@@ -126,24 +126,30 @@ const login = async ({ email, phone, password }) => {
   return { accessToken, refreshToken };
 };
 
-const refreshToken = async ({ refreshToken }) => {
-  const payload = jwt.verifyRefreshToken(refreshToken);
+const refreshToken = async (token) => {
+  const payload = jwt.verifyRefreshToken(token);
 
   const user = await User.findById(payload.user_id).select("+refreshToken");
 
-  if (!user || user.refreshToken !== refreshToken) {
+  if (!user || user.refreshToken !== token) {
     const error = new Error(translate(ERROR_CODES.INVALID_REFRESH_TOKEN, "en"));
     error.code = ERROR_CODES.INVALID_REFRESH_TOKEN;
     error.status = 401;
     throw error;
   }
 
-  const accessToken = jwt.signAccessToken({
+  // Rotate: issue a new refresh token so the old one is invalidated.
+  // This limits the damage window if a refresh token is stolen.
+  const newAccessToken = jwt.signAccessToken({
     id: user._id,
     role: user.role,
   });
+  const newRefreshToken = jwt.signRefreshToken({ id: user._id });
 
-  return { accessToken };
+  user.refreshToken = newRefreshToken;
+  await user.save();
+
+  return { accessToken: newAccessToken, refreshToken: newRefreshToken };
 };
 
 const forgotPassword = async ({ email }) => {
