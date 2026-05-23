@@ -122,6 +122,9 @@ dist
 # Firebase cache directory
 .firebase/
 
+# ai docs directory
+ai-docs/
+
 # TernJS port file
 .tern-port
 
