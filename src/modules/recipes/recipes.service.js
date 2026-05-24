@@ -1,4 +1,5 @@
 import Recipe from "#models/recipe.js";
+import cloudinaryService from "#utils/cloudinary.js";
 import { ERROR_CODES, translate } from "#utils/localization.js";
 
 // Create a new recipe (admin only)
@@ -214,6 +215,7 @@ const updateRecipe = async (recipeId, updateData, user) => {
       "servings",
       "difficulty",
       "nutritionInfo",
+      "imageUrl",
     ];
 
     allowedFields.forEach((field) => {
@@ -221,6 +223,11 @@ const updateRecipe = async (recipeId, updateData, user) => {
         recipe[field] = updateData[field];
       }
     });
+
+    // Delete old image from Cloudinary if being replaced
+    if (updateData.imageUrl && recipe.imageUrl) {
+      cloudinaryService.deleteImage(recipe.imageUrl).catch(() => {});
+    }
 
     await recipe.save();
     await recipe.populate([
@@ -244,6 +251,10 @@ const deleteRecipe = async (recipeId) => {
       error.code = ERROR_CODES.RECIPE_NOT_FOUND;
       error.status = 404;
       throw error;
+    }
+
+    if (recipe.imageUrl) {
+      cloudinaryService.deleteImage(recipe.imageUrl).catch(() => {});
     }
 
     return true;

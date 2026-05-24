@@ -5,6 +5,20 @@ import { ensureRoles } from "#middlewares/guards.js";
 import controller from "./articles.controller.js";
 import validators from "./articles.validators.js";
 import { standardLimiter, relaxedLimiter } from "#middlewares/rateLimiter.js";
+import imageUpload from "#middlewares/imageUpload.js";
+
+const setArticleImageOptions = (req, res, next) => {
+  req.cloudinaryOptions = { folder: "nutrition/articles" };
+  next();
+};
+
+const remapToImageUrl = (req, res, next) => {
+  if (req.body.attachmentUrl !== undefined) {
+    req.body.imageUrl = req.body.attachmentUrl;
+    delete req.body.attachmentUrl;
+  }
+  next();
+};
 
 const router = express.Router();
 
@@ -16,6 +30,10 @@ router.post(
   authenticate,
   standardLimiter,
   ensureRoles(["admin"]),
+  setArticleImageOptions,
+  imageUpload.upload,
+  imageUpload.uploadToCloudinary,
+  remapToImageUrl,
   validators.createArticle,
   handleValidationErrors,
   controller.createArticle,
@@ -38,6 +56,10 @@ router.put(
   authenticate,
   standardLimiter,
   ensureRoles(["admin"]),
+  setArticleImageOptions,
+  imageUpload.upload,
+  imageUpload.uploadToCloudinary,
+  remapToImageUrl,
   validators.articleId,
   validators.updateArticle,
   handleValidationErrors,

@@ -1,4 +1,5 @@
 import User from "#models/user.js";
+import cloudinaryService from "#utils/cloudinary.js";
 import { ERROR_CODES, translate, getLanguage } from "#utils/localization.js";
 
 // Get user's own profile
@@ -70,7 +71,7 @@ const searchProfiles = async (query, requesterRole) => {
 // Update user profile
 const updateProfile = async (userId, updateData) => {
   // Prevent updating sensitive fields
-  const allowedFields = ["firstName", "lastName", "phone"];
+  const allowedFields = ["firstName", "lastName", "phone", "avatarUrl"];
 
   // If user is specialist, allow updating specialist info
   const user = await User.findById(userId);
@@ -85,6 +86,11 @@ const updateProfile = async (userId, updateData) => {
         filteredData[field] = updateData[field];
       }
     });
+  }
+
+  // Delete old avatar from Cloudinary if being replaced
+  if (filteredData.avatarUrl && user?.avatarUrl) {
+    cloudinaryService.deleteImage(user.avatarUrl).catch(() => {});
   }
 
   const updatedUser = await User.findByIdAndUpdate(userId, filteredData, {

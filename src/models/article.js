@@ -105,6 +105,10 @@ const articleSchema = new mongoose.Schema(
       type: Number, // in minutes
       default: 5,
     },
+    imageUrl: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true },
 );

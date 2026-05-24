@@ -5,6 +5,20 @@ import controller from "./profile.controller.js";
 import validators from "./profile.validators.js";
 import { ensureRoles } from "#middlewares/guards.js";
 import { standardLimiter } from "#middlewares/rateLimiter.js";
+import imageUpload from "#middlewares/imageUpload.js";
+
+const setAvatarImageOptions = (req, res, next) => {
+  req.cloudinaryOptions = { folder: "nutrition/avatars" };
+  next();
+};
+
+const remapToAvatarUrl = (req, res, next) => {
+  if (req.body.attachmentUrl !== undefined) {
+    req.body.avatarUrl = req.body.attachmentUrl;
+    delete req.body.attachmentUrl;
+  }
+  next();
+};
 
 const router = express.Router();
 
@@ -18,6 +32,10 @@ router.get("/", standardLimiter, controller.getProfile);
 router.put(
   "/",
   standardLimiter,
+  setAvatarImageOptions,
+  imageUpload.upload,
+  imageUpload.uploadToCloudinary,
+  remapToAvatarUrl,
   validators.updateProfile,
   handleValidationErrors,
   controller.updateProfile,

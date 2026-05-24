@@ -1,4 +1,5 @@
 import Article from "#models/article.js";
+import cloudinaryService from "#utils/cloudinary.js";
 import { ERROR_CODES, translate } from "#utils/localization.js";
 
 // Create a new article (admin only)
@@ -209,6 +210,7 @@ const updateArticle = async (articleId, updateData, user) => {
       "category",
       "tags",
       "estimatedReadTime",
+      "imageUrl",
     ];
 
     const filteredData = {};
@@ -217,6 +219,11 @@ const updateArticle = async (articleId, updateData, user) => {
         filteredData[field] = updateData[field];
       }
     });
+
+    // Delete old image from Cloudinary if being replaced
+    if (filteredData.imageUrl && article.imageUrl) {
+      cloudinaryService.deleteImage(article.imageUrl).catch(() => {});
+    }
 
     const updatedArticle = await Article.findByIdAndUpdate(
       articleId,
@@ -247,6 +254,10 @@ const deleteArticle = async (articleId) => {
       error.code = ERROR_CODES.ARTICLE_NOT_FOUND;
       error.status = 404;
       throw error;
+    }
+
+    if (article.imageUrl) {
+      cloudinaryService.deleteImage(article.imageUrl).catch(() => {});
     }
 
     return true;

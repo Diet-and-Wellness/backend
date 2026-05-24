@@ -45,6 +45,10 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    avatarUrl: {
+      type: String,
+      default: null,
+    },
 
     // this points to the assessment result document
     assessment: {

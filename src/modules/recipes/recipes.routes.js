@@ -5,6 +5,20 @@ import { ensureRoles } from "#middlewares/guards.js";
 import controller from "./recipes.controller.js";
 import validators from "./recipes.validators.js";
 import { standardLimiter, relaxedLimiter } from "#middlewares/rateLimiter.js";
+import imageUpload from "#middlewares/imageUpload.js";
+
+const setRecipeImageOptions = (req, res, next) => {
+  req.cloudinaryOptions = { folder: "nutrition/recipes" };
+  next();
+};
+
+const remapToImageUrl = (req, res, next) => {
+  if (req.body.attachmentUrl !== undefined) {
+    req.body.imageUrl = req.body.attachmentUrl;
+    delete req.body.attachmentUrl;
+  }
+  next();
+};
 
 const router = express.Router();
 
@@ -16,6 +30,10 @@ router.post(
   authenticate,
   standardLimiter,
   ensureRoles(["admin"]),
+  setRecipeImageOptions,
+  imageUpload.upload,
+  imageUpload.uploadToCloudinary,
+  remapToImageUrl,
   validators.createRecipe,
   handleValidationErrors,
   controller.createRecipe,
@@ -38,6 +56,10 @@ router.put(
   authenticate,
   standardLimiter,
   ensureRoles(["admin"]),
+  setRecipeImageOptions,
+  imageUpload.upload,
+  imageUpload.uploadToCloudinary,
+  remapToImageUrl,
   validators.recipeId,
   validators.updateRecipe,
   handleValidationErrors,
