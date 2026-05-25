@@ -1,3 +1,9 @@
+// Subscription plan types (subscription_plan vs one_time_offer)
+export const SUBSCRIPTION_PLAN_TYPES = {
+  SUBSCRIPTION_PLAN: "subscription_plan",
+  ONE_TIME_OFFER: "one_time_offer",
+};
+
 // Subscription types/names
 export const SUBSCRIPTION_TYPES = {
   ONE_MONTH: "1_month",

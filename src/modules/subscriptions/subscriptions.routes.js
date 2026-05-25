@@ -15,7 +15,13 @@ const router = express.Router();
 // ============ PUBLIC ENDPOINTS ============
 
 //Fetch all available subscription plans
-router.get("/", relaxedLimiter, controller.getSubscriptions);
+router.get(
+  "/",
+  relaxedLimiter,
+  validators.validateGetSubscriptions,
+  handleValidationErrors,
+  controller.getSubscriptions,
+);
 
 // ============ PROTECTED ENDPOINTS (require authentication) ============
 
@@ -96,6 +102,8 @@ router.get(
   authenticate,
   standardLimiter,
   ensureRoles(["admin"]),
+  validators.validateGetSubscriptions,
+  handleValidationErrors,
   controller.adminGetAllSubscriptions,
 );
 

@@ -12,14 +12,19 @@ import { ERROR_CODES, createError } from "#utils/localization.js";
 
 // ============ SUBSCRIPTION PLANS ============
 
-export const getAllSubscriptions = async (page = 1, limit = 10) => {
+export const getAllSubscriptions = async (
+  page = 1,
+  limit = 10,
+  type = null,
+) => {
   const skip = (page - 1) * limit;
 
-  const subscriptions = await Subscription.find({ isActive: true })
-    .skip(skip)
-    .limit(limit);
+  const filter = { isActive: true };
+  if (type) filter.type = type;
 
-  const total = await Subscription.countDocuments({ isActive: true });
+  const subscriptions = await Subscription.find(filter).skip(skip).limit(limit);
+
+  const total = await Subscription.countDocuments(filter);
 
   return {
     data: subscriptions,
@@ -77,8 +82,10 @@ export const getAllSubscriptionsAdmin = async (
   page = 1,
   limit = 10,
   includeInactive = true,
+  type = null,
 ) => {
   const filter = includeInactive ? {} : { isActive: true };
+  if (type) filter.type = type;
   const skip = (page - 1) * limit;
 
   const subscriptions = await Subscription.find(filter).skip(skip).limit(limit);

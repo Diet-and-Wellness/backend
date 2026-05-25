@@ -1,5 +1,6 @@
 import { body, param, query } from "express-validator";
 import { ERROR_CODES } from "#utils/localization.js";
+import { SUBSCRIPTION_PLAN_TYPES } from "./subscriptions.constants.js";
 
 export const validateSubscriptionId = param("subscriptionId")
   .trim()
@@ -88,6 +89,16 @@ export const validateCreateSubscription = [
       }
       return true;
     }),
+  body("type")
+    .optional()
+    .isIn(Object.values(SUBSCRIPTION_PLAN_TYPES))
+    .withMessage([
+      ERROR_CODES.INVALID_VALUE,
+      {
+        field: "type",
+        values: Object.values(SUBSCRIPTION_PLAN_TYPES).join(", "),
+      },
+    ]),
 ];
 
 export const validateUpdateSubscription = [
@@ -136,9 +147,40 @@ export const validateUpdateSubscription = [
     .optional()
     .isBoolean()
     .withMessage([ERROR_CODES.INVALID_BOOLEAN_VALUE]),
+  body("type")
+    .optional()
+    .isIn(Object.values(SUBSCRIPTION_PLAN_TYPES))
+    .withMessage([
+      ERROR_CODES.INVALID_VALUE,
+      {
+        field: "type",
+        values: Object.values(SUBSCRIPTION_PLAN_TYPES).join(", "),
+      },
+    ]),
 ];
 
 export const validateDeleteSubscription = [validateSubscriptionId];
+
+export const validateGetSubscriptions = [
+  query("type")
+    .optional()
+    .isIn(Object.values(SUBSCRIPTION_PLAN_TYPES))
+    .withMessage([
+      ERROR_CODES.INVALID_VALUE,
+      {
+        field: "type",
+        values: Object.values(SUBSCRIPTION_PLAN_TYPES).join(", "),
+      },
+    ]),
+  query("page")
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage([ERROR_CODES.INVALID_PAGE_NUMBER]),
+  query("limit")
+    .optional()
+    .isInt({ min: 1, max: 100 })
+    .withMessage([ERROR_CODES.INVALID_LIMIT_NUMBER]),
+];
 
 export const validatePaymentStatus = [
   param("orderId")

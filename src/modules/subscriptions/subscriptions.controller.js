@@ -26,7 +26,10 @@ import { ERROR_CODES, getLanguage, translate } from "#utils/localization.js";
 // Fetch all available subscription plans
 export const getSubscriptions = async (req, res, next) => {
   try {
-    const result = await getAllSubscriptions();
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const type = req.query.type || null;
+    const result = await getAllSubscriptions(page, limit, type);
     res.status(200).json(result);
   } catch (error) {
     next(error);
@@ -363,8 +366,16 @@ export const verifyUserSubscription = async (req, res, next) => {
 // Admin: Get all subscription plans (including inactive)
 export const adminGetAllSubscriptions = async (req, res, next) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
     const includeInactive = req.query.includeInactive === "true";
-    const result = await getAllSubscriptionsAdmin(includeInactive);
+    const type = req.query.type || null;
+    const result = await getAllSubscriptionsAdmin(
+      page,
+      limit,
+      includeInactive,
+      type,
+    );
 
     res.status(200).json(result);
   } catch (error) {
@@ -393,6 +404,7 @@ export const adminCreateSubscription = async (req, res, next) => {
       price,
       description: description || "",
       features: features || [],
+      type: req.body.type,
       isActive: true,
     };
 

@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import {
   SUBSCRIPTION_TYPES,
   SUBSCRIPTION_DURATIONS,
+  SUBSCRIPTION_PLAN_TYPES,
 } from "#modules/subscriptions/subscriptions.constants.js";
 
 // Subscription Plan Model - Stores available subscription types offered by the system
@@ -47,6 +48,11 @@ const subscriptionSchema = new mongoose.Schema(
     mostPopular: {
       type: Boolean,
       default: false,
+    },
+    type: {
+      type: String,
+      enum: Object.values(SUBSCRIPTION_PLAN_TYPES),
+      default: SUBSCRIPTION_PLAN_TYPES.SUBSCRIPTION_PLAN,
     },
   },
   { timestamps: true },
