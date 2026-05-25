@@ -63,6 +63,7 @@ const uploadToCloudinary = async (req, res, next) => {
     );
 
     req.body.attachmentUrl = cloudinaryResult.secure_url;
+    req.uploadedCloudinaryUrl = cloudinaryResult.secure_url;
     next();
   } catch (error) {
     console.error("Error uploading image to Cloudinary:", error);

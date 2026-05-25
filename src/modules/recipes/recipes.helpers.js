@@ -245,7 +245,8 @@ export const validateNutritionInfo = (nutritionInfo, validation = false) => {
       throw error;
     }
 
-    if (typeof nutritionInfo[field] !== "number" || nutritionInfo[field] < 0) {
+    const value = Number(nutritionInfo[field]);
+    if (isNaN(value) || value < 0) {
       if (validation) {
         throw [ERROR_CODES.NUTRITION_FIELD_VALUE_INVALID, { field }];
       }

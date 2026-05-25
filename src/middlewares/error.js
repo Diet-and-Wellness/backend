@@ -10,6 +10,7 @@ import {
   ERROR_CODES,
   mapMongoError,
 } from "#utils/localization.js";
+import cloudinaryService from "#utils/cloudinary.js";
 
 const errorHandler = (err, req, res, next) => {
   const lang = getLanguage(req);
@@ -97,6 +98,13 @@ const errorHandler = (err, req, res, next) => {
       code: err.code || ERROR_CODES.INTERNAL_SERVER_ERROR,
       message: err.message,
     };
+  }
+
+  // Clean up any image uploaded to Cloudinary during this request if the request failed
+  if (req.uploadedCloudinaryUrl) {
+    cloudinaryService.deleteImage(req.uploadedCloudinaryUrl).catch((e) => {
+      console.error("[CLOUDINARY ROLLBACK FAILED]", e.message);
+    });
   }
 
   res.status(statusCode).json(errorResponse);

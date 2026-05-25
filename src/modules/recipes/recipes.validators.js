@@ -36,23 +36,29 @@ const createRecipe = [
     .withMessage(["REQUIRED_FIELD", { field: "category" }])
     .isMongoId()
     .withMessage(["INVALID_MONGO_ID_FORMAT", { field: "category" }]),
-  body("ingredients")
-    .notEmpty()
-    .withMessage(["REQUIRED_FIELD", { field: "ingredients" }])
-    .isArray({ min: 1 })
-    .withMessage(["INVALID_ARRAY", { field: "ingredients" }])
-    .custom((value) => {
-      validateIngredients(value, true);
-      return true;
-    }),
+  body("ingredients").custom((value) => {
+    if (typeof value === "string") {
+      value = JSON.parse(value);
+    }
+
+    if (!Array.isArray(value) || value.length < 1) {
+      throw new Error("INVALID_ARRAY");
+    }
+
+    validateIngredients(value, true);
+    return true;
+  }),
   body("instructions")
     .optional()
-    .isArray()
-    .withMessage(["INVALID_ARRAY", { field: "instructions" }])
     .custom((value) => {
+      if (typeof value === "string") {
+        value = JSON.parse(value);
+      }
+
       if (value && value.length > 0) {
         validateInstructions(value, true);
       }
+
       return true;
     }),
   body("tags")
@@ -83,12 +89,16 @@ const createRecipe = [
     .withMessage(["INVALID_VALUE", { field: "difficulty" }]),
   body("nutritionInfo")
     .optional()
-    .isObject()
-    .withMessage(["INVALID_INPUT", { field: "nutritionInfo" }])
     .custom((value) => {
-      if (value) {
-        validateNutritionInfo(value, true);
+      if (typeof value === "string") {
+        try {
+          value = JSON.parse(value);
+        } catch (e) {
+          throw new Error("INVALID_INPUT");
+        }
       }
+
+      validateNutritionInfo(value, true);
       return true;
     }),
 ];
@@ -118,24 +128,29 @@ const updateRecipe = [
     .optional()
     .isMongoId()
     .withMessage(["INVALID_MONGO_ID_FORMAT", { field: "category" }]),
-  body("ingredients")
-    .optional()
-    .isArray({ min: 1 })
-    .withMessage(["INVALID_ARRAY", { field: "ingredients" }])
-    .custom((value) => {
-      if (value) {
-        validateIngredients(value, true);
-      }
-      return true;
-    }),
+  body("ingredients").custom((value) => {
+    if (typeof value === "string") {
+      value = JSON.parse(value);
+    }
+
+    if (!Array.isArray(value) || value.length < 1) {
+      throw new Error("INVALID_ARRAY");
+    }
+
+    validateIngredients(value, true);
+    return true;
+  }),
   body("instructions")
     .optional()
-    .isArray()
-    .withMessage(["INVALID_ARRAY", { field: "instructions" }])
     .custom((value) => {
+      if (typeof value === "string") {
+        value = JSON.parse(value);
+      }
+
       if (value && value.length > 0) {
         validateInstructions(value, true);
       }
+
       return true;
     }),
   body("tags")
@@ -166,12 +181,16 @@ const updateRecipe = [
     .withMessage(["INVALID_VALUE", { field: "difficulty" }]),
   body("nutritionInfo")
     .optional()
-    .isObject()
-    .withMessage(["INVALID_INPUT", { field: "nutritionInfo" }])
     .custom((value) => {
-      if (value) {
-        validateNutritionInfo(value, true);
+      if (typeof value === "string") {
+        try {
+          value = JSON.parse(value);
+        } catch (e) {
+          throw new Error("INVALID_INPUT");
+        }
       }
+
+      validateNutritionInfo(value, true);
       return true;
     }),
 ];

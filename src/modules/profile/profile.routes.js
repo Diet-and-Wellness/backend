@@ -34,10 +34,10 @@ router.put(
   standardLimiter,
   setAvatarImageOptions,
   imageUpload.upload,
-  imageUpload.uploadToCloudinary,
-  remapToAvatarUrl,
   validators.updateProfile,
   handleValidationErrors,
+  imageUpload.uploadToCloudinary,
+  remapToAvatarUrl,
   controller.updateProfile,
 );
 

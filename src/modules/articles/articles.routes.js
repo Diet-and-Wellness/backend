@@ -32,10 +32,10 @@ router.post(
   ensureRoles(["admin"]),
   setArticleImageOptions,
   imageUpload.upload,
-  imageUpload.uploadToCloudinary,
-  remapToImageUrl,
   validators.createArticle,
   handleValidationErrors,
+  imageUpload.uploadToCloudinary,
+  remapToImageUrl,
   controller.createArticle,
 );
 
@@ -58,11 +58,11 @@ router.put(
   ensureRoles(["admin"]),
   setArticleImageOptions,
   imageUpload.upload,
-  imageUpload.uploadToCloudinary,
-  remapToImageUrl,
   validators.articleId,
   validators.updateArticle,
   handleValidationErrors,
+  imageUpload.uploadToCloudinary,
+  remapToImageUrl,
   controller.updateArticle,
 );
 

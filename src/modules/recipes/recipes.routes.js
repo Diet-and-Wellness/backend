@@ -32,10 +32,10 @@ router.post(
   ensureRoles(["admin"]),
   setRecipeImageOptions,
   imageUpload.upload,
-  imageUpload.uploadToCloudinary,
-  remapToImageUrl,
   validators.createRecipe,
   handleValidationErrors,
+  imageUpload.uploadToCloudinary,
+  remapToImageUrl,
   controller.createRecipe,
 );
 
@@ -58,11 +58,11 @@ router.put(
   ensureRoles(["admin"]),
   setRecipeImageOptions,
   imageUpload.upload,
-  imageUpload.uploadToCloudinary,
-  remapToImageUrl,
   validators.recipeId,
   validators.updateRecipe,
   handleValidationErrors,
+  imageUpload.uploadToCloudinary,
+  remapToImageUrl,
   controller.updateRecipe,
 );
 

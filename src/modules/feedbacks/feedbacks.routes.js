@@ -38,15 +38,15 @@ router.put(
   authenticate,
   standardLimiter,
   ensureRoles(["admin"]),
-  validators.feedbackId,
-  validators.updateFeedback,
-  handleValidationErrors,
-  checkFeedbackExists,
   (req, res, next) => {
     req.cloudinaryOptions = { folder: "nutrition/feedbacks" };
     next();
   },
   imageUploadMiddleware.upload,
+  validators.feedbackId,
+  validators.updateFeedback,
+  handleValidationErrors,
+  checkFeedbackExists,
   imageUploadMiddleware.uploadToCloudinary,
   controller.updateFeedback,
 );
@@ -91,13 +91,13 @@ router.post(
   authenticate,
   relaxedLimiter,
   ensureRoles(["admin"]),
-  validators.createFeedback,
-  handleValidationErrors,
   (req, res, next) => {
     req.cloudinaryOptions = { folder: "nutrition/feedbacks" };
     next();
   },
   imageUploadMiddleware.upload,
+  validators.createFeedback,
+  handleValidationErrors,
   imageUploadMiddleware.uploadToCloudinary,
   controller.createFeedback,
 );
