@@ -11,7 +11,13 @@ const getProfile = async (userId) => {
     error.status = 404;
     throw error;
   }
-  return user;
+  const userObj = user.toJSON();
+  if (user.role === "specialist") {
+    userObj.assignedCustomersCount = await User.countDocuments({
+      specialist: user._id,
+    });
+  }
+  return userObj;
 };
 
 // Search and filter profiles (admin/specialists only)
@@ -57,8 +63,20 @@ const searchProfiles = async (query, requesterRole) => {
 
   const total = await User.countDocuments(filters);
 
+  const data = await Promise.all(
+    users.map(async (user) => {
+      const userObj = user.toJSON();
+      if (user.role === "specialist") {
+        userObj.assignedCustomersCount = await User.countDocuments({
+          specialist: user._id,
+        });
+      }
+      return userObj;
+    }),
+  );
+
   return {
-    data: users,
+    data,
     pagination: {
       total,
       page: query.page || 1,
