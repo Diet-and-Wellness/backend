@@ -1,4 +1,5 @@
 import User from "#models/user.js";
+import UserSubscription from "#models/userSubscription.js";
 import cloudinaryService from "#utils/cloudinary.js";
 import { ERROR_CODES, translate, getLanguage } from "#utils/localization.js";
 
@@ -16,6 +17,12 @@ const getProfile = async (userId) => {
     userObj.assignedCustomersCount = await User.countDocuments({
       specialist: user._id,
     });
+  }
+  if (user.role === "customer") {
+    const userSubscription = await UserSubscription.findOne({
+      user: user._id,
+    }).populate("subscription");
+    userObj.subscription = userSubscription ?? null;
   }
   return userObj;
 };
@@ -70,6 +77,12 @@ const searchProfiles = async (query, requesterRole) => {
         userObj.assignedCustomersCount = await User.countDocuments({
           specialist: user._id,
         });
+      }
+      if (user.role === "customer") {
+        const userSubscription = await UserSubscription.findOne({
+          user: user._id,
+        }).populate("subscription");
+        userObj.subscription = userSubscription ?? null;
       }
       return userObj;
     }),
