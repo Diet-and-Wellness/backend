@@ -51,6 +51,14 @@ router.get(
   controller.searchProfiles,
 );
 
+// Admin: Dashboard stats
+router.get(
+  "/admin/dashboard",
+  standardLimiter,
+  ensureRoles(["admin"]),
+  controller.getDashboard,
+);
+
 // Get specific user profile details (admin/specialists only)
 router.get(
   "/:userId",

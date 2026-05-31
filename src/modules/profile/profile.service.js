@@ -1,5 +1,8 @@
 import User from "#models/user.js";
 import UserSubscription from "#models/userSubscription.js";
+import Article from "#models/article.js";
+import Recipe from "#models/recipe.js";
+import Feedback from "#models/feedback.js";
 import cloudinaryService from "#utils/cloudinary.js";
 import { ERROR_CODES, translate, getLanguage } from "#utils/localization.js";
 
@@ -260,6 +263,168 @@ const deleteProfile = async (userId, requesterRole) => {
   return true;
 };
 
+// Admin: Dashboard stats
+const getDashboardStats = async () => {
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+  // 22 queries → 5 parallel $facet aggregations (one round-trip per collection)
+  const [
+    articleStats,
+    recipeStats,
+    feedbackStats,
+    userStats,
+    subscriptionStats,
+  ] = await Promise.all([
+    Article.aggregate([
+      {
+        $facet: {
+          total: [{ $count: "n" }],
+          active: [{ $match: { isHidden: false } }, { $count: "n" }],
+          hidden: [{ $match: { isHidden: true } }, { $count: "n" }],
+          thisMonth: [
+            { $match: { createdAt: { $gte: startOfMonth } } },
+            { $count: "n" },
+          ],
+        },
+      },
+    ]),
+
+    Recipe.aggregate([
+      {
+        $facet: {
+          total: [{ $count: "n" }],
+          active: [{ $match: { isHidden: false } }, { $count: "n" }],
+          hidden: [{ $match: { isHidden: true } }, { $count: "n" }],
+          thisMonth: [
+            { $match: { createdAt: { $gte: startOfMonth } } },
+            { $count: "n" },
+          ],
+        },
+      },
+    ]),
+
+    Feedback.aggregate([
+      {
+        $facet: {
+          total: [{ $count: "n" }],
+          visible: [{ $match: { isHidden: false } }, { $count: "n" }],
+          hidden: [{ $match: { isHidden: true } }, { $count: "n" }],
+          avgRating: [{ $group: { _id: null, avg: { $avg: "$rating" } } }],
+        },
+      },
+    ]),
+
+    User.aggregate([
+      {
+        $facet: {
+          clientsTotal: [{ $match: { role: "customer" } }, { $count: "n" }],
+          clientsThisMonth: [
+            { $match: { role: "customer", createdAt: { $gte: startOfMonth } } },
+            { $count: "n" },
+          ],
+          unassignedClients: [
+            { $match: { role: "customer", specialist: null } },
+            { $count: "n" },
+          ],
+          specialistsTotal: [
+            { $match: { role: "specialist" } },
+            { $count: "n" },
+          ],
+          specialistsActive: [
+            {
+              $match: { role: "specialist", "specialistInfo.status": "active" },
+            },
+            { $count: "n" },
+          ],
+          specialistsInactive: [
+            {
+              $match: {
+                role: "specialist",
+                "specialistInfo.status": "inactive",
+              },
+            },
+            { $count: "n" },
+          ],
+        },
+      },
+    ]),
+
+    UserSubscription.aggregate([
+      {
+        $facet: {
+          active: [{ $match: { status: "active" } }, { $count: "n" }],
+          expired: [{ $match: { status: "expired" } }, { $count: "n" }],
+          cancelled: [{ $match: { status: "cancelled" } }, { $count: "n" }],
+          expiringSoon: [
+            {
+              $match: {
+                status: "active",
+                expiryDate: { $gte: now, $lte: sevenDaysFromNow },
+              },
+            },
+            { $count: "n" },
+          ],
+        },
+      },
+    ]),
+  ]);
+
+  // Helper: safely extract a count from a $facet result
+  const c = (stats, key) => stats[0]?.[key]?.[0]?.n ?? 0;
+
+  const clientsTotal = c(userStats, "clientsTotal");
+  const activeSubscriptions = c(subscriptionStats, "active");
+  const expiredSubscriptions = c(subscriptionStats, "expired");
+  const cancelledSubscriptions = c(subscriptionStats, "cancelled");
+  const rawAvg = feedbackStats[0]?.avgRating?.[0]?.avg ?? null;
+
+  return {
+    articles: {
+      total: c(articleStats, "total"),
+      active: c(articleStats, "active"),
+      hidden: c(articleStats, "hidden"),
+    },
+    recipes: {
+      total: c(recipeStats, "total"),
+      active: c(recipeStats, "active"),
+      hidden: c(recipeStats, "hidden"),
+    },
+    feedbacks: {
+      total: c(feedbackStats, "total"),
+      visible: c(feedbackStats, "visible"),
+      hidden: c(feedbackStats, "hidden"),
+      averageRating: rawAvg !== null ? Math.round(rawAvg * 10) / 10 : null,
+    },
+    clients: {
+      total: clientsTotal,
+      withActiveSubscription: activeSubscriptions,
+      withExpiredSubscription: expiredSubscriptions,
+      withCancelledSubscription: cancelledSubscriptions,
+      withNoSubscription: Math.max(
+        0,
+        clientsTotal -
+          activeSubscriptions -
+          expiredSubscriptions -
+          cancelledSubscriptions,
+      ),
+      unassignedToSpecialist: c(userStats, "unassignedClients"),
+    },
+    specialists: {
+      total: c(userStats, "specialistsTotal"),
+      active: c(userStats, "specialistsActive"),
+      inactive: c(userStats, "specialistsInactive"),
+    },
+    insights: {
+      articlesAddedThisMonth: c(articleStats, "thisMonth"),
+      recipesAddedThisMonth: c(recipeStats, "thisMonth"),
+      newClientsThisMonth: c(userStats, "clientsThisMonth"),
+      subscriptionsExpiringSoon: c(subscriptionStats, "expiringSoon"),
+    },
+  };
+};
+
 export default {
   getProfile,
   searchProfiles,
@@ -269,4 +434,5 @@ export default {
   activateSpecialist,
   deactivateSpecialist,
   assignCustomersToSpecialist,
+  getDashboardStats,
 };

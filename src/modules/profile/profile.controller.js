@@ -123,6 +123,16 @@ const deleteProfile = async (req, res, next) => {
   }
 };
 
+// Admin: Dashboard stats
+const getDashboard = async (req, res, next) => {
+  try {
+    const result = await profileService.getDashboardStats();
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   getProfile,
   getProfileDetails,
@@ -133,4 +143,5 @@ export default {
   deactivateSpecialist,
   assignCustomersToSpecialist,
   deleteProfile,
+  getDashboard,
 };
