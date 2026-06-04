@@ -26,7 +26,13 @@ const env = {
   frontendUrl: process.env.FRONTEND_URL,
   backendUrl: process.env.BACKEND_URL,
 
-  allowedOrigins: [process.env.FRONTEND_URL || "http://localhost:3000"],
+  // allowedOrigins: [process.env.FRONTEND_URL || "http://localhost:3000"],
 };
+
+if (env.environment === "production") {
+  env.allowedOrigins = [env.frontendUrl];
+} else {
+  env.allowedOrigins = [env.frontendUrl, "http://localhost:3000"];
+}
 
 export default env;
