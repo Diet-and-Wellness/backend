@@ -36,7 +36,7 @@ const createRateLimitHandler = (time_in_mins) => {
 // TIER 1: Very Strict (3 requests per 15 mins) - Login, OTP, Password verification
 export const strictLoginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 3,
+  max: 30, // TODO: Change back to 3 after testing
   keyGenerator,
   skip: (req) => env.environment === "test",
   handler: createRateLimitHandler("15"),
@@ -47,7 +47,7 @@ export const strictLoginLimiter = rateLimit({
 // TIER 2: Moderate (5 requests per 15 mins) - OTP send, signup, password reset
 export const moderateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 5,
+  max: 50, // TODO: Change back to 5 after testing
   keyGenerator,
   skip: (req) => env.environment === "test",
   handler: createRateLimitHandler("15"),
@@ -80,7 +80,7 @@ export const relaxedLimiter = rateLimit({
 // Email-Based (2 requests per hour per email) - OTP sending
 export const emailRateLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
-  max: 2,
+  max: 20, // TODO: Change back to 2 after testing
   keyGenerator: emailKeyGenerator,
   skip: (req) => env.environment === "test",
   handler: createRateLimitHandler("60"),
