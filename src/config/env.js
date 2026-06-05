@@ -10,7 +10,8 @@ const env = {
   jwtSecret: process.env.JWT_SECRET,
 
   googleAppPassword: process.env.GOOGLE_APP_PASSWORD,
-  mailFrom: process.env.MAIL_FROM,
+  mailFrom: process.env.BUSINESS_EMAIL,
+  contactUsEmail: process.env.BUSINESS_EMAIL,
 
   paymobApiKey: process.env.PAYMOB_API_KEY,
   paymobSecretKey: process.env.PAYMOB_SECRET_KEY,

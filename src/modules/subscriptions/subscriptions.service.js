@@ -685,7 +685,7 @@ const sendSubscriptionConfirmationEmail = async (
       day: "numeric",
     });
 
-    await sendEmail({
+    sendEmail({
       to: user.email,
       subject: `Subscription Confirmed - ${subscription.displayName}`,
       html: `

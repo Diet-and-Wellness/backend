@@ -21,7 +21,7 @@ const sendOtp = async ({ email }) => {
   });
 
   // send email
-  await sendEmail({
+  sendEmail({
     to: email,
     subject: "Verify Your Email - OTP Code",
     html: otpEmailTemplate(otp),
@@ -171,7 +171,7 @@ const forgotPassword = async ({ email }) => {
   });
 
   // send email
-  await sendEmail({
+  sendEmail({
     to: email,
     subject: "Reset Your Password - OTP Code",
     html: otpEmailTemplate(otp, "reset_password"),

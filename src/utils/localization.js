@@ -196,6 +196,8 @@ export const ERROR_CODES = {
   ASSESSMENT_RESULT_RANGES_INVALID: "ASSESSMENT_RESULT_RANGES_INVALID",
   ASSESSMENT_FORM_DELETED: "ASSESSMENT_FORM_DELETED",
   ASSESSMENT_SECTION_DELETED: "ASSESSMENT_SECTION_DELETED",
+
+  CONTACT_US_ERROR: "CONTACT_US_ERROR",
 };
 
 // Translation dictionary - easily extensible
@@ -454,6 +456,8 @@ const translations = {
       "Assessment form deleted successfully",
     [ERROR_CODES.ASSESSMENT_SECTION_DELETED]:
       "Assessment section deleted successfully",
+    [ERROR_CODES.CONTACT_US_ERROR]:
+      "An error occurred while sending your message. Please try again later.",
   },
 
   ar: {
@@ -695,6 +699,8 @@ const translations = {
       "يجب أن تبدأ نطاقات النتائج من 0 وتنتهي عند 10 بالضبط وتكون متتالية بدون فجوات أو تداخل",
     [ERROR_CODES.ASSESSMENT_FORM_DELETED]: "تم حذف نموذج التقييم بنجاح",
     [ERROR_CODES.ASSESSMENT_SECTION_DELETED]: "تم حذف قسم التقييم بنجاح",
+    [ERROR_CODES.CONTACT_US_ERROR]:
+      "حدث خطأ أثناء إرسال رسالتك. يرجى المحاولة مرة أخرى لاحقًا.",
   },
 };
 
@@ -799,6 +805,9 @@ export const fieldNames = {
     nutritionInfo: "Nutrition info",
     slug: "Slug",
     updates: "Updates",
+    name: "Name",
+    message: "Message",
+    phone: "Phone number",
   },
   ar: {
     firstName: "الاسم الأول",
@@ -882,6 +891,9 @@ export const fieldNames = {
     updates: "التحديثات",
     "text.en": "النص (إنجليزي)",
     "text.ar": "النص (عربي)",
+    name: "الاسم",
+    message: "الرسالة",
+    phone: "رقم الهاتف",
   },
 };
 
