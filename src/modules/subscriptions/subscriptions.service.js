@@ -3,10 +3,10 @@ import Subscription from "#models/subscription.js";
 import Order from "#models/order.js";
 import UserSubscription from "#models/userSubscription.js";
 import { createPaymentIntention, generateCheckoutUrl } from "#utils/paymob.js";
-import sendEmail from "#utils/email.js";
 import {
   calculateExpiryDate,
   getDaysRemaining,
+  sendSubscriptionConfirmationEmail,
 } from "./subscriptions.helpers.js";
 import { ERROR_CODES, createError } from "#utils/localization.js";
 
@@ -269,7 +269,7 @@ const handlePaymentSuccess = async (orderId) => {
     const order = await Order.findById(orderId)
       .populate(
         "subscription",
-        "id displayName price currency durationInDays description isActive features",
+        "id displayName price currency durationInDays description isActive features responseTimeInHours planNote",
       )
       .populate("user", "id firstName lastName email phone")
       .session(session);
@@ -322,8 +322,10 @@ const handlePaymentSuccess = async (orderId) => {
     await userSubscription.save({ session });
     await session.commitTransaction();
 
-    console.log(
-      `Payment success processed for user: ${order.user._id}, expires: ${expiryDate}`,
+    await sendSubscriptionConfirmationEmail(
+      order.user,
+      subscription,
+      expiryDate,
     );
 
     return {
@@ -377,7 +379,7 @@ export const getUserSubscription = async (userId) => {
   return await UserSubscription.findOne({ userId })
     .populate(
       "subscription",
-      "id displayName price currency durationInDays description isActive features",
+      "id displayName price currency durationInDays description isActive features responseTimeInHours planNote",
     )
     .populate("currentOrder", "id subscription amount status createdAt");
 };
@@ -666,64 +668,6 @@ export const processPaymentCallback = async (callbackData, isVerified) => {
     return true;
   } catch (error) {
     console.error("Error processing payment callback:", error);
-    throw error;
-  }
-};
-
-// ============ HELPER FUNCTIONS ============
-
-// Send subscription confirmation email
-const sendSubscriptionConfirmationEmail = async (
-  user,
-  subscription,
-  expiryDate,
-) => {
-  try {
-    const expiryFormatted = expiryDate.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-
-    await sendEmail({
-      to: user.email,
-      subject: `Subscription Confirmed - ${subscription.displayName}`,
-      html: `
-        <h2>Thank you for your subscription!</h2>
-        <p>Your subscription has been activated successfully.</p>
-        <ul>
-          <li><strong>Plan:</strong> ${subscription.displayName}</li>
-          <li><strong>Duration:</strong> ${subscription.durationInDays} days</li>
-          <li><strong>Expiry Date:</strong> ${expiryFormatted}</li>
-        </ul>
-        <p>Enjoy your subscription benefits!</p>
-      `,
-    });
-  } catch (error) {
-    console.error("Error sending subscription confirmation email:", error);
-  }
-};
-
-// Should be run periodically (e.g., via cron job)
-export const checkAndUpdateExpiredSubscriptions = async () => {
-  try {
-    const now = new Date();
-    const result = await UserSubscription.updateMany(
-      {
-        status: "active",
-        expiryDate: { $lt: now },
-      },
-      {
-        status: "expired",
-      },
-    );
-
-    console.log(
-      `Updated ${result.modifiedCount} expired subscriptions to expired status`,
-    );
-    return result;
-  } catch (error) {
-    console.error("Error updating expired subscriptions:", error);
     throw error;
   }
 };

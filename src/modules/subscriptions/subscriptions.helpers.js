@@ -1,3 +1,6 @@
+import { subscriptionConfirmationEmailTemplate } from "../../utils/emailTemplates.js";
+import sendEmail from "#utils/email.js";
+
 // Calculate subscription expiry date
 export const calculateExpiryDate = (durationInDays, oldExpiryDate = null) => {
   if (!Number.isInteger(durationInDays) || durationInDays < 0) {
@@ -88,4 +91,45 @@ export const retryWithBackoff = async (fn, maxRetries = 3, delayMs = 1000) => {
   }
 
   throw lastError;
+};
+
+// Send subscription confirmation email
+export const sendSubscriptionConfirmationEmail = async (
+  user,
+  subscription,
+  expiryDate,
+) => {
+  try {
+    await sendEmail({
+      to: user.email,
+      subject: `Subscription Confirmed - ${subscription.displayName}`,
+      html: subscriptionConfirmationEmailTemplate(subscription, expiryDate),
+    });
+  } catch (error) {
+    console.error("Error sending subscription confirmation email:", error);
+  }
+};
+
+// Should be run periodically (e.g., via cron job)
+export const checkAndUpdateExpiredSubscriptions = async () => {
+  try {
+    const now = new Date();
+    const result = await UserSubscription.updateMany(
+      {
+        status: "active",
+        expiryDate: { $lt: now },
+      },
+      {
+        status: "expired",
+      },
+    );
+
+    console.log(
+      `Updated ${result.modifiedCount} expired subscriptions to expired status`,
+    );
+    return result;
+  } catch (error) {
+    console.error("Error updating expired subscriptions:", error);
+    throw error;
+  }
 };

@@ -107,3 +107,74 @@ export const contactUsEmailTemplate = ({ name, email, message, phone }) =>
     </p>
     </div>
 `;
+
+export const subscriptionConfirmationEmailTemplate = (
+  subscription,
+  expiryDate,
+) => {
+  const expiryFormatted = expiryDate.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  return `
+    <div style="
+        font-family: Arial, sans-serif; 
+        max-width: 600px; 
+        margin: auto; 
+        padding: 20px; 
+        border: 1px solid #e0e0e0; 
+        border-radius: 10px;
+        background-color: #f9f9f9;
+    ">
+    <h2 style="
+        color: #333333; 
+        text-align: center;
+    ">Thank you for your subscription!</h2>
+    <p style="
+        font-size: 16px; 
+        color: #555555;
+    ">
+        Your subscription has been activated successfully. Here are the details:
+    </p>
+    <ul style="
+        font-size: 16px; 
+        color: #555555;
+    ">
+        <li><strong>Plan:</strong> ${subscription.displayName}</li>
+        <li><strong>Duration:</strong> ${subscription.durationInDays} days</li>
+        <li><strong>Expiry Date:</strong> ${expiryFormatted}</li>
+        ${
+          subscription.responseTimeInHours
+            ? `<li><strong>Expected Response Time:</strong> ${subscription.responseTimeInHours} hours</li>`
+            : ""
+        }
+        ${
+          subscription.features && subscription.features.length > 0
+            ? `<li><strong>Features:</strong> ${subscription.features.join(", ")}</li>`
+            : ""
+        }
+        ${
+          subscription.planNote
+            ? `<li><strong>Note:</strong> ${subscription.planNote}</li>`
+            : ""
+        }
+    </ul>
+    <p style="
+        font-size: 16px; 
+        color: #555555;
+    ">
+        Enjoy your subscription benefits!
+    </p>
+    <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 20px 0;">
+    <p style="
+        font-size: 12px; 
+        color: #aaaaaa; 
+        text-align: center;
+    ">
+        &copy; ${new Date().getFullYear()} Diet and Wellness. All rights reserved.
+    </p>
+    </div>
+  `;
+};
