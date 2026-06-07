@@ -4,6 +4,16 @@ export const SUBSCRIPTION_PLAN_TYPES = {
   ONE_TIME_OFFER: "one_time_offer",
 };
 
+export const ACTIVE_DAYS = {
+  SUNDAY: "sunday",
+  MONDAY: "monday",
+  TUESDAY: "tuesday",
+  WEDNESDAY: "wednesday",
+  THURSDAY: "thursday",
+  FRIDAY: "friday",
+  SATURDAY: "saturday",
+};
+
 // Subscription types/names
 export const SUBSCRIPTION_TYPES = {
   ONE_MONTH: "1_month",

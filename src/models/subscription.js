@@ -3,6 +3,7 @@ import {
   SUBSCRIPTION_TYPES,
   SUBSCRIPTION_DURATIONS,
   SUBSCRIPTION_PLAN_TYPES,
+  ACTIVE_DAYS,
 } from "#modules/subscriptions/subscriptions.constants.js";
 
 // Subscription Plan Model - Stores available subscription types offered by the system
@@ -53,6 +54,20 @@ const subscriptionSchema = new mongoose.Schema(
       type: String,
       enum: Object.values(SUBSCRIPTION_PLAN_TYPES),
       default: SUBSCRIPTION_PLAN_TYPES.SUBSCRIPTION_PLAN,
+    },
+    activeDays: {
+      type: [String],
+      enum: Object.values(ACTIVE_DAYS),
+      default: [],
+    },
+    responseTimeInHours: {
+      type: Number,
+      default: 5,
+    },
+    planNote: {
+      type: String,
+      default: "",
+      maxlength: 200,
     },
   },
   { timestamps: true },

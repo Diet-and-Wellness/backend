@@ -1,6 +1,9 @@
 import { body, param, query } from "express-validator";
-import { ERROR_CODES } from "#utils/localization.js";
-import { SUBSCRIPTION_PLAN_TYPES } from "./subscriptions.constants.js";
+import { ERROR_CODES, translate } from "#utils/localization.js";
+import {
+  SUBSCRIPTION_PLAN_TYPES,
+  ACTIVE_DAYS,
+} from "./subscriptions.constants.js";
 
 export const validateSubscriptionId = param("subscriptionId")
   .trim()
@@ -37,7 +40,10 @@ export const validateRenewalSubscription = [
     .notEmpty()
     .withMessage([ERROR_CODES.REQUIRED_FIELD, { field: "userSubscriptionId" }])
     .isMongoId()
-    .withMessage([ERROR_CODES.INVALID_MONGO_ID]),
+    .withMessage([
+      ERROR_CODES.INVALID_MONGO_ID,
+      { field: "userSubscriptionId" },
+    ]),
 ];
 
 export const validateHistoryQuery = [
@@ -99,6 +105,34 @@ export const validateCreateSubscription = [
         values: Object.values(SUBSCRIPTION_PLAN_TYPES).join(", "),
       },
     ]),
+  body("activeDays")
+    .optional()
+    .isArray()
+    .withMessage([ERROR_CODES.INVALID_VALUE, { field: "activeDays" }])
+    .custom((days) => {
+      const validDays = Object.values(ACTIVE_DAYS);
+      if (days && !days.every((d) => validDays.includes(d))) {
+        return false;
+      }
+      return true;
+    })
+    .withMessage([ERROR_CODES.INVALID_VALUE, { field: "activeDays" }]),
+  body("responseTimeInHours")
+    .optional()
+    .isInt({ min: 0 })
+    .withMessage([ERROR_CODES.INVALID_VALUE, { field: "responseTimeInHours" }]),
+  body("planNote")
+    .optional()
+    .trim()
+    .isLength({ max: 200 })
+    .withMessage([
+      ERROR_CODES.INVALID_LENGTH,
+      {
+        field: "planNote",
+        min: 0,
+        max: 200,
+      },
+    ]),
 ];
 
 export const validateUpdateSubscription = [
@@ -155,6 +189,34 @@ export const validateUpdateSubscription = [
       {
         field: "type",
         values: Object.values(SUBSCRIPTION_PLAN_TYPES).join(", "),
+      },
+    ]),
+  body("activeDays")
+    .optional()
+    .isArray()
+    .withMessage([ERROR_CODES.INVALID_VALUE, { field: "activeDays" }])
+    .custom((days) => {
+      const validDays = Object.values(ACTIVE_DAYS);
+      if (days && !days.every((d) => validDays.includes(d))) {
+        return false;
+      }
+      return true;
+    })
+    .withMessage([ERROR_CODES.INVALID_VALUE, { field: "activeDays" }]),
+  body("responseTimeInHours")
+    .optional()
+    .isInt({ min: 0 })
+    .withMessage([ERROR_CODES.INVALID_VALUE, { field: "responseTimeInHours" }]),
+  body("planNote")
+    .optional()
+    .trim()
+    .isLength({ max: 200 })
+    .withMessage([
+      ERROR_CODES.INVALID_LENGTH,
+      {
+        field: "planNote",
+        min: 0,
+        max: 200,
       },
     ]),
 ];

@@ -808,6 +808,9 @@ export const fieldNames = {
     name: "Name",
     message: "Message",
     phone: "Phone number",
+    activeDays: "Active days",
+    responseTimeInHours: "Response time in hours",
+    planNote: "Plan note",
   },
   ar: {
     firstName: "الاسم الأول",
@@ -894,6 +897,9 @@ export const fieldNames = {
     name: "الاسم",
     message: "الرسالة",
     phone: "رقم الهاتف",
+    activeDays: "الأيام النشطة",
+    responseTimeInHours: "وقت الاستجابة بالساعات",
+    planNote: "ملاحظة الخطة",
   },
 };
 

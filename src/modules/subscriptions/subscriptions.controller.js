@@ -386,8 +386,18 @@ export const adminGetAllSubscriptions = async (req, res, next) => {
 // Admin: Create a new subscription plan
 export const adminCreateSubscription = async (req, res, next) => {
   try {
-    const { name, displayName, durationInDays, price, description, features } =
-      req.body;
+    const {
+      name,
+      displayName,
+      durationInDays,
+      price,
+      description,
+      features,
+      type,
+      activeDays,
+      responseTimeInHours,
+      planNote,
+    } = req.body;
 
     // Validate required fields
     if (!name || !displayName || !durationInDays || price === undefined) {
@@ -404,7 +414,10 @@ export const adminCreateSubscription = async (req, res, next) => {
       price,
       description: description || "",
       features: features || [],
-      type: req.body.type,
+      type: type || null,
+      activeDays: activeDays || [],
+      responseTimeInHours: responseTimeInHours || 0,
+      planNote: planNote || "",
       isActive: true,
     };
 
