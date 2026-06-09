@@ -312,6 +312,10 @@ const getDashboardStats = async () => {
           visible: [{ $match: { isHidden: false } }, { $count: "n" }],
           hidden: [{ $match: { isHidden: true } }, { $count: "n" }],
           avgRating: [{ $group: { _id: null, avg: { $avg: "$rating" } } }],
+          thisMonth: [
+            { $match: { createdAt: { $gte: startOfMonth } } },
+            { $count: "n" },
+          ],
         },
       },
     ]),
@@ -330,6 +334,12 @@ const getDashboardStats = async () => {
           ],
           specialistsTotal: [
             { $match: { role: "specialist" } },
+            { $count: "n" },
+          ],
+          specialistsThisMonth: [
+            {
+              $match: { role: "specialist", createdAt: { $gte: startOfMonth } },
+            },
             { $count: "n" },
           ],
           specialistsActive: [
@@ -366,6 +376,10 @@ const getDashboardStats = async () => {
             },
             { $count: "n" },
           ],
+          thisMonth: [
+            { $match: { createdAt: { $gte: startOfMonth } } },
+            { $count: "n" },
+          ],
         },
       },
     ]),
@@ -385,41 +399,44 @@ const getDashboardStats = async () => {
       total: c(articleStats, "total"),
       active: c(articleStats, "active"),
       hidden: c(articleStats, "hidden"),
+      thisMonth: c(articleStats, "thisMonth"),
     },
     recipes: {
       total: c(recipeStats, "total"),
       active: c(recipeStats, "active"),
       hidden: c(recipeStats, "hidden"),
+      thisMonth: c(recipeStats, "thisMonth"),
     },
     feedbacks: {
       total: c(feedbackStats, "total"),
       visible: c(feedbackStats, "visible"),
       hidden: c(feedbackStats, "hidden"),
       averageRating: rawAvg !== null ? Math.round(rawAvg * 10) / 10 : null,
+      thisMonth: c(feedbackStats, "thisMonth"),
     },
     clients: {
       total: clientsTotal,
-      withActiveSubscription: activeSubscriptions,
-      withExpiredSubscription: expiredSubscriptions,
-      withCancelledSubscription: cancelledSubscriptions,
-      withNoSubscription: Math.max(
-        0,
-        clientsTotal -
-          activeSubscriptions -
-          expiredSubscriptions -
-          cancelledSubscriptions,
-      ),
+      thisMonth: c(userStats, "clientsThisMonth"),
       unassignedToSpecialist: c(userStats, "unassignedClients"),
+    },
+    subscriptions: {
+      active: activeSubscriptions,
+      expired: expiredSubscriptions,
+      cancelled: cancelledSubscriptions,
+      expiringSoon: c(subscriptionStats, "expiringSoon"),
+      thisMonth: c(subscriptionStats, "thisMonth"),
     },
     specialists: {
       total: c(userStats, "specialistsTotal"),
       active: c(userStats, "specialistsActive"),
       inactive: c(userStats, "specialistsInactive"),
+      thisMonth: c(userStats, "specialistsThisMonth"),
     },
     insights: {
       articlesAddedThisMonth: c(articleStats, "thisMonth"),
       recipesAddedThisMonth: c(recipeStats, "thisMonth"),
       newClientsThisMonth: c(userStats, "clientsThisMonth"),
+      newSpecialistsThisMonth: c(userStats, "specialistsThisMonth"),
       subscriptionsExpiringSoon: c(subscriptionStats, "expiringSoon"),
     },
   };
