@@ -31,7 +31,7 @@ const env = {
 };
 
 if (env.environment === "production") {
-  env.allowedOrigins = [env.frontendUrl];
+  env.allowedOrigins = [env.frontendUrl, "http://localhost:3000"];
 } else {
   env.allowedOrigins = [env.frontendUrl, "http://localhost:3000"];
 }
