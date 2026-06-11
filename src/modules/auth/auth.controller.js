@@ -42,7 +42,7 @@ const login = async (req, res, next) => {
       refreshToken: result.refreshToken,
     });
     // Tokens are delivered via httpOnly cookies only — not exposed in the body.
-    res.json({ success: true });
+    res.json({ success: true, data: result.user });
   } catch (error) {
     next(error);
   }
@@ -68,7 +68,7 @@ const refreshToken = async (req, res, next) => {
       refreshToken: result.refreshToken,
     });
     // Tokens are delivered via httpOnly cookies only — not exposed in the body.
-    res.json({ success: true });
+    res.json({ success: true, data: result.user });
   } catch (error) {
     next(error);
   }

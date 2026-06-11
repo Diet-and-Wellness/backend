@@ -414,144 +414,132 @@ async function createAssessmentForm(createdBy) {
 // helper: create localized field
 const localized = (en, ar) => ({ en, ar });
 
-export async function runSeed({ envName = "development" } = {}) {
-  await connect();
+export const prodSeed = async () => {
+  // Minimal, idempotent production seed: admin, subscriptions, assessment
+  const admin = await ensureUser({
+    firstName: "Admin",
+    lastName: "User",
+    email: "admin@diet-wellness.com",
+    phone: "01000000000",
+    role: "admin",
+  });
 
-  const isProduction = envName === "production"; //|| process.env.NODE_ENV === "production";
-
-  if (isProduction) {
-    // Minimal, idempotent production seed: admin, subscriptions, assessment
-    const admin = await ensureUser({
-      firstName: "Admin",
-      lastName: "User",
-      email: "admin@diet-wellness.com",
-      phone: "01000000000",
-      role: "admin",
-    });
-
-    await ensureSubscription({
-      name: "basic",
-      displayName: localized("Basic Package", "الباقة الأساسية"),
-      durationInDays: 30,
-      price: 450,
-      currency: "EGP",
-      description: localized(
-        "This plan includes a personalized diet plan and recipes to help you achieve your goals. It also offers WhatsApp support twice a week to answer your questions and provide guidance.",
-        "تتضمن هذه الخطة نظامًا غذائيًا مخصصًا ووصفات تساعدك على تحقيق أهدافك. كما توفر دعمًا عبر واتساب مرتين أسبوعيًا للإجابة على استفساراتك وتقديم التوجيه.",
+  await ensureSubscription({
+    name: "basic",
+    displayName: localized("Basic Package", "الباقة الأساسية"),
+    durationInDays: 30,
+    price: 450,
+    currency: "EGP",
+    description: localized(
+      "This plan includes a personalized diet plan and recipes to help you achieve your goals. It also offers WhatsApp support twice a week to answer your questions and provide guidance.",
+      "تتضمن هذه الخطة نظامًا غذائيًا مخصصًا ووصفات تساعدك على تحقيق أهدافك. كما توفر دعمًا عبر واتساب مرتين أسبوعيًا للإجابة على استفساراتك وتقديم التوجيه.",
+    ),
+    features: [
+      localized("A diet plan suitable for your goal", "نظام غذائي مناسب لهدفك"),
+      localized(
+        "Recipes that help you feel full and control hunger",
+        "وصفات تساعدك على الشعور بالشبع والسيطرة على الجوع",
       ),
-      features: [
-        localized(
-          "A diet plan suitable for your goal",
-          "نظام غذائي مناسب لهدفك",
-        ),
-        localized(
-          "Recipes that help you feel full and control hunger",
-          "وصفات تساعدك على الشعور بالشبع والسيطرة على الجوع",
-        ),
-        localized(
-          "Weekly follow-up to review your progress",
-          "متابعة أسبوعية لمراجعة تقدمك",
-        ),
-        localized(
-          "WhatsApp support twice a week",
-          "دعم عبر واتساب مرتين أسبوعيًا",
-        ),
-      ],
-      mostPopular: false,
-      activeDays: ["sunday", "wednesday"],
-      responseTimeInHours: 1,
-      planNote: localized(
-        "This package is suitable if you need guidance and organization, but the main execution will be on you.",
-        "هذه الباقة مناسبة إذا كنت تحتاج إلى التوجيه والتنظيم، ولكن سيكون التنفيذ الأساسي عليك.",
+      localized(
+        "Weekly follow-up to review your progress",
+        "متابعة أسبوعية لمراجعة تقدمك",
       ),
-    });
-    await ensureSubscription({
-      name: "standard",
-      displayName: localized("Standard Package", "الباقة القياسية"),
-      durationInDays: 30,
-      price: 850,
-      currency: "EGP",
-      description: localized(
-        "This plan includes all Basic features plus a practical recipe booklet to make adherence easier, cardio exercises suitable for your level, organized follow-up to minimize confusion, and continuous adjustments based on your body’s response. WhatsApp support is available 4 times a week.",
-        "تتضمن هذه الخطة جميع ميزات القاعدة بالإضافة إلى كتيب وصفات عملية لتسهيل الالتزام، تمارين قلبية مناسبة لمستوى الخاص بك، متابعة منظمة لتقليل الالتباس، وتعديلات مستمرة بناءً على استجابة جسمك. دعم واتساب متاح 4 مرات في الأسبوع.",
+      localized(
+        "WhatsApp support twice a week",
+        "دعم عبر واتساب مرتين أسبوعيًا",
       ),
-      features: [
-        localized("Personalized diet plan", "نظام غذائي مخصص"),
-        localized(
-          "Practical recipe booklet to make adherence easier",
-          "كتيب وصفات عملية لتسهيل الالتزام",
-        ),
-        localized(
-          "Cardio exercises suitable for your level",
-          "تمارين قلبية مناسبة لمستوى الخاص بك",
-        ),
-        localized(
-          "Organized follow-up to minimize confusion",
-          "متابعة منظمة لتقليل الالتباس",
-        ),
-        localized(
-          "Continuous adjustments based on your body’s response",
-          "تعديلات مستمرة بناءً على استجابة جسمك",
-        ),
-        localized(
-          "WhatsApp support 4 times a week",
-          "دعم واتساب 4 مرات في الأسبوع",
-        ),
-      ],
-      mostPopular: true,
-      activeDays: ["sunday", "monday", "wednesday"],
-      responseTimeInHours: 2,
-      planNote: localized(
-        "Most of our clients choose this package because it gives enough support to help you continue without feeling alone.",
-        "يختار معظم عملائنا هذه الباقة لأنها توفر الدعم الكافي لمساعدتك على الاستمرار دون الشعور بالوحدة.",
+    ],
+    mostPopular: false,
+    activeDays: ["sunday", "wednesday"],
+    responseTimeInHours: 1,
+    planNote: localized(
+      "This package is suitable if you need guidance and organization, but the main execution will be on you.",
+      "هذه الباقة مناسبة إذا كنت تحتاج إلى التوجيه والتنظيم، ولكن سيكون التنفيذ الأساسي عليك.",
+    ),
+  });
+  await ensureSubscription({
+    name: "standard",
+    displayName: localized("Standard Package", "الباقة القياسية"),
+    durationInDays: 30,
+    price: 850,
+    currency: "EGP",
+    description: localized(
+      "This plan includes all Basic features plus a practical recipe booklet to make adherence easier, cardio exercises suitable for your level, organized follow-up to minimize confusion, and continuous adjustments based on your body’s response. WhatsApp support is available 4 times a week.",
+      "تتضمن هذه الخطة جميع ميزات القاعدة بالإضافة إلى كتيب وصفات عملية لتسهيل الالتزام، تمارين قلبية مناسبة لمستوى الخاص بك، متابعة منظمة لتقليل الالتباس، وتعديلات مستمرة بناءً على استجابة جسمك. دعم واتساب متاح 4 مرات في الأسبوع.",
+    ),
+    features: [
+      localized("Personalized diet plan", "نظام غذائي مخصص"),
+      localized(
+        "Practical recipe booklet to make adherence easier",
+        "كتيب وصفات عملية لتسهيل الالتزام",
       ),
-    });
-    await ensureSubscription({
-      name: "premium",
-      displayName: localized("Premium Package", "الباقة المميزة"),
-      durationInDays: 30,
-      price: 1350,
-      currency: "EGP",
-      description: localized(
-        "This plan is designed for those who want the highest level of support and guidance. It includes all Standard features plus closer follow-up with faster adjustments, and daily WhatsApp support to ensure you never feel alone in your journey.",
-        "هذه الخطة مصممة لمن يرغب في أعلى مستوى من الدعم والتوجيه. تشمل جميع ميزات الباقة القياسية بالإضافة إلى متابعة أقرب مع تعديلات أسرع، ودعم واتساب يومي لضمان عدم شعورك بالوحدة في رحلتك.",
+      localized(
+        "Cardio exercises suitable for your level",
+        "تمارين قلبية مناسبة لمستوى الخاص بك",
       ),
-      features: [
-        localized(
-          "All features of the Standard package",
-          "جميع ميزات الباقة القياسية",
-        ),
-        localized(
-          "Closer follow-up and faster adjustments",
-          "متابعة أقرب وتعديلات أسرع",
-        ),
-        localized("Daily WhatsApp support", "دعم واتساب يومي"),
-      ],
-      mostPopular: false,
-      activeDays: [
-        "sunday",
-        "monday",
-        "tuesday",
-        "wednesday",
-        "thursday",
-        "friday",
-        "saturday",
-      ],
-      responseTimeInHours: 8,
-      planNote: localized(
-        "If you like having daily support during the execution and want closer guidance.",
-        "إذا أعجبك الحصول على الدعم اليومي أثناء التنفيذ وتريد توجيهًا أقرب.",
+      localized(
+        "Organized follow-up to minimize confusion",
+        "متابعة منظمة لتقليل الالتباس",
       ),
-    });
+      localized(
+        "Continuous adjustments based on your body’s response",
+        "تعديلات مستمرة بناءً على استجابة جسمك",
+      ),
+      localized(
+        "WhatsApp support 4 times a week",
+        "دعم واتساب 4 مرات في الأسبوع",
+      ),
+    ],
+    mostPopular: true,
+    activeDays: ["sunday", "monday", "wednesday"],
+    responseTimeInHours: 2,
+    planNote: localized(
+      "Most of our clients choose this package because it gives enough support to help you continue without feeling alone.",
+      "يختار معظم عملائنا هذه الباقة لأنها توفر الدعم الكافي لمساعدتك على الاستمرار دون الشعور بالوحدة.",
+    ),
+  });
+  await ensureSubscription({
+    name: "premium",
+    displayName: localized("Premium Package", "الباقة المميزة"),
+    durationInDays: 30,
+    price: 1350,
+    currency: "EGP",
+    description: localized(
+      "This plan is designed for those who want the highest level of support and guidance. It includes all Standard features plus closer follow-up with faster adjustments, and daily WhatsApp support to ensure you never feel alone in your journey.",
+      "هذه الخطة مصممة لمن يرغب في أعلى مستوى من الدعم والتوجيه. تشمل جميع ميزات الباقة القياسية بالإضافة إلى متابعة أقرب مع تعديلات أسرع، ودعم واتساب يومي لضمان عدم شعورك بالوحدة في رحلتك.",
+    ),
+    features: [
+      localized(
+        "All features of the Standard package",
+        "جميع ميزات الباقة القياسية",
+      ),
+      localized(
+        "Closer follow-up and faster adjustments",
+        "متابعة أقرب وتعديلات أسرع",
+      ),
+      localized("Daily WhatsApp support", "دعم واتساب يومي"),
+    ],
+    mostPopular: false,
+    activeDays: [
+      "sunday",
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday",
+    ],
+    responseTimeInHours: 8,
+    planNote: localized(
+      "If you like having daily support during the execution and want closer guidance.",
+      "إذا أعجبك الحصول على الدعم اليومي أثناء التنفيذ وتريد توجيهًا أقرب.",
+    ),
+  });
 
-    await createAssessmentForm(admin);
+  await createAssessmentForm(admin);
+};
 
-    await disconnect();
-    return;
-  }
-
-  // Non-production: full seed (users, categories, content, subscriptions, assessment)
-
+export const devSeed = async () => {
   // Users
   const admin = await ensureUser({
     firstName: "Admin",
@@ -617,6 +605,18 @@ export async function runSeed({ envName = "development" } = {}) {
 
   // Assessment form
   await createAssessmentForm(admin);
+};
+
+export async function runSeed({ envName = "development" } = {}) {
+  await connect();
+
+  const isProduction = envName === "production"; //|| process.env.NODE_ENV === "production";
+
+  if (isProduction) {
+    await prodSeed();
+  } else {
+    await devSeed();
+  }
 
   await disconnect();
 }

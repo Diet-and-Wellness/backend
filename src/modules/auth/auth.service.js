@@ -123,7 +123,7 @@ const login = async ({ email, phone, password }) => {
     id: user._id,
     role: user.role,
   });
-  return { accessToken, refreshToken };
+  return { accessToken, refreshToken, user: user.toJSON() };
 };
 
 const refreshToken = async (token) => {
@@ -149,7 +149,11 @@ const refreshToken = async (token) => {
   user.refreshToken = newRefreshToken;
   await user.save();
 
-  return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+  return {
+    accessToken: newAccessToken,
+    refreshToken: newRefreshToken,
+    user: user.toJSON(),
+  };
 };
 
 const forgotPassword = async ({ email }) => {
