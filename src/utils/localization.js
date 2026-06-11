@@ -1,3 +1,5 @@
+import { SUBSCRIPTION_TYPES } from "#modules/subscriptions/subscriptions.constants.js";
+
 /**
  * Localization utility for multi-language error messages and translations
  * Automatically detects language from request headers or uses default (en)
@@ -198,6 +200,7 @@ export const ERROR_CODES = {
   ASSESSMENT_SECTION_DELETED: "ASSESSMENT_SECTION_DELETED",
 
   CONTACT_US_ERROR: "CONTACT_US_ERROR",
+  INVALID_LOCALIZED_OBJECT: "INVALID_LOCALIZED_OBJECT",
 };
 
 // Translation dictionary - easily extensible
@@ -396,8 +399,7 @@ const translations = {
     [ERROR_CODES.SUBSCRIPTION_ALREADY_EXISTS]:
       "Subscription plan with this name already exists",
     [ERROR_CODES.SUBSCRIPTION_EXPIRED]: "Subscription has expired",
-    [ERROR_CODES.SUBSCRIPTION_NAME_INVALID]:
-      "Plan name must be one of: 1_month, 3_months, 6_months, 12_months",
+    [ERROR_CODES.SUBSCRIPTION_NAME_INVALID]: `Plan name must be one of: ${Object.values(SUBSCRIPTION_TYPES).join(", ")}`,
     [ERROR_CODES.SUBSCRIPTION_DISPLAY_NAME_REQUIRED]:
       "Display name is required and must be 2-50 characters",
     [ERROR_CODES.SUBSCRIPTION_DURATION_INVALID]:
@@ -458,6 +460,8 @@ const translations = {
       "Assessment section deleted successfully",
     [ERROR_CODES.CONTACT_US_ERROR]:
       "An error occurred while sending your message. Please try again later.",
+    [ERROR_CODES.INVALID_LOCALIZED_OBJECT]:
+      "Invalid localized object. Must be an object with language codes (ar, en) as keys and strings as values",
   },
 
   ar: {
@@ -645,8 +649,7 @@ const translations = {
     [ERROR_CODES.SUBSCRIPTION_ALREADY_EXISTS]:
       "خطة اشتراك بهذا الاسم موجودة بالفعل",
     [ERROR_CODES.SUBSCRIPTION_EXPIRED]: "انتهت صلاحية الاشتراك",
-    [ERROR_CODES.SUBSCRIPTION_NAME_INVALID]:
-      "يجب أن يكون اسم الخطة أحدًا من: 1_month, 3_months, 6_months, 12_months",
+    [ERROR_CODES.SUBSCRIPTION_NAME_INVALID]: `يجب أن يكون اسم الخطة أحدًا من: ${Object.values(SUBSCRIPTION_TYPES).join(", ")}`,
     [ERROR_CODES.SUBSCRIPTION_DISPLAY_NAME_REQUIRED]:
       "اسم العرض مطلوب ويجب أن يكون بين 2-50 حرفًا",
     [ERROR_CODES.SUBSCRIPTION_DURATION_INVALID]:
@@ -701,6 +704,8 @@ const translations = {
     [ERROR_CODES.ASSESSMENT_SECTION_DELETED]: "تم حذف قسم التقييم بنجاح",
     [ERROR_CODES.CONTACT_US_ERROR]:
       "حدث خطأ أثناء إرسال رسالتك. يرجى المحاولة مرة أخرى لاحقًا.",
+    [ERROR_CODES.INVALID_LOCALIZED_OBJECT]:
+      "كائن محلي غير صالح. يجب أن يكون كائناً يحتوي على رموز اللغات (ar, en) كمفاتيح وقيم نصية",
   },
 };
 
@@ -927,6 +932,17 @@ export const translate = (code, lang = "en", data = {}) => {
   });
 
   return message;
+};
+
+export const localize = (doc, lang = "en", fields = []) => {
+  const pick = (v) =>
+    v && typeof v === "object" && (v.en || v.ar) ? v[lang] || v.en : v;
+
+  fields.forEach((f) => {
+    if (doc[f]) doc[f] = pick(doc[f]);
+  });
+
+  return doc;
 };
 
 /**

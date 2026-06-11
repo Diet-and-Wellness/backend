@@ -5,6 +5,7 @@ import {
   SUBSCRIPTION_PLAN_TYPES,
   ACTIVE_DAYS,
 } from "#modules/subscriptions/subscriptions.constants.js";
+import { translateField } from "#modules/subscriptions/subscriptions.helpers.js";
 
 // Subscription Plan Model - Stores available subscription types offered by the system
 const subscriptionSchema = new mongoose.Schema(
@@ -17,7 +18,10 @@ const subscriptionSchema = new mongoose.Schema(
       enum: Object.values(SUBSCRIPTION_TYPES),
     },
     displayName: {
-      type: String,
+      type: {
+        ar: { type: String, required: true, trim: true },
+        en: { type: String, required: true, trim: true },
+      },
       required: true, // e.g., "1 Month", "3 Months"
     },
     durationInDays: {
@@ -32,14 +36,23 @@ const subscriptionSchema = new mongoose.Schema(
     },
     currency: {
       type: String,
+      enum: ["EGP"],
       default: "EGP",
     },
     description: {
-      type: String,
+      type: {
+        ar: { type: String, required: true, trim: true },
+        en: { type: String, required: true, trim: true },
+      },
       default: "",
     },
     features: {
-      type: [String],
+      type: [
+        {
+          ar: { type: String, required: true, trim: true },
+          en: { type: String, required: true, trim: true },
+        },
+      ],
       default: [],
     },
     isActive: {
@@ -65,7 +78,10 @@ const subscriptionSchema = new mongoose.Schema(
       default: 5,
     },
     planNote: {
-      type: String,
+      type: {
+        ar: { type: String, required: true, trim: true },
+        en: { type: String, required: true, trim: true },
+      },
       default: "",
       maxlength: 200,
     },
@@ -79,6 +95,15 @@ subscriptionSchema.methods.toJSON = function () {
   // Remove sensitive fields
   delete subscription.__v;
   delete subscription.isHidden;
+
+  const lang = this._lang || "en"; // default language
+  subscription.displayName = translateField(subscription.displayName, lang);
+  subscription.description = translateField(subscription.description, lang);
+  subscription.planNote = translateField(subscription.planNote, lang);
+  subscription.features = (subscription.features || []).map((f) =>
+    translateField(f, lang),
+  );
+  subscription.currency = translateField(subscription.currency, lang);
 
   // Rename fields
   subscription.id = subscription._id;

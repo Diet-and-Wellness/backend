@@ -29,7 +29,7 @@ export const getSubscriptions = async (req, res, next) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const type = req.query.type || null;
-    const result = await getAllSubscriptions(page, limit, type);
+    const result = await getAllSubscriptions(page, limit, type, getLanguage(req));
     res.status(200).json(result);
   } catch (error) {
     next(error);
@@ -375,6 +375,7 @@ export const adminGetAllSubscriptions = async (req, res, next) => {
       limit,
       includeInactive,
       type,
+      getLanguage(req),
     );
 
     res.status(200).json(result);
@@ -412,17 +413,17 @@ export const adminCreateSubscription = async (req, res, next) => {
       displayName,
       durationInDays,
       price,
-      description: description || "",
-      features: features || [],
-      type: type || null,
-      activeDays: activeDays || [],
-      responseTimeInHours: responseTimeInHours || 0,
-      planNote: planNote || "",
+      description: description,
+      features: features,
+      type: type,
+      activeDays: activeDays,
+      responseTimeInHours: responseTimeInHours,
+      planNote: planNote,
       isActive: true,
     };
 
     const subscription = await createSubscription(subscriptionData);
-
+    subscription._lang = getLanguage(req);
     res.status(201).json(subscription);
   } catch (error) {
     if (error.message.includes("duplicate key")) {
@@ -453,6 +454,7 @@ export const adminUpdateSubscription = async (req, res, next) => {
     }
 
     const subscription = await updateSubscription(subscriptionId, updateData);
+    subscription._lang = getLanguage(req);
 
     res.status(200).json(subscription);
   } catch (error) {
@@ -482,6 +484,7 @@ export const adminDeleteSubscription = async (req, res, next) => {
     }
 
     const subscription = await deleteSubscription(subscriptionId);
+    subscription._lang = getLanguage(req);
 
     res.status(200).json(subscription);
   } catch (error) {

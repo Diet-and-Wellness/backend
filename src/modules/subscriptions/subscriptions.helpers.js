@@ -133,3 +133,11 @@ export const checkAndUpdateExpiredSubscriptions = async () => {
     throw error;
   }
 };
+
+export const translateField = (field, lang) => {
+  if (!field) return field;
+  if (typeof field === "object" && (field.en || field.ar)) {
+    return field[lang] || field.en || field.ar;
+  }
+  return field;
+};

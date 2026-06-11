@@ -27,6 +27,8 @@ const env = {
   frontendUrl: process.env.FRONTEND_URL,
   backendUrl: process.env.BACKEND_URL,
 
+  defaultPassword: process.env.DEFAULT_PASSWORD,
+
   // allowedOrigins: [process.env.FRONTEND_URL || "http://localhost:3000"],
 };
 

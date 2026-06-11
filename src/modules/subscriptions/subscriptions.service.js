@@ -7,6 +7,7 @@ import {
   calculateExpiryDate,
   getDaysRemaining,
   sendSubscriptionConfirmationEmail,
+  translateField,
 } from "./subscriptions.helpers.js";
 import { ERROR_CODES, createError } from "#utils/localization.js";
 
@@ -16,6 +17,7 @@ export const getAllSubscriptions = async (
   page = 1,
   limit = 10,
   type = null,
+  lang = "en",
 ) => {
   const skip = (page - 1) * limit;
 
@@ -23,8 +25,12 @@ export const getAllSubscriptions = async (
   if (type) filter.type = type;
 
   const subscriptions = await Subscription.find(filter).skip(skip).limit(limit);
-
   const total = await Subscription.countDocuments(filter);
+
+  const result = subscriptions.map((doc) => {
+    doc._lang = lang || "en";
+    return doc.toJSON();
+  });
 
   return {
     data: subscriptions,
@@ -83,6 +89,7 @@ export const getAllSubscriptionsAdmin = async (
   limit = 10,
   includeInactive = true,
   type = null,
+  lang = "en",
 ) => {
   const filter = includeInactive ? {} : { isActive: true };
   if (type) filter.type = type;
@@ -91,6 +98,11 @@ export const getAllSubscriptionsAdmin = async (
   const subscriptions = await Subscription.find(filter).skip(skip).limit(limit);
 
   const total = await Subscription.countDocuments(filter);
+
+  const result = subscriptions.map((doc) => {
+    doc._lang = lang || "en";
+    return doc.toJSON();
+  });
 
   return {
     data: subscriptions,

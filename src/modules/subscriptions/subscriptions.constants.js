@@ -16,11 +16,9 @@ export const ACTIVE_DAYS = {
 
 // Subscription types/names
 export const SUBSCRIPTION_TYPES = {
-  ONE_MONTH: "1_month",
-  TWO_MONTHS: "2_months",
-  THREE_MONTHS: "3_months",
-  SIX_MONTHS: "6_months",
-  TWELVE_MONTHS: "12_months",
+  BASIC: "basic",
+  STANDARD: "standard",
+  PREMIUM: "premium",
 };
 
 // Order status values
