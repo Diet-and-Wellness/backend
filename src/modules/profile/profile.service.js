@@ -287,6 +287,18 @@ const getDashboardStats = async () => {
             { $match: { createdAt: { $gte: startOfMonth } } },
             { $count: "n" },
           ],
+          activeThisMonth: [
+            {
+              $match: { isHidden: false, createdAt: { $gte: startOfMonth } },
+            },
+            { $count: "n" },
+          ],
+          hiddenThisMonth: [
+            {
+              $match: { isHidden: true, createdAt: { $gte: startOfMonth } },
+            },
+            { $count: "n" },
+          ],
         },
       },
     ]),
@@ -299,6 +311,18 @@ const getDashboardStats = async () => {
           hidden: [{ $match: { isHidden: true } }, { $count: "n" }],
           thisMonth: [
             { $match: { createdAt: { $gte: startOfMonth } } },
+            { $count: "n" },
+          ],
+          activeThisMonth: [
+            {
+              $match: { isHidden: false, createdAt: { $gte: startOfMonth } },
+            },
+            { $count: "n" },
+          ],
+          hiddenThisMonth: [
+            {
+              $match: { isHidden: true, createdAt: { $gte: startOfMonth } },
+            },
             { $count: "n" },
           ],
         },
@@ -314,6 +338,18 @@ const getDashboardStats = async () => {
           avgRating: [{ $group: { _id: null, avg: { $avg: "$rating" } } }],
           thisMonth: [
             { $match: { createdAt: { $gte: startOfMonth } } },
+            { $count: "n" },
+          ],
+          visibleThisMonth: [
+            {
+              $match: { isHidden: false, createdAt: { $gte: startOfMonth } },
+            },
+            { $count: "n" },
+          ],
+          hiddenThisMonth: [
+            {
+              $match: { isHidden: true, createdAt: { $gte: startOfMonth } },
+            },
             { $count: "n" },
           ],
         },
@@ -348,11 +384,31 @@ const getDashboardStats = async () => {
             },
             { $count: "n" },
           ],
+          specialistsActiveThisMonth: [
+            {
+              $match: {
+                role: "specialist",
+                "specialistInfo.status": "active",
+                createdAt: { $gte: startOfMonth },
+              },
+            },
+            { $count: "n" },
+          ],
           specialistsInactive: [
             {
               $match: {
                 role: "specialist",
                 "specialistInfo.status": "inactive",
+              },
+            },
+            { $count: "n" },
+          ],
+          specialistsInactiveThisMonth: [
+            {
+              $match: {
+                role: "specialist",
+                "specialistInfo.status": "inactive",
+                createdAt: { $gte: startOfMonth },
               },
             },
             { $count: "n" },
@@ -380,6 +436,33 @@ const getDashboardStats = async () => {
             { $match: { createdAt: { $gte: startOfMonth } } },
             { $count: "n" },
           ],
+          activeThisMonth: [
+            {
+              $match: {
+                status: "active",
+                createdAt: { $gte: startOfMonth },
+              },
+            },
+            { $count: "n" },
+          ],
+          expiredThisMonth: [
+            {
+              $match: {
+                status: "expired",
+                createdAt: { $gte: startOfMonth },
+              },
+            },
+            { $count: "n" },
+          ],
+          cancelledThisMonth: [
+            {
+              $match: {
+                status: "cancelled",
+                createdAt: { $gte: startOfMonth },
+              },
+            },
+            { $count: "n" },
+          ],
         },
       },
     ]),
@@ -397,22 +480,28 @@ const getDashboardStats = async () => {
   return {
     articles: {
       total: c(articleStats, "total"),
-      active: c(articleStats, "active"),
-      hidden: c(articleStats, "hidden"),
       thisMonth: c(articleStats, "thisMonth"),
+      active: c(articleStats, "active"),
+      activeThisMonth: c(articleStats, "activeThisMonth"),
+      hidden: c(articleStats, "hidden"),
+      hiddenThisMonth: c(articleStats, "hiddenThisMonth"),
     },
     recipes: {
       total: c(recipeStats, "total"),
-      active: c(recipeStats, "active"),
-      hidden: c(recipeStats, "hidden"),
       thisMonth: c(recipeStats, "thisMonth"),
+      active: c(recipeStats, "active"),
+      activeThisMonth: c(recipeStats, "activeThisMonth"),
+      hidden: c(recipeStats, "hidden"),
+      hiddenThisMonth: c(recipeStats, "hiddenThisMonth"),
     },
     feedbacks: {
       total: c(feedbackStats, "total"),
-      visible: c(feedbackStats, "visible"),
-      hidden: c(feedbackStats, "hidden"),
-      averageRating: rawAvg !== null ? Math.round(rawAvg * 10) / 10 : null,
       thisMonth: c(feedbackStats, "thisMonth"),
+      visible: c(feedbackStats, "visible"),
+      visibleThisMonth: c(feedbackStats, "visibleThisMonth"),
+      hidden: c(feedbackStats, "hidden"),
+      hiddenThisMonth: c(feedbackStats, "hiddenThisMonth"),
+      averageRating: rawAvg !== null ? Math.round(rawAvg * 10) / 10 : null,
     },
     clients: {
       total: clientsTotal,
@@ -420,17 +509,22 @@ const getDashboardStats = async () => {
       unassignedToSpecialist: c(userStats, "unassignedClients"),
     },
     subscriptions: {
-      active: activeSubscriptions,
-      expired: expiredSubscriptions,
-      cancelled: cancelledSubscriptions,
-      expiringSoon: c(subscriptionStats, "expiringSoon"),
       thisMonth: c(subscriptionStats, "thisMonth"),
+      active: activeSubscriptions,
+      activeThisMonth: c(subscriptionStats, "activeThisMonth"),
+      expired: expiredSubscriptions,
+      expiredThisMonth: c(subscriptionStats, "expiredThisMonth"),
+      cancelled: cancelledSubscriptions,
+      cancelledThisMonth: c(subscriptionStats, "cancelledThisMonth"),
+      expiringSoon: c(subscriptionStats, "expiringSoon"),
     },
     specialists: {
       total: c(userStats, "specialistsTotal"),
-      active: c(userStats, "specialistsActive"),
-      inactive: c(userStats, "specialistsInactive"),
       thisMonth: c(userStats, "specialistsThisMonth"),
+      active: c(userStats, "specialistsActive"),
+      activeThisMonth: c(userStats, "specialistsActiveThisMonth"),
+      inactive: c(userStats, "specialistsInactive"),
+      inactiveThisMonth: c(userStats, "specialistsInactiveThisMonth"),
     },
     insights: {
       articlesAddedThisMonth: c(articleStats, "thisMonth"),
