@@ -93,6 +93,8 @@ app.use(
       // Origin header is only set for cross-origin requests
       if (!origin) return callback(null, true);
 
+      console.log(`ALLOWED ORIGINS: ${env.allowedOrigins.join(", ")}`);
+      console.log(`CORS check for origin: ${origin}`);
       // Check if origin is in whitelist
       if (env.allowedOrigins.includes(origin)) {
         callback(null, true);
