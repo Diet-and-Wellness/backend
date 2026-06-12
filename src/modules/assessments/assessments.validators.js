@@ -104,17 +104,14 @@ const resultRangesBody = (fieldPath = "resultRanges") => [
     .isArray({ min: 1 })
     .withMessage(["INVALID_ARRAY", { field: fieldPath }]),
   body(`${fieldPath}.*.minScore`)
-    .isInt({ min: 0, max: 10 })
+    .isInt({ min: 0 })
     .withMessage([
       "INVALID_RANGE_VALUE",
-      { field: "minScore", min: 0, max: 10 },
+      { field: "minScore", min: 0 },
     ]),
   body(`${fieldPath}.*.maxScore`)
-    .isInt({ min: 0, max: 10 })
-    .withMessage([
-      "INVALID_RANGE_VALUE",
-      { field: "maxScore", min: 0, max: 10 },
-    ]),
+    .isInt({ min: 0 })
+    .withMessage(["INVALID_RANGE_VALUE", { field: "maxScore", min: 0 }]),
   ...localizedField(`${fieldPath}.*.label`, { min: 1, max: 100 }),
   ...localizedField(`${fieldPath}.*.description`, { min: 1, max: 2000 }),
   body(`${fieldPath}.*.recommendations`)

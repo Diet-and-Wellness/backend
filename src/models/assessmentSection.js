@@ -61,8 +61,8 @@ const questionSchema = new mongoose.Schema(
 
 const resultRangeSchema = new mongoose.Schema(
   {
-    minScore: { type: Number, required: true, min: 0, max: 10 },
-    maxScore: { type: Number, required: true, min: 0, max: 10 },
+    minScore: { type: Number, required: true, min: 0 },
+    maxScore: { type: Number, required: true, min: 0 },
     label: {
       en: { type: String, required: true, trim: true },
       ar: { type: String, required: true, trim: true },
@@ -109,16 +109,15 @@ const assessmentSectionSchema = new mongoose.Schema(
           if (!ranges || ranges.length === 0) return false;
           const sorted = [...ranges].sort((a, b) => a.minScore - b.minScore);
           if (sorted[0].minScore !== 0) return false;
-          if (sorted[sorted.length - 1].maxScore !== 10) return false;
           for (let i = 0; i < sorted.length; i++) {
-            if (sorted[i].maxScore < sorted[i].minScore) return false;
+            if (sorted[i].maxScore <= sorted[i].minScore) return false;
             if (i > 0 && sorted[i].minScore !== sorted[i - 1].maxScore + 1)
               return false;
           }
           return true;
         },
         message:
-          "Result ranges must be non-empty, start at 0, end at exactly 10, and be contiguous with no gaps or overlaps",
+          "Result ranges must be non-empty, start at 0, and be contiguous with no gaps or overlaps",
       },
     },
   },

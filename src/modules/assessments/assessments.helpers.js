@@ -18,15 +18,11 @@ export function validateResultRanges(ranges) {
     return "Result ranges must start at minScore 0";
   }
 
-  if (sorted[sorted.length - 1].maxScore !== 10) {
-    return "Result ranges must end at maxScore 10";
-  }
-
   for (let i = 0; i < sorted.length; i++) {
     const range = sorted[i];
 
     if (range.maxScore < range.minScore) {
-      return `Range "${range.label}": maxScore must be >= minScore`;
+      return `Range "${range.label}": maxScore must be > minScore`;
     }
 
     if (i > 0) {

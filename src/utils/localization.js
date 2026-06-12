@@ -453,7 +453,7 @@ const translations = {
       "Answer missing for question ({{question}})",
     [ERROR_CODES.ASSESSMENT_NOT_FOUND]: "Assessment result not found",
     [ERROR_CODES.ASSESSMENT_RESULT_RANGES_INVALID]:
-      "Result ranges must start at 0, end at exactly 10, be contiguous with no gaps or overlaps",
+      "Result ranges must start at 0 and be contiguous with no gaps or overlaps",
     [ERROR_CODES.ASSESSMENT_FORM_DELETED]:
       "Assessment form deleted successfully",
     [ERROR_CODES.ASSESSMENT_SECTION_DELETED]:
