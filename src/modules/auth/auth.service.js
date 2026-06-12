@@ -123,6 +123,10 @@ const login = async ({ email, phone, password }) => {
     id: user._id,
     role: user.role,
   });
+
+  // TODO: Remove or reduce logging in production to avoid sensitive information exposure
+  console.log("Response Headers:", res.getHeaders());
+
   return { accessToken, refreshToken, user: user.toJSON() };
 };
 
