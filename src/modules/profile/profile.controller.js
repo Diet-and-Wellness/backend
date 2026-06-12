@@ -24,10 +24,10 @@ const getProfileDetails = async (req, res, next) => {
 // Search and filter profiles
 const searchProfiles = async (req, res, next) => {
   try {
-    const result = await profileService.searchProfiles(
-      req.query,
-      req.user.role,
-    );
+    const result = await profileService.searchProfiles(req.query, {
+      id: req.user.user_id,
+      role: req.user.role,
+    });
     res.json(result);
   } catch (error) {
     next(error);

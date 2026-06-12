@@ -31,7 +31,7 @@ const getProfile = async (userId) => {
 };
 
 // Search and filter profiles (admin/specialists only)
-const searchProfiles = async (query, requesterRole) => {
+const searchProfiles = async (query, requester) => {
   const filters = {};
 
   // Search by name (firstName or lastName)
@@ -61,6 +61,13 @@ const searchProfiles = async (query, requesterRole) => {
       $regex: query.specialization,
       $options: "i",
     };
+  }
+
+  // If requester is a specialist, restrict results to their assigned customers only
+  if (requester && requester.role === "specialist") {
+    // Force role to customer and limit to customers assigned to this specialist
+    filters.role = "customer";
+    filters.specialist = requester.id;
   }
 
   const skip = (query.page - 1) * query.limit || 0;
