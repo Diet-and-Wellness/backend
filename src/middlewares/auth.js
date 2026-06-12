@@ -7,10 +7,6 @@ const authenticate = async (req, res, next) => {
   // HTTP-only cookie is the only accepted auth mechanism.
   // Bearer token header fallback is intentionally disabled.
 
-  // log all the headers for debugging purposes
-  // TODO: Remove or reduce logging in production to avoid sensitive information exposure
-  console.log("Request Headers:", req.headers);
-
   const token = req.cookies?.accessToken;
 
   if (!token) {

@@ -42,8 +42,6 @@ const login = async (req, res, next) => {
       refreshToken: result.refreshToken,
     });
 
-    // TODO: Remove or reduce logging in production to avoid sensitive information exposure
-    console.log("Response Headers:", res.getHeaders());
     // Tokens are delivered via httpOnly cookies only — not exposed in the body.
     res.json({ success: true, data: result.user });
   } catch (error) {

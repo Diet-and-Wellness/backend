@@ -29,13 +29,6 @@ router.get("/health", (req, res) => {
   });
 });
 
-// TODO: Remove this debug route in production to avoid sensitive information exposure
-router.get("/debug-cookies", (req, res) => {
-  res.json({
-    cookies: req.headers.cookie || null,
-  });
-});
-
 // Default API root route (must come BEFORE 404)
 router.use((req, res, next) => {
   if (req.path === "/") {
