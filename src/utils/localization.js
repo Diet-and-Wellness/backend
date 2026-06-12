@@ -201,6 +201,7 @@ export const ERROR_CODES = {
 
   CONTACT_US_ERROR: "CONTACT_US_ERROR",
   INVALID_LOCALIZED_OBJECT: "INVALID_LOCALIZED_OBJECT",
+  WEIGHT_UNCHANGED: "WEIGHT_UNCHANGED",
 };
 
 // Translation dictionary - easily extensible
@@ -462,6 +463,8 @@ const translations = {
       "An error occurred while sending your message. Please try again later.",
     [ERROR_CODES.INVALID_LOCALIZED_OBJECT]:
       "Invalid localized object. Must be an object with language codes (ar, en) as keys and strings as values",
+    [ERROR_CODES.WEIGHT_UNCHANGED]:
+      "New weight must be different from the current weight",
   },
 
   ar: {
@@ -706,6 +709,8 @@ const translations = {
       "حدث خطأ أثناء إرسال رسالتك. يرجى المحاولة مرة أخرى لاحقًا.",
     [ERROR_CODES.INVALID_LOCALIZED_OBJECT]:
       "كائن محلي غير صالح. يجب أن يكون كائناً يحتوي على رموز اللغات (ar, en) كمفاتيح وقيم نصية",
+    [ERROR_CODES.WEIGHT_UNCHANGED]:
+      "يجب أن يكون الوزن الجديد مختلفًا عن الوزن الحالي",
   },
 };
 
