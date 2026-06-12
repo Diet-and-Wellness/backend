@@ -50,6 +50,55 @@ const userSchema = new mongoose.Schema(
       default: null,
     },
 
+    profile: {
+      gender: {
+        type: String,
+        enum: ["male", "female"],
+      },
+      age: {
+        type: Number,
+        min: 1,
+      },
+      maritalStatus: {
+        type: String,
+        enum: ["single", "married", "other"],
+      },
+      currentWeight: {
+        type: Number,
+        min: 1,
+      },
+      height: {
+        type: Number,
+        min: 30,
+      },
+      location: {
+        type: String,
+        trim: true,
+      },
+      weightHistory: [
+        new mongoose.Schema(
+          {
+            weight: {
+              type: Number,
+              required: true,
+              min: 1,
+            },
+            date: {
+              type: Date,
+              required: true,
+              default: Date.now,
+            },
+            note: {
+              type: String,
+              trim: true,
+              default: null,
+            },
+          },
+          { _id: false },
+        ),
+      ],
+    },
+
     // this points to the assessment result document
     assessment: {
       type: mongoose.Schema.Types.ObjectId,
@@ -145,6 +194,13 @@ userSchema.methods.toJSON = function () {
   // Remove specialistInfo if not a specialist
   if (user.role !== "specialist") {
     delete user.specialistInfo;
+  }
+
+  // return only the last 5 weight history records
+  if (user.profile && user.profile.weightHistory) {
+    user.profile.weightHistory = user.profile.weightHistory
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .slice(0, 5);
   }
 
   return user;

@@ -47,6 +47,22 @@ const updateProfile = async (req, res, next) => {
   }
 };
 
+const addWeightRecord = async (req, res, next) => {
+  try {
+    const result = await profileService.addWeightRecord(
+      req.params.customerId,
+      req.body,
+      {
+        requestingUserId: req.user.user_id,
+        requestingUserRole: req.user.role,
+      },
+    );
+    res.status(201).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Admin: Create specialist profile
 const createSpecialistProfile = async (req, res, next) => {
   try {
@@ -138,6 +154,7 @@ export default {
   getProfileDetails,
   searchProfiles,
   updateProfile,
+  addWeightRecord,
   createSpecialistProfile,
   activateSpecialist,
   deactivateSpecialist,

@@ -105,11 +105,23 @@ const searchProfiles = async (query, requesterRole) => {
 // Update user profile
 const updateProfile = async (userId, updateData) => {
   // Prevent updating sensitive fields
-  const allowedFields = ["firstName", "lastName", "phone", "avatarUrl"];
+  const allowedFields = [
+    "firstName",
+    "lastName",
+    "phone",
+    "avatarUrl",
+    "profile",
+  ];
 
-  // If user is specialist, allow updating specialist info
   const user = await User.findById(userId);
-  if (user?.role === "specialist" && updateData.specialistInfo) {
+  if (!user) {
+    const error = new Error(translate(ERROR_CODES.USER_NOT_FOUND, "en"));
+    error.code = ERROR_CODES.USER_NOT_FOUND;
+    error.status = 404;
+    throw error;
+  }
+
+  if (user.role === "specialist" && updateData.specialistInfo) {
     allowedFields.push("specialistInfo");
   }
 
@@ -122,23 +134,110 @@ const updateProfile = async (userId, updateData) => {
     });
   }
 
-  // Delete old avatar from Cloudinary if being replaced
-  if (filteredData.avatarUrl && user?.avatarUrl) {
+  const weightBeforeUpdate = user.profile?.currentWeight;
+
+  // init profile safely
+  user.profile = user.profile || {};
+  user.profile.weightHistory = user.profile.weightHistory || [];
+
+  if (filteredData.avatarUrl && user.avatarUrl) {
     cloudinaryService.deleteImage(user.avatarUrl).catch(() => {});
   }
 
-  const updatedUser = await User.findByIdAndUpdate(userId, filteredData, {
-    new: true,
-    runValidators: true,
+  // apply top-level allowed fields EXCEPT profile (handled separately)
+  const { profile, ...topLevelData } = updateData;
+  Object.keys(topLevelData).forEach((key) => {
+    if (allowedFields.includes(key) && topLevelData[key] !== undefined) {
+      user[key] = topLevelData[key];
+    }
   });
+  // apply profile fields safely (NO full overwrite)
+  const profileFields = [
+    "gender",
+    "age",
+    "maritalStatus",
+    "currentWeight",
+    "height",
+    "location",
+  ];
 
-  if (!updatedUser) {
+  if (profile) {
+    profileFields.forEach((field) => {
+      if (profile[field] !== undefined) {
+        user.profile[field] = profile[field];
+      }
+    });
+  }
+
+  const weightAfterUpdate = user.profile?.currentWeight;
+  console.log("Weight before update:", weightBeforeUpdate);
+  console.log("Weight after update:", weightAfterUpdate);
+  console.log("Weight changed:", updateData.profile?.currentWeight);
+  if (
+    updateData.profile?.currentWeight !== undefined &&
+    weightAfterUpdate !== weightBeforeUpdate
+  ) {
+    console.log("Adding weight record due to currentWeight change");
+    user.profile.weightHistory.push({
+      weight: weightAfterUpdate,
+      date: new Date(),
+    });
+  }
+
+  const updatedUser = await user.save();
+
+  return updatedUser;
+};
+
+const addWeightRecord = async (customerId, recordData, auth) => {
+  const customer = await User.findById(customerId);
+  if (!customer) {
     const error = new Error(translate(ERROR_CODES.USER_NOT_FOUND, "en"));
     error.code = ERROR_CODES.USER_NOT_FOUND;
     error.status = 404;
     throw error;
   }
-  return updatedUser;
+
+  // Ensure target is a customer
+  if (customer.role !== "customer") {
+    const error = new Error("Target user is not a customer");
+    error.code = "USER_NOT_CUSTOMER";
+    error.status = 400;
+    throw error;
+  }
+
+  // Authorization: specialists can only update assigned customers
+  if (auth.requestingUserRole === "specialist") {
+    if (
+      !customer.specialist ||
+      customer.specialist.toString() !== auth.requestingUserId
+    ) {
+      const error = new Error(
+        "You can only update weight for customers assigned to you",
+      );
+      error.status = 403;
+      throw error;
+    }
+  }
+  // admins can update any customer
+
+  customer.profile = customer.profile || {};
+  const weight = recordData.weight;
+  const date = recordData.date ? new Date(recordData.date) : new Date();
+  const note = recordData.note ?? null;
+
+  if (weight === customer.profile.currentWeight) {
+    const error = new Error(translate(ERROR_CODES.WEIGHT_UNCHANGED, "en"));
+    error.code = ERROR_CODES.WEIGHT_UNCHANGED;
+    error.status = 400;
+    throw error;
+  }
+
+  customer.profile.currentWeight = weight;
+  customer.profile.weightHistory = customer.profile.weightHistory || [];
+  customer.profile.weightHistory.push({ weight, date, note });
+
+  return await customer.save();
 };
 
 // Admin: Create specialist profile
@@ -546,4 +645,5 @@ export default {
   deactivateSpecialist,
   assignCustomersToSpecialist,
   getDashboardStats,
+  addWeightRecord,
 };

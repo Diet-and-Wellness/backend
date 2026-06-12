@@ -28,6 +28,48 @@ const updateProfile = [
     .optional()
     .isInt({ min: 0 })
     .withMessage(["INVALID_LENGTH", { field: "experienceYears", min: 0 }]),
+  body("profile.gender")
+    .optional()
+    .isIn(["male", "female"])
+    .withMessage(["INVALID_VALUE", { field: "gender" }]),
+  body("profile.age")
+    .optional()
+    .isInt({ min: 1, max: 120 })
+    .withMessage(["INVALID_INPUT"]),
+  body("profile.currentWeight")
+    .optional()
+    .isFloat({ min: 1 })
+    .withMessage(["INVALID_INPUT"]),
+  body("profile.height")
+    .optional()
+    .isFloat({ min: 30 })
+    .withMessage(["INVALID_INPUT"]),
+  body("profile.maritalStatus")
+    .optional()
+    .isIn(["single", "married", "other"])
+    .withMessage(["INVALID_VALUE", { field: "maritalStatus" }]),
+  body("profile.location")
+    .optional()
+    .trim()
+    .isLength({ min: 1 })
+    .withMessage(["INVALID_LENGTH", { field: "location", min: 1 }]),
+];
+
+const addWeightRecord = [
+  param("customerId")
+    .isMongoId()
+    .withMessage(["INVALID_MONGO_ID_FORMAT", { field: "customerId" }]),
+  body("weight")
+    .notEmpty()
+    .withMessage(["REQUIRED_FIELD", { field: "weight" }])
+    .isFloat({ min: 1 })
+    .withMessage(["INVALID_INPUT"]),
+  body("date").optional().isISO8601().withMessage(["INVALID_DATE"]),
+  body("note")
+    .optional()
+    .trim()
+    .isLength({ max: 200 })
+    .withMessage(["INVALID_LENGTH", { field: "note", max: 200 }]),
 ];
 
 const createSpecialistProfile = [
@@ -143,6 +185,7 @@ const userId = [
 
 export default {
   updateProfile,
+  addWeightRecord,
   createSpecialistProfile,
   searchProfiles,
   specialistId,

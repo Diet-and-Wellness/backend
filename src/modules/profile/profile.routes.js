@@ -41,6 +41,16 @@ router.put(
   controller.updateProfile,
 );
 
+// Add a new weight record and update customer weight (admin/specialists only)
+router.post(
+  "/:customerId/weight-history",
+  standardLimiter,
+  ensureRoles(["admin", "specialist"]),
+  validators.addWeightRecord,
+  handleValidationErrors,
+  controller.addWeightRecord,
+);
+
 // Search and filter profiles (admin/specialists only)
 router.get(
   "/search",
