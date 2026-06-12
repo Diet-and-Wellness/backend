@@ -103,6 +103,7 @@ app.use(
         callback(new Error("CORS policy: Origin not allowed"));
       }
     },
+    resource: "*",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization", "Accept-Language"],
