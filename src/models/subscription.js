@@ -19,6 +19,7 @@ const subscriptionSchema = new mongoose.Schema(
     },
     displayName: {
       type: {
+        _id: false,
         ar: { type: String, required: true, trim: true },
         en: { type: String, required: true, trim: true },
       },
@@ -41,6 +42,7 @@ const subscriptionSchema = new mongoose.Schema(
     },
     description: {
       type: {
+        _id: false,
         ar: { type: String, required: true, trim: true },
         en: { type: String, required: true, trim: true },
       },
@@ -49,6 +51,7 @@ const subscriptionSchema = new mongoose.Schema(
     features: {
       type: [
         {
+          _id: false,
           ar: { type: String, required: true, trim: true },
           en: { type: String, required: true, trim: true },
         },
@@ -79,6 +82,7 @@ const subscriptionSchema = new mongoose.Schema(
     },
     planNote: {
       type: {
+        _id: false,
         ar: { type: String, required: true, trim: true },
         en: { type: String, required: true, trim: true },
       },

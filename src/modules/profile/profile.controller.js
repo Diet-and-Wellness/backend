@@ -4,7 +4,10 @@ import profileService from "./profile.service.js";
 // Get current user's profile
 const getProfile = async (req, res, next) => {
   try {
-    const result = await profileService.getProfile(req.user.user_id);
+    const result = await profileService.getProfile(
+      req.user.user_id,
+      getLanguage(req),
+    );
     res.json(result);
   } catch (error) {
     next(error);
@@ -14,7 +17,10 @@ const getProfile = async (req, res, next) => {
 // Get another user's profile details (admin/specialists only)
 const getProfileDetails = async (req, res, next) => {
   try {
-    const result = await profileService.getProfile(req.params.userId);
+    const result = await profileService.getProfile(
+      req.params.userId,
+      getLanguage(req),
+    );
     res.json(result);
   } catch (error) {
     next(error);
@@ -24,10 +30,14 @@ const getProfileDetails = async (req, res, next) => {
 // Search and filter profiles
 const searchProfiles = async (req, res, next) => {
   try {
-    const result = await profileService.searchProfiles(req.query, {
-      id: req.user.user_id,
-      role: req.user.role,
-    });
+    const result = await profileService.searchProfiles(
+      req.query,
+      {
+        id: req.user.user_id,
+        role: req.user.role,
+      },
+      getLanguage(req),
+    );
     res.json(result);
   } catch (error) {
     next(error);

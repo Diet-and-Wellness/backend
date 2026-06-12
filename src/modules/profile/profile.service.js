@@ -7,7 +7,7 @@ import cloudinaryService from "#utils/cloudinary.js";
 import { ERROR_CODES, translate, getLanguage } from "#utils/localization.js";
 
 // Get user's own profile
-const getProfile = async (userId) => {
+const getProfile = async (userId, lang = "en") => {
   const user = await User.findById(userId);
   if (!user) {
     const error = new Error(translate(ERROR_CODES.USER_NOT_FOUND, "en"));
@@ -25,13 +25,20 @@ const getProfile = async (userId) => {
     const userSubscription = await UserSubscription.findOne({
       user: user._id,
     }).populate("subscription");
-    userObj.subscription = userSubscription ?? null;
+    userObj.subscription = {
+      name: userSubscription?.subscription?.name ?? null,
+      displayName: userSubscription?.subscription?.displayName?.[lang] ?? null,
+      price: userSubscription?.subscription?.price ?? null,
+      durationInDays: userSubscription?.subscription?.durationInDays ?? null,
+      active: userSubscription ? userSubscription.status === "active" : null,
+      subscriptionCount: userSubscription.subscriptionCount ?? null,
+    };
   }
   return userObj;
 };
 
 // Search and filter profiles (admin/specialists only)
-const searchProfiles = async (query, requester) => {
+const searchProfiles = async (query, requester, lang = "en") => {
   const filters = {};
 
   // Search by name (firstName or lastName)
@@ -92,7 +99,18 @@ const searchProfiles = async (query, requester) => {
         const userSubscription = await UserSubscription.findOne({
           user: user._id,
         }).populate("subscription");
-        userObj.subscription = userSubscription ?? null;
+        userObj.subscription = {
+          name: userSubscription?.subscription?.name ?? null,
+          displayName:
+            userSubscription?.subscription?.displayName?.[lang] ?? null,
+          price: userSubscription?.subscription?.price ?? null,
+          durationInDays:
+            userSubscription?.subscription?.durationInDays ?? null,
+          active: userSubscription
+            ? userSubscription.status === "active"
+            : null,
+          subscriptionCount: userSubscription.subscriptionCount ?? null,
+        };
       }
       return userObj;
     }),
