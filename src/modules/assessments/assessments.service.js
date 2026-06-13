@@ -726,19 +726,22 @@ export async function getProgress(userId, language = null) {
     form: form._id,
   });
 
-  const allSections = await AssessmentSection.find({ form: form._id })
-    .sort({ order: 1 })
-    .select("_id title order");
+  const allVisibleSections = [];
+  const userObj = await User.findById(userId);
+  for (const sectionId of form.sections) {
+    const section = await AssessmentSection.findById(sectionId);
+    if (section && isSectionVisibleForUser(section, userObj)) {
+      allVisibleSections.push(section);
+    }
+  }
 
-  const answeredIds = new Set(
-    (submission?.sectionResults || []).map((r) => r.section.toString()),
-  );
+  const answeredIds = new Set(submission?.sectionResults.map((r) => r.section));
 
   return {
     status: submission?.status || null,
-    totalSections: allSections.length,
+    totalSections: allVisibleSections.length,
     answeredSections: answeredIds.size,
-    sections: allSections.map((s) => ({
+    sections: allVisibleSections.map((s) => ({
       id: s._id,
       title: language ? (s.title?.[language] ?? s.title?.en) : s.title,
       order: s.order,
