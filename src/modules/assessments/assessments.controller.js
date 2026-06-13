@@ -190,7 +190,7 @@ export const getUserSubmission = async (req, res, next) => {
 
 export const getActiveForm = async (req, res, next) => {
   try {
-    const form = await service.getActiveForm(req.language);
+    const form = await service.getActiveForm(req.user.user_id, req.language);
     res.json({ success: true, data: form });
   } catch (err) {
     next(err);
@@ -200,6 +200,7 @@ export const getActiveForm = async (req, res, next) => {
 export const getActiveFormSection = async (req, res, next) => {
   try {
     const section = await service.getActiveFormSection(
+      req.user.user_id,
       req.params.sectionId,
       req.language,
     );

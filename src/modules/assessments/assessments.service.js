@@ -13,6 +13,7 @@ import {
   buildAnswerSnapshots,
   stripScoresFromForm,
   localizeContent,
+  isSectionVisibleForUser,
 } from "./assessments.helpers.js";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -400,7 +401,7 @@ export async function deleteQuestion(sectionId, questionId) {
 // Customer — Assessment
 // ─────────────────────────────────────────────────────────────────────────────
 
-export async function getActiveForm(language = null) {
+export async function getActiveForm(userId, language = null) {
   const form = await AssessmentForm.findOne({ isActive: true }).populate({
     path: "sections",
     select: "-questions -form",
@@ -409,10 +410,21 @@ export async function getActiveForm(language = null) {
 
   if (!form) throw createError(ERROR_CODES.NO_ACTIVE_ASSESSMENT_FORM, 404);
 
+  // Get user with profile to check section visibility
+  const user = await User.findById(userId);
+  if (!user) throw createError(ERROR_CODES.USER_NOT_FOUND, 404);
+
+  // Filter sections based on visibility for the user
+  if (form.sections) {
+    form.sections = form.sections.filter((section) =>
+      isSectionVisibleForUser(section, user),
+    );
+  }
+
   return stripScoresFromForm(form, language);
 }
 
-export async function getActiveFormSection(sectionId, language = null) {
+export async function getActiveFormSection(userId, sectionId, language = null) {
   const form = await AssessmentForm.findOne({ isActive: true });
   if (!form) throw createError(ERROR_CODES.NO_ACTIVE_ASSESSMENT_FORM, 404);
 
@@ -427,6 +439,16 @@ export async function getActiveFormSection(sectionId, language = null) {
   const section = await AssessmentSection.findById(sectionId);
   if (!section)
     throw createError(ERROR_CODES.ASSESSMENT_SECTION_NOT_FOUND, 404);
+
+  // Get user and check if section is visible
+  const user = await User.findById(userId);
+  if (!user) throw createError(ERROR_CODES.USER_NOT_FOUND, 404);
+
+  if (!isSectionVisibleForUser(section, user)) {
+    throw createError(ERROR_CODES.ASSESSMENT_SECTION_NOT_VISIBLE, 403, {
+      section: section.title?.en ?? "",
+    });
+  }
 
   // Strip scores and result ranges for customer
   const s = section.toJSON();
@@ -484,6 +506,16 @@ export async function submitSection(
   const section = await AssessmentSection.findById(sectionId);
   if (!section)
     throw createError(ERROR_CODES.ASSESSMENT_SECTION_NOT_FOUND, 404);
+
+  // Check if section is visible for the user
+  const user = await User.findById(userId);
+  if (!user) throw createError(ERROR_CODES.USER_NOT_FOUND, 404);
+
+  if (!isSectionVisibleForUser(section, user)) {
+    throw createError(ERROR_CODES.ASSESSMENT_SECTION_NOT_VISIBLE, 403, {
+      section: section.title?.en ?? "",
+    });
+  }
 
   const existingSubmission = await AssessmentSubmission.findOne({
     user: userId,
@@ -547,7 +579,7 @@ export async function submitSection(
 }
 
 /**
- * Finalize an in-progress submission after all sections have been submitted
+ * Finalize an in-progress submission after all visible sections have been submitted
  * section-by-section.
  */
 export async function finalizeSubmission(userId, language = null) {
@@ -563,18 +595,32 @@ export async function finalizeSubmission(userId, language = null) {
     throw createError(ERROR_CODES.ASSESSMENT_NO_DRAFT_SUBMISSION, 404);
   }
 
-  // Check all form sections are answered
+  // Get user and form with sections to check which sections are required
+  const user = await User.findById(userId);
+  if (!user) throw createError(ERROR_CODES.USER_NOT_FOUND, 404);
+
+  const fullForm = await AssessmentForm.findById(form._id).populate({
+    path: "sections",
+    options: { sort: { order: 1 } },
+  });
+
+  // Filter to only required (visible) sections for this user
+  const requiredSectionIds = fullForm.sections
+    .filter((section) => isSectionVisibleForUser(section, user))
+    .map((section) => section._id.toString());
+
+  // Check all visible sections are answered
   const answeredSectionIds = new Set(
     submission.sectionResults.map((r) => r.section.toString()),
   );
 
-  const missingSections = form.sections.filter(
-    (id) => !answeredSectionIds.has(id.toString()),
+  const missingVisibleSections = requiredSectionIds.filter(
+    (id) => !answeredSectionIds.has(id),
   );
 
-  if (missingSections.length > 0) {
+  if (missingVisibleSections.length > 0) {
     throw createError(ERROR_CODES.ASSESSMENT_SECTIONS_INCOMPLETE, 400, {
-      sections: missingSections.length,
+      sections: missingVisibleSections.length,
     });
   }
 

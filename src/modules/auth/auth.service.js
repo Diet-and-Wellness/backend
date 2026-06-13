@@ -124,9 +124,11 @@ const login = async ({ email, phone, password }) => {
     role: user.role,
   });
 
-  user.assignedCustomersCount = await User.countDocuments({
-    specialist: user._id,
-  });
+  if (user.role === "specialist") {
+    user.assignedCustomersCount = await User.countDocuments({
+      specialist: user._id,
+    });
+  }
 
   return {
     accessToken,

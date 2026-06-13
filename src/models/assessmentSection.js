@@ -1,4 +1,9 @@
 import mongoose from "mongoose";
+import {
+  ASSESSMENT_CONDITION_LOGIC,
+  ASSESSMENT_CONDITION_FIELDS,
+  ASSESSMENT_CONDITION_OPERATORS,
+} from "../modules/assessments/assessments.constants.js";
 
 const idTransform = (doc, ret) => {
   ret.id = ret._id;
@@ -30,6 +35,41 @@ const conditionSchema = new mongoose.Schema(
         validator: (arr) => arr.length >= 1,
         message: "condition.choiceIds must contain at least one choice ID",
       },
+    },
+  },
+  { _id: false },
+);
+
+// Section visibility condition based on user attributes
+const sectionConditionSchema = new mongoose.Schema(
+  {
+    // Simple rule: { field: 'gender', value: 'female' }
+    // Complex rule with operators: { field: 'age', operator: '>=', value: 18 }
+    rules: {
+      type: [
+        {
+          field: {
+            type: String,
+            required: true,
+            enum: ASSESSMENT_CONDITION_FIELDS,
+          },
+          operator: {
+            type: String,
+            enum: ASSESSMENT_CONDITION_OPERATORS,
+            default: "equals",
+          },
+          value: {
+            type: mongoose.Schema.Types.Mixed,
+            required: true,
+          },
+        },
+      ],
+      default: [],
+    },
+    logic: {
+      type: String,
+      enum: ASSESSMENT_CONDITION_LOGIC,
+      default: "AND",
     },
   },
   { _id: false },
@@ -102,6 +142,11 @@ const assessmentSectionSchema = new mongoose.Schema(
     },
     order: { type: Number, required: true, min: 1 },
     questions: { type: [questionSchema], default: [] },
+    // Condition to determine if this section is visible/required for a user
+    visibilityCondition: {
+      type: sectionConditionSchema,
+      default: () => ({ rules: [], logic: "AND" }),
+    },
     resultRanges: {
       type: [resultRangeSchema],
       validate: {
@@ -110,7 +155,7 @@ const assessmentSectionSchema = new mongoose.Schema(
           const sorted = [...ranges].sort((a, b) => a.minScore - b.minScore);
           if (sorted[0].minScore !== 0) return false;
           for (let i = 0; i < sorted.length; i++) {
-            if (sorted[i].maxScore <= sorted[i].minScore) return false;
+            if (sorted[i].maxScore < sorted[i].minScore) return false;
             if (i > 0 && sorted[i].minScore !== sorted[i - 1].maxScore + 1)
               return false;
           }

@@ -9,6 +9,7 @@ import Subscription from "#models/subscription.js";
 import UserSubscription from "#models/userSubscription.js";
 import AssessmentForm from "#models/assessmentForm.js";
 import AssessmentSection from "#models/assessmentSection.js";
+import { assessmentFormSeed } from "./assessmentSeedData.js";
 
 const DEFAULT_PASSWORD = env.defaultPassword || "123456";
 
@@ -336,14 +337,13 @@ async function createSubscriptionsAndUserSubscriptions(users) {
 }
 
 async function createAssessmentForm(createdBy) {
-  // idempotent by title
-  const titleEn = "Idempotent Assessment";
+  const titleEn = assessmentFormSeed.title.en;
   let form = await AssessmentForm.findOne({ "title.en": titleEn });
   if (form) return form;
 
   form = new AssessmentForm({
-    title: { en: titleEn, ar: "تقييم" },
-    description: { en: "A sample assessment form", ar: "نموذج تقييم تجريبي" },
+    title: assessmentFormSeed.title,
+    description: assessmentFormSeed.description,
     isActive: true,
     createdBy: createdBy._id,
     sections: [],
@@ -351,58 +351,18 @@ async function createAssessmentForm(createdBy) {
 
   await form.save();
 
-  // create 3 sections with 3 questions each
   const sections = [];
-  for (let s = 1; s <= 3; s++) {
-    const questions = [];
-    for (let q = 1; q <= 3; q++) {
-      const choices = [
-        { text: { en: `Never ${s}-${q}`, ar: "أبدا" }, score: 0 },
-        { text: { en: `Sometimes ${s}-${q}`, ar: "أحيانا" }, score: 5 },
-        { text: { en: `Always ${s}-${q}`, ar: "دائما" }, score: 10 },
-      ];
-
-      questions.push({
-        text: { en: `Question ${s}-${q}`, ar: `سؤال ${s}-${q}` },
-        order: q,
-        choices,
-      });
-    }
-
-    const resultRanges = [
-      {
-        minScore: 0,
-        maxScore: 3,
-        label: { en: "Low", ar: "منخفض" },
-        description: { en: "Low score", ar: "منخفض" },
-        recommendations: [{ en: "Improve", ar: "تحسين" }],
-      },
-      {
-        minScore: 4,
-        maxScore: 7,
-        label: { en: "Medium", ar: "متوسط" },
-        description: { en: "Medium score", ar: "متوسط" },
-        recommendations: [{ en: "Maintain", ar: "حافظ" }],
-      },
-      {
-        minScore: 8,
-        maxScore: 10,
-        label: { en: "High", ar: "مرتفع" },
-        description: { en: "High score", ar: "مرتفع" },
-        recommendations: [{ en: "Excellent", ar: "ممتاز" }],
-      },
-    ];
-
-    const sec = await AssessmentSection.create({
+  for (const sectionData of assessmentFormSeed.sections) {
+    const section = await AssessmentSection.create({
       form: form._id,
-      title: { en: `Section ${s}`, ar: `القسم ${s}` },
-      description: { en: `Section ${s} description`, ar: "" },
-      order: s,
-      questions,
-      resultRanges,
+      title: sectionData.title,
+      description: sectionData.description,
+      order: sectionData.order,
+      questions: sectionData.questions,
+      visibilityCondition: sectionData.visibilityCondition,
+      resultRanges: sectionData.resultRanges,
     });
-
-    sections.push(sec._id);
+    sections.push(section._id);
   }
 
   form.sections = sections;

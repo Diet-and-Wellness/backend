@@ -1,3 +1,9 @@
+import {
+  ASSESSMENT_CONDITION_LOGIC,
+  ASSESSMENT_CONDITION_FIELDS,
+  ASSESSMENT_CONDITION_OPERATORS,
+} from "./assessments.constants.js";
+
 /**
  * Validate that result ranges are:
  * - Non-empty array
@@ -22,7 +28,7 @@ export function validateResultRanges(ranges) {
     const range = sorted[i];
 
     if (range.maxScore < range.minScore) {
-      return `Range "${range.label}": maxScore must be > minScore`;
+      return `Range "${range.label}": maxScore must be > or = minScore`;
     }
 
     if (i > 0) {
@@ -203,4 +209,116 @@ export function localizeContent(obj, lang) {
   }
 
   return obj;
+}
+
+/**
+ * Check if a section is visible for a given user based on visibility condition.
+ *
+ * @param {Object} section - the assessment section with visibilityCondition
+ * @param {Object} user - the user object with profile data
+ * @returns {boolean} true if section is visible for the user, false otherwise
+ */
+export function isSectionVisibleForUser(section, user) {
+  // If no visibility condition or no rules, section is always visible
+  if (
+    !section.visibilityCondition ||
+    !section.visibilityCondition.rules ||
+    section.visibilityCondition.rules.length === 0
+  ) {
+    return true;
+  }
+
+  const { rules, logic } = section.visibilityCondition;
+
+  if (!rules || rules.length === 0) {
+    return false;
+  }
+
+  if (!logic) {
+    return false;
+  }
+
+  if (!Object.values(ASSESSMENT_CONDITION_LOGIC).includes(logic)) {
+    return false;
+  }
+
+  const results = rules.map((rule) => evaluateRule(rule, user));
+
+  // If logic is "AND", all rules must be true. If "OR", at least one must be true.
+  if (logic === ASSESSMENT_CONDITION_LOGIC.AND) {
+    return results.every((r) => r === true);
+  } else if (logic === ASSESSMENT_CONDITION_LOGIC.OR) {
+    return results.some((r) => r === true);
+  }
+
+  return true;
+}
+
+/**
+ * Evaluate a single condition rule against a user object.
+ *
+ * @param {Object} rule - condition rule with { field, operator, value }
+ * @param {Object} user - the user object
+ * @returns {boolean} whether the rule matches
+ */
+function evaluateRule(rule, user) {
+  const { field, operator, value } = rule;
+
+  if (!field || !operator || !value) {
+    return false;
+  }
+  if (!Object.values(ASSESSMENT_CONDITION_FIELDS).includes(field)) {
+    return false;
+  }
+  if (!Object.values(ASSESSMENT_CONDITION_OPERATORS).includes(operator)) {
+    return false;
+  }
+
+  // Extract the field value from user (supports nested paths like profile.gender)
+  const fieldValue = getFieldValue(user, field);
+
+  if (fieldValue === undefined) {
+    return false;
+  }
+
+  switch (operator) {
+    case "equals":
+      return fieldValue === value;
+    case "notEquals":
+      return fieldValue !== value;
+    case "greaterThan":
+      return fieldValue > value;
+    case "lessThan":
+      return fieldValue < value;
+    case "greaterThanOrEquals":
+      return fieldValue >= value;
+    case "lessThanOrEquals":
+      return fieldValue <= value;
+    case "in":
+      return Array.isArray(value) ? value.includes(fieldValue) : false;
+    default:
+      return false;
+  }
+}
+
+/**
+ * Get a field value from a user object, supporting nested paths.
+ *
+ * @param {Object} user - the user object
+ * @param {string} fieldPath - field path (e.g., "gender" or "profile.gender")
+ * @returns {*} the field value or undefined
+ */
+function getFieldValue(user, fieldPath) {
+  const parts = fieldPath.split(".");
+  let value = user;
+
+  for (const part of parts) {
+    if (value && typeof value === "object") {
+      value = value[part];
+    } else {
+      return undefined;
+    }
+  }
+
+  return value;
 }

@@ -186,6 +186,7 @@ export const ERROR_CODES = {
   CANNOT_DELETE_ACTIVE_FORM: "CANNOT_DELETE_ACTIVE_FORM",
   ASSESSMENT_CONDITION_INVALID: "ASSESSMENT_CONDITION_INVALID",
   ASSESSMENT_SECTION_NOT_IN_FORM: "ASSESSMENT_SECTION_NOT_IN_FORM",
+  ASSESSMENT_SECTION_NOT_VISIBLE: "ASSESSMENT_SECTION_NOT_VISIBLE",
   ASSESSMENT_SECTION_ALREADY_SUBMITTED: "ASSESSMENT_SECTION_ALREADY_SUBMITTED",
   ASSESSMENT_NO_DRAFT_SUBMISSION: "ASSESSMENT_NO_DRAFT_SUBMISSION",
   ASSESSMENT_ALREADY_COMPLETED: "ASSESSMENT_ALREADY_COMPLETED",
@@ -437,6 +438,8 @@ const translations = {
       "Question condition references an invalid question or choice",
     [ERROR_CODES.ASSESSMENT_SECTION_NOT_IN_FORM]:
       "Section does not belong to the active assessment form",
+    [ERROR_CODES.ASSESSMENT_SECTION_NOT_VISIBLE]:
+      'This section is not available for your profile. Section "{{section}}" requires different conditions',
     [ERROR_CODES.ASSESSMENT_SECTION_ALREADY_SUBMITTED]:
       "This section has already been submitted",
     [ERROR_CODES.ASSESSMENT_NO_DRAFT_SUBMISSION]:
@@ -687,6 +690,8 @@ const translations = {
       "شرط السؤال يشير إلى سؤال أو خيار غير صحيح",
     [ERROR_CODES.ASSESSMENT_SECTION_NOT_IN_FORM]:
       "القسم لا ينتمي إلى نموذج التقييم النشط",
+    [ERROR_CODES.ASSESSMENT_SECTION_NOT_VISIBLE]:
+      'هذا القسم غير متاح لملفك الشخصي. القسم "{{section}}" يتطلب شروطًا مختلفة',
     [ERROR_CODES.ASSESSMENT_SECTION_ALREADY_SUBMITTED]:
       "تم إرسال هذا القسم بالفعل",
     [ERROR_CODES.ASSESSMENT_NO_DRAFT_SUBMISSION]:
