@@ -124,7 +124,18 @@ const login = async ({ email, phone, password }) => {
     role: user.role,
   });
 
-  return { accessToken, refreshToken, user: user.toJSON() };
+  user.assignedCustomersCount = await User.countDocuments({
+    specialist: user._id,
+  });
+
+  return {
+    accessToken,
+    refreshToken,
+    user: {
+      ...user.toJSON(),
+      assignedCustomersCount: user.assignedCustomersCount,
+    },
+  };
 };
 
 const refreshToken = async (token) => {
