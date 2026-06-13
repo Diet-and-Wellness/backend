@@ -147,7 +147,10 @@ const updateProfile = async (userId, updateData) => {
   }
 
   if (user.role === "specialist" && updateData.specialistInfo) {
-    allowedFields.push("specialistInfo");
+    allowedFields.push(
+      "specialistInfo.specialization",
+      "specialistInfo.experienceYears",
+    );
   }
 
   const filteredData = {};
@@ -170,7 +173,7 @@ const updateProfile = async (userId, updateData) => {
   }
 
   // apply top-level allowed fields EXCEPT profile (handled separately)
-  const { profile, ...topLevelData } = updateData;
+  const { profile, ...topLevelData } = filteredData;
   Object.keys(topLevelData).forEach((key) => {
     if (allowedFields.includes(key) && topLevelData[key] !== undefined) {
       user[key] = topLevelData[key];
