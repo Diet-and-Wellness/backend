@@ -99,6 +99,16 @@ router.post(
   controller.createSpecialistProfile,
 );
 
+// Admin: Update specialist details
+router.patch(
+  "/specialists/:specialistId",
+  standardLimiter,
+  ensureRoles(["admin"]),
+  validators.updateSpecialistProfile,
+  handleValidationErrors,
+  controller.updateSpecialistProfile,
+);
+
 // Admin: Activate specialist
 router.patch(
   "/specialists/:specialistId/activate",

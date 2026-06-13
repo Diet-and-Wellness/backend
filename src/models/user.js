@@ -51,52 +51,61 @@ const userSchema = new mongoose.Schema(
     },
 
     profile: {
-      gender: {
-        type: String,
-        enum: ["male", "female"],
-      },
-      age: {
-        type: Number,
-        min: 1,
-      },
-      maritalStatus: {
-        type: String,
-        enum: ["single", "married", "other"],
-      },
-      currentWeight: {
-        type: Number,
-        min: 1,
-      },
-      height: {
-        type: Number,
-        min: 30,
-      },
-      location: {
-        type: String,
-        trim: true,
-      },
-      weightHistory: [
-        new mongoose.Schema(
-          {
-            weight: {
-              type: Number,
-              required: true,
-              min: 1,
+      type: {
+        gender: {
+          type: String,
+          enum: ["male", "female"],
+        },
+        age: {
+          type: Number,
+          min: 1,
+        },
+        maritalStatus: {
+          type: String,
+          enum: ["single", "married", "other"],
+        },
+        currentWeight: {
+          type: Number,
+          min: 1,
+        },
+        height: {
+          type: Number,
+          min: 30,
+        },
+        location: {
+          type: String,
+          trim: true,
+        },
+        weightHistory: [
+          new mongoose.Schema(
+            {
+              weight: {
+                type: Number,
+                required: true,
+                min: 1,
+              },
+              date: {
+                type: Date,
+                required: true,
+                default: Date.now,
+              },
+              note: {
+                type: String,
+                trim: true,
+                default: null,
+              },
             },
-            date: {
-              type: Date,
-              required: true,
-              default: Date.now,
-            },
-            note: {
-              type: String,
-              trim: true,
-              default: null,
-            },
-          },
-          { _id: false },
-        ),
-      ],
+            { _id: false },
+          ),
+        ],
+      },
+      // profile fields for customers only
+      validate: {
+        validator: function (value) {
+          if (this.role !== "customer") return false;
+        },
+        message: "Profile fields are only available for customers",
+      },
     },
 
     // this points to the assessment result document

@@ -86,6 +86,19 @@ const createSpecialistProfile = async (req, res, next) => {
   }
 };
 
+// Admin: Update specialist details
+const updateSpecialistProfile = async (req, res, next) => {
+  try {
+    const result = await profileService.updateSpecialistProfile(
+      req.params.specialistId,
+      req.body,
+    );
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Admin: Activate specialist
 const activateSpecialist = async (req, res, next) => {
   try {
@@ -166,6 +179,7 @@ export default {
   updateProfile,
   addWeightRecord,
   createSpecialistProfile,
+  updateSpecialistProfile,
   activateSpecialist,
   deactivateSpecialist,
   assignCustomersToSpecialist,

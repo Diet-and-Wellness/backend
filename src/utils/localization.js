@@ -202,6 +202,7 @@ export const ERROR_CODES = {
   CONTACT_US_ERROR: "CONTACT_US_ERROR",
   INVALID_LOCALIZED_OBJECT: "INVALID_LOCALIZED_OBJECT",
   WEIGHT_UNCHANGED: "WEIGHT_UNCHANGED",
+  NO_BODY_FIELDS_PROVIDED: "NO_BODY_FIELDS_PROVIDED",
 };
 
 // Translation dictionary - easily extensible
@@ -465,6 +466,8 @@ const translations = {
       "Invalid localized object. Must be an object with language codes (ar, en) as keys and strings as values",
     [ERROR_CODES.WEIGHT_UNCHANGED]:
       "New weight must be different from the current weight",
+    [ERROR_CODES.NO_BODY_FIELDS_PROVIDED]:
+      "No fields provided to update. Please include at least one field in the request body",
   },
 
   ar: {
@@ -711,6 +714,8 @@ const translations = {
       "كائن محلي غير صالح. يجب أن يكون كائناً يحتوي على رموز اللغات (ar, en) كمفاتيح وقيم نصية",
     [ERROR_CODES.WEIGHT_UNCHANGED]:
       "يجب أن يكون الوزن الجديد مختلفًا عن الوزن الحالي",
+    [ERROR_CODES.NO_BODY_FIELDS_PROVIDED]:
+      "لم يتم تقديم أي حقول للتحديث. يرجى تضمين حقل واحد على الأقل في جسم الطلب",
   },
 };
 

@@ -146,12 +146,12 @@ const updateProfile = async (userId, updateData) => {
     throw error;
   }
 
-  if (user.role === "specialist" && updateData.specialistInfo) {
-    allowedFields.push(
-      "specialistInfo.specialization",
-      "specialistInfo.experienceYears",
-    );
-  }
+  // if (user.role === "specialist" && updateData.specialistInfo) {
+  //   allowedFields.push(
+  //     "specialistInfo.specialization",
+  //     "specialistInfo.experienceYears",
+  //   );
+  // }
 
   const filteredData = {};
   if (updateData) {
@@ -198,9 +198,6 @@ const updateProfile = async (userId, updateData) => {
   }
 
   const weightAfterUpdate = user.profile?.currentWeight;
-  console.log("Weight before update:", weightBeforeUpdate);
-  console.log("Weight after update:", weightAfterUpdate);
-  console.log("Weight changed:", updateData.profile?.currentWeight);
   if (
     updateData.profile?.currentWeight !== undefined &&
     weightAfterUpdate !== weightBeforeUpdate
@@ -292,6 +289,37 @@ const createSpecialistProfile = async (specialistData, requesterRole) => {
     },
   });
 
+  return specialist;
+};
+
+// Admin: Update specialist details
+const updateSpecialistProfile = async (specialistId, updateData) => {
+  const specialist = await User.findById(specialistId);
+  if (!specialist) {
+    const error = new Error(translate(ERROR_CODES.SPECIALIST_NOT_FOUND, "en"));
+    error.code = ERROR_CODES.SPECIALIST_NOT_FOUND;
+    error.status = 404;
+    throw error;
+  }
+  if (specialist.role !== "specialist") {
+    const error = new Error(translate(ERROR_CODES.USER_NOT_SPECIALIST, "en"));
+    error.code = ERROR_CODES.USER_NOT_SPECIALIST;
+    error.status = 400;
+    throw error;
+  }
+
+  specialist.specialistInfo = specialist.specialistInfo || {};
+  if (updateData.specialization !== undefined) {
+    specialist.specialistInfo.specialization = updateData.specialization;
+  }
+  if (updateData.experienceYears !== undefined) {
+    specialist.specialistInfo.experienceYears = updateData.experienceYears;
+  }
+  if (updateData.status !== undefined) {
+    specialist.specialistInfo.status = updateData.status;
+  }
+
+  await specialist.save();
   return specialist;
 };
 
@@ -668,6 +696,7 @@ export default {
   searchProfiles,
   updateProfile,
   createSpecialistProfile,
+  updateSpecialistProfile,
   deleteProfile,
   activateSpecialist,
   deactivateSpecialist,

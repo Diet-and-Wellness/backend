@@ -164,6 +164,40 @@ const specialistId = [
     .withMessage(["INVALID_MONGO_ID_FORMAT", { field: "specialist" }]),
 ];
 
+const updateSpecialistProfile = [
+  param("specialistId")
+    .isMongoId()
+    .withMessage(["INVALID_MONGO_ID_FORMAT", { field: "specialistId" }]),
+  body("specialization")
+    .optional()
+    .trim()
+    .isLength({ min: 3 })
+    .withMessage([
+      "INVALID_LENGTH",
+      { field: "specialization", min: 3, max: 100 },
+    ]),
+  body("experienceYears")
+    .optional()
+    .isInt({ min: 0 })
+    .withMessage(["INVALID_INPUT"]),
+  body("status")
+    .optional()
+    .isIn(["active", "inactive"])
+    .withMessage(["INVALID_SPECIALIST_STATUS"]),
+  body()
+    .custom((_, { req }) => {
+      if (
+        req.body.specialization === undefined &&
+        req.body.experienceYears === undefined &&
+        req.body.status === undefined
+      ) {
+        return false;
+      }
+      return true;
+    })
+    .withMessage(["NO_BODY_FIELDS_PROVIDED"]),
+];
+
 const assignCustomersToSpecialist = [
   param("specialistId")
     .isMongoId()
@@ -187,6 +221,7 @@ export default {
   updateProfile,
   addWeightRecord,
   createSpecialistProfile,
+  updateSpecialistProfile,
   searchProfiles,
   specialistId,
   userId,
