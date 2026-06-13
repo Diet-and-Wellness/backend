@@ -31,14 +31,28 @@ function createError(code, status = 400, params = {}) {
 
 /** Validate a section's answers: all visible questions answered, all choices valid. */
 function validateSectionAnswers(section, answers, language = "en") {
-  const answerMap = new Map(
-    answers.map((a) => [a.questionId.toString(), a.choiceId.toString()]),
-  );
+  const answerMap = new Map(answers.map((a) => [a.questionId.toString(), a]));
 
   const visible = resolveVisibleQuestions(section.questions, answerMap);
 
   for (const q of visible) {
-    const choiceIdStr = answerMap.get(q._id.toString());
+    const answer = answerMap.get(q._id.toString());
+    if (!answer) {
+      throw createError(ERROR_CODES.ASSESSMENT_MISSING_VISIBLE_ANSWER, 400, {
+        question: q.text?.[language] ?? q.text?.en ?? q.text,
+      });
+    }
+
+    if (section.isText) {
+      if (!answer.answerText || !answer.answerText.trim()) {
+        throw createError(ERROR_CODES.ASSESSMENT_MISSING_VISIBLE_ANSWER, 400, {
+          question: q.text?.[language] ?? q.text?.en ?? q.text,
+        });
+      }
+      continue;
+    }
+
+    const choiceIdStr = answer.choiceId?.toString();
     if (!choiceIdStr) {
       throw createError(ERROR_CODES.ASSESSMENT_MISSING_VISIBLE_ANSWER, 400, {
         question: q.text?.[language] ?? q.text?.en ?? q.text,
@@ -58,13 +72,25 @@ function validateSectionAnswers(section, answers, language = "en") {
 function scoreSectionResult(section, answers, language = "en") {
   validateSectionAnswers(section, answers, language);
 
+  const score = calculateSectionScore(section, answers);
+  const snapshots = buildAnswerSnapshots(section, answers);
+
+  if (section.isText) {
+    return {
+      section: section._id,
+      sectionTitle: section.title,
+      sectionScore: score,
+      result: null,
+      answers: snapshots,
+    };
+  }
+
   if (!section.resultRanges || section.resultRanges.length === 0) {
     throw createError(ERROR_CODES.ASSESSMENT_NO_RESULT_RANGES, 500, {
       section: section.title?.[language] ?? section.title?.en ?? "",
     });
   }
 
-  const score = calculateSectionScore(section.questions, answers);
   const range = matchResultRange(section.resultRanges, score);
 
   if (!range) {
@@ -72,8 +98,6 @@ function scoreSectionResult(section, answers, language = "en") {
       section: section.title?.[language] ?? section.title?.en ?? "",
     });
   }
-
-  const snapshots = buildAnswerSnapshots(section.questions, answers);
 
   return {
     section: section._id,
@@ -209,14 +233,20 @@ export async function addSection(formId, data) {
     }
   }
 
-  const section = await AssessmentSection.create({
+  const sectionObject = {
     form: formId,
     title: data.title,
     description: data.description || "",
+    isText: data.isText || false,
     order: data.order,
     questions: [],
-    resultRanges: data.resultRanges || [],
-  });
+  };
+
+  if (!sectionObject.isText) {
+    sectionObject.resultRanges = data.resultRanges || [];
+  }
+
+  const section = await AssessmentSection.create(sectionObject);
 
   form.sections.push(section._id);
   await form.save();
@@ -322,12 +352,16 @@ export async function addQuestion(sectionId, data) {
     validateCondition(section, data.condition);
   }
 
-  section.questions.push({
+  const question = {
     text: data.text,
     order: data.order,
     condition: data.condition || null,
-    choices: data.choices,
-  });
+  };
+  if (!section.isText) {
+    question.choices = data.choices || [];
+  }
+
+  section.questions.push(question);
 
   await section.save();
 
@@ -735,7 +769,9 @@ export async function getProgress(userId, language = null) {
     }
   }
 
-  const answeredIds = new Set(submission?.sectionResults.map((r) => r.section));
+  const answeredIds = new Set(
+    submission?.sectionResults.map((r) => r.section.toString()),
+  );
 
   return {
     status: submission?.status || null,

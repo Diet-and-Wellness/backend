@@ -97,40 +97,45 @@ const submissionsFilter = [
 
 // ─── Result range array validator helper ─────────────────────────────────────
 
-const resultRangesBody = (fieldPath = "resultRanges") => [
-  body(fieldPath)
-    .notEmpty()
-    .withMessage(["REQUIRED_FIELD", { field: fieldPath }])
-    .isArray({ min: 1 })
-    .withMessage(["INVALID_ARRAY", { field: fieldPath }]),
-  body(`${fieldPath}.*.minScore`)
-    .isInt({ min: 0 })
-    .withMessage([
-      "INVALID_RANGE_VALUE",
-      { field: "minScore", min: 0 },
-    ]),
-  body(`${fieldPath}.*.maxScore`)
-    .isInt({ min: 0 })
-    .withMessage(["INVALID_RANGE_VALUE", { field: "maxScore", min: 0 }]),
-  ...localizedField(`${fieldPath}.*.label`, { min: 1, max: 100 }),
-  ...localizedField(`${fieldPath}.*.description`, { min: 1, max: 2000 }),
-  body(`${fieldPath}.*.recommendations`)
-    .optional()
-    .isArray()
-    .withMessage(["INVALID_ARRAY", { field: "recommendations" }]),
-  body(`${fieldPath}.*.recommendations.*.en`)
-    .optional()
-    .isString()
-    .trim()
-    .notEmpty()
-    .withMessage(["REQUIRED_FIELD", { field: "recommendation.en" }]),
-  body(`${fieldPath}.*.recommendations.*.ar`)
-    .optional()
-    .isString()
-    .trim()
-    .notEmpty()
-    .withMessage(["REQUIRED_FIELD", { field: "recommendation.ar" }]),
-];
+const resultRangesBody = (fieldPath = "resultRanges", condition = null) => {
+  const validators = [
+    body(fieldPath)
+      .notEmpty()
+      .withMessage(["REQUIRED_FIELD", { field: fieldPath }])
+      .isArray({ min: 1 })
+      .withMessage(["INVALID_ARRAY", { field: fieldPath }]),
+    body(`${fieldPath}.*.minScore`)
+      .isInt({ min: 0 })
+      .withMessage(["INVALID_RANGE_VALUE", { field: "minScore", min: 0 }]),
+    body(`${fieldPath}.*.maxScore`)
+      .isInt({ min: 0 })
+      .withMessage(["INVALID_RANGE_VALUE", { field: "maxScore", min: 0 }]),
+    ...localizedField(`${fieldPath}.*.label`, { min: 1, max: 100 }),
+    ...localizedField(`${fieldPath}.*.description`, { min: 1, max: 2000 }),
+    body(`${fieldPath}.*.recommendations`)
+      .optional()
+      .isArray()
+      .withMessage(["INVALID_ARRAY", { field: "recommendations" }]),
+    body(`${fieldPath}.*.recommendations.*.en`)
+      .optional()
+      .isString()
+      .trim()
+      .notEmpty()
+      .withMessage(["REQUIRED_FIELD", { field: "recommendation.en" }]),
+    body(`${fieldPath}.*.recommendations.*.ar`)
+      .optional()
+      .isString()
+      .trim()
+      .notEmpty()
+      .withMessage(["REQUIRED_FIELD", { field: "recommendation.ar" }]),
+  ];
+
+  if (!condition) {
+    return validators;
+  }
+
+  return []; // validators.map((validator) => validator.if(condition));
+};
 
 // ─── Form validators ──────────────────────────────────────────────────────────
 
@@ -162,7 +167,11 @@ const createSectionValidators = [
     .withMessage(["REQUIRED_FIELD", { field: "order" }])
     .isInt({ min: 1 })
     .withMessage(["INVALID_ORDER", { min: 1 }]),
-  ...resultRangesBody("resultRanges"),
+  body("isText")
+    .optional()
+    .isBoolean()
+    .withMessage(["INVALID_FORMAT", { field: "isText" }]),
+  ...resultRangesBody("resultRanges", body("isText").not().equals(true)),
 ];
 
 const updateSection = [
@@ -180,6 +189,10 @@ const updateSection = [
     .optional()
     .isInt({ min: 1 })
     .withMessage(["INVALID_ORDER", { min: 1 }]),
+  body("isText")
+    .optional()
+    .isBoolean()
+    .withMessage(["INVALID_FORMAT", { field: "isText" }]),
 ];
 
 const replaceSectionResultRanges = resultRangesBody("resultRanges");
@@ -188,12 +201,12 @@ const replaceSectionResultRanges = resultRangesBody("resultRanges");
 
 const choiceValidators = [
   body("choices")
-    .notEmpty()
-    .withMessage(["REQUIRED_FIELD", { field: "choices" }])
+    .optional()
     .isArray({ min: 2, max: 10 })
     .withMessage(["INVALID_ARRAY", { field: "choices" }]),
   ...localizedField("choices.*.text", { min: 1, max: 300 }),
   body("choices.*.score")
+    .if(body("choices").exists())
     .isInt({ min: 0, max: 10 })
     .withMessage(["INVALID_RANGE_VALUE", { field: "score", min: 0, max: 10 }]),
 ];
@@ -289,8 +302,29 @@ const sectionAnswers = [
     .isMongoId()
     .withMessage(["INVALID_MONGO_ID_FORMAT", { field: "questionId" }]),
   body("answers.*.choiceId")
+    .optional()
     .isMongoId()
     .withMessage(["INVALID_MONGO_ID_FORMAT", { field: "choiceId" }]),
+  body("answers.*.answerText")
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage(["REQUIRED_FIELD", { field: "answerText" }]),
+  body("answers")
+    .custom((answers) => {
+      if (!Array.isArray(answers)) return true;
+      for (const answer of answers) {
+        const hasChoiceId = Boolean(answer.choiceId);
+        const hasAnswerText =
+          typeof answer.answerText === "string" &&
+          answer.answerText.trim().length > 0;
+        if (!hasChoiceId && !hasAnswerText) {
+          return false;
+        }
+      }
+      return true;
+    })
+    .withMessage(["EITHER_CHOICEID_OR_ANSWERTEXT_REQUIRED"]),
 ];
 
 const submitAllSections = [
@@ -314,8 +348,29 @@ const submitAllSections = [
     .isMongoId()
     .withMessage(["INVALID_MONGO_ID_FORMAT", { field: "questionId" }]),
   body("sections.*.answers.*.choiceId")
+    .optional()
     .isMongoId()
     .withMessage(["INVALID_MONGO_ID_FORMAT", { field: "choiceId" }]),
+  body("sections.*.answers.*.answerText")
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage(["REQUIRED_FIELD", { field: "answerText" }]),
+  body("sections.*.answers")
+    .custom((answers) => {
+      if (!Array.isArray(answers)) return true;
+      for (const answer of answers) {
+        const hasChoiceId = Boolean(answer.choiceId);
+        const hasAnswerText =
+          typeof answer.answerText === "string" &&
+          answer.answerText.trim().length > 0;
+        if (!hasChoiceId && !hasAnswerText) {
+          return false;
+        }
+      }
+      return true;
+    })
+    .withMessage(["EITHER_CHOICEID_OR_ANSWERTEXT_REQUIRED"]),
 ];
 
 export default {

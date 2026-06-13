@@ -223,6 +223,7 @@ export const submitSection = async (req, res, next) => {
       data: {
         sectionResult,
         status: submission.status,
+        submittedCount: submission.sectionResults.length,
         totalScore: submission.totalScore,
       },
     });

@@ -199,6 +199,9 @@ export const ERROR_CODES = {
   ASSESSMENT_RESULT_RANGES_INVALID: "ASSESSMENT_RESULT_RANGES_INVALID",
   ASSESSMENT_FORM_DELETED: "ASSESSMENT_FORM_DELETED",
   ASSESSMENT_SECTION_DELETED: "ASSESSMENT_SECTION_DELETED",
+  EITHER_CHOICEID_OR_ANSWERTEXT_REQUIRED:
+    "EITHER_CHOICEID_OR_ANSWERTEXT_REQUIRED",
+  NO_RESULT_RANGES_FOR_TEXT_SECTION: "NO_RESULT_RANGES_FOR_TEXT_SECTION",
 
   CONTACT_US_ERROR: "CONTACT_US_ERROR",
   INVALID_LOCALIZED_OBJECT: "INVALID_LOCALIZED_OBJECT",
@@ -455,7 +458,7 @@ const translations = {
     [ERROR_CODES.ASSESSMENT_FORM_HAS_NO_SECTIONS]:
       "Cannot activate form: no sections available",
     [ERROR_CODES.ASSESSMENT_MISSING_VISIBLE_ANSWER]:
-      "Answer missing for question ({{question}})",
+      "Answer missing for question ({{question}}) -- answerText for text-based sections and choiceId for choice-based sections.",
     [ERROR_CODES.ASSESSMENT_NOT_FOUND]: "Assessment result not found",
     [ERROR_CODES.ASSESSMENT_RESULT_RANGES_INVALID]:
       "Result ranges must start at 0 and be contiguous with no gaps or overlaps",
@@ -471,6 +474,10 @@ const translations = {
       "New weight must be different from the current weight",
     [ERROR_CODES.NO_BODY_FIELDS_PROVIDED]:
       "No fields provided to update. Please include at least one field in the request body",
+    [ERROR_CODES.EITHER_CHOICEID_OR_ANSWERTEXT_REQUIRED]:
+      "Either choiceId or answerText is required for each question",
+    [ERROR_CODES.NO_RESULT_RANGES_FOR_TEXT_SECTION]:
+      "No result ranges should be sent for text-based section.",
   },
 
   ar: {
@@ -707,7 +714,7 @@ const translations = {
     [ERROR_CODES.ASSESSMENT_FORM_HAS_NO_SECTIONS]:
       "لا يمكن تفعيل النموذج: لا توجد أقسام متاحة",
     [ERROR_CODES.ASSESSMENT_MISSING_VISIBLE_ANSWER]:
-      "إجابة مفقودة للسؤال ({{question}})",
+      "إجابة مفقودة للسؤال ({{question}}) -- answerText للأقسام النصية و choiceId للأقسام القائمة على الاختيار.",
     [ERROR_CODES.ASSESSMENT_NOT_FOUND]: "نتيجة التقييم غير موجودة",
     [ERROR_CODES.ASSESSMENT_RESULT_RANGES_INVALID]:
       "يجب أن تبدأ نطاقات النتائج من 0 وتنتهي عند 10 بالضبط وتكون متتالية بدون فجوات أو تداخل",
@@ -721,6 +728,10 @@ const translations = {
       "يجب أن يكون الوزن الجديد مختلفًا عن الوزن الحالي",
     [ERROR_CODES.NO_BODY_FIELDS_PROVIDED]:
       "لم يتم تقديم أي حقول للتحديث. يرجى تضمين حقل واحد على الأقل في جسم الطلب",
+    [ERROR_CODES.EITHER_CHOICEID_OR_ANSWERTEXT_REQUIRED]:
+      "إما choiceId أو answerText مطلوب لكل سؤال",
+    [ERROR_CODES.NO_RESULT_RANGES_FOR_TEXT_SECTION]:
+      "لا يجب إرسال نطاقات نتائج لأي قسم نصي.",
   },
 };
 

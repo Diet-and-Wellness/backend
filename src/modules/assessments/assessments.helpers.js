@@ -62,32 +62,47 @@ export function resolveVisibleQuestions(questions, answerMap) {
     const triggerAnswer = answerMap.get(q.condition.questionId.toString());
     if (!triggerAnswer) return false;
 
+    const triggerChoiceId =
+      typeof triggerAnswer === "object"
+        ? triggerAnswer.choiceId?.toString()
+        : triggerAnswer;
+
+    if (!triggerChoiceId) return false;
+
     return q.condition.choiceIds
       .map((id) => id.toString())
-      .includes(triggerAnswer);
+      .includes(triggerChoiceId);
   });
 }
 
 /**
  * Calculate the section score from visible answers.
- * Only visible questions contribute to the score.
+ * Only visible choice questions contribute to the score.
  *
  * @param {Array} questions - the section's embedded questions
- * @param {Array} answers - array of { questionId, choiceId }
+ * @param {Array} answers - array of { questionId, choiceId, answerText }
  * @returns {number} the section score
  */
-export function calculateSectionScore(questions, answers) {
-  const answerMap = new Map(
-    answers.map((a) => [a.questionId.toString(), a.choiceId.toString()]),
-  );
+export function calculateSectionScore(section, answers) {
+  const answerMap = new Map(answers.map((a) => [a.questionId.toString(), a]));
 
-  const visibleQuestions = resolveVisibleQuestions(questions, answerMap);
+  const visibleQuestions = resolveVisibleQuestions(
+    section.questions,
+    answerMap,
+  );
   let score = 0;
 
+  if (section.isText) {
+    return 0;
+  }
+
   for (const q of visibleQuestions) {
-    const choiceIdStr = answerMap.get(q._id.toString());
-    if (!choiceIdStr) continue;
-    const choice = q.choices.find((c) => c._id.toString() === choiceIdStr);
+    const answer = answerMap.get(q._id.toString());
+    if (!answer?.choiceId) continue;
+
+    const choice = q.choices.find(
+      (c) => c._id.toString() === answer.choiceId.toString(),
+    );
     if (choice) score += choice.score;
   }
 
@@ -106,8 +121,9 @@ export function matchResultRange(ranges, score) {
  * Compute max possible score for a section.
  * Assumes all conditional questions are visible (worst-case upper bound).
  */
-export function sectionMaxPossibleScore(questions) {
-  return questions.reduce((total, q) => {
+export function sectionMaxPossibleScore(section) {
+  if (section.isText) return 0;
+  return section.questions.reduce((total, q) => {
     const maxChoiceScore = Math.max(...q.choices.map((c) => c.score));
     return total + maxChoiceScore;
   }, 0);
@@ -121,17 +137,33 @@ export function sectionMaxPossibleScore(questions) {
  * @param {Array} answers - array of { questionId, choiceId }
  * @returns {Array} answerSnapshots
  */
-export function buildAnswerSnapshots(questions, answers) {
-  const answerMap = new Map(
-    answers.map((a) => [a.questionId.toString(), a.choiceId.toString()]),
-  );
+export function buildAnswerSnapshots(section, answers) {
+  const answerMap = new Map(answers.map((a) => [a.questionId.toString(), a]));
 
-  const visibleQuestions = resolveVisibleQuestions(questions, answerMap);
+  const visibleQuestions = resolveVisibleQuestions(
+    section.questions,
+    answerMap,
+  );
   const snapshots = [];
 
   for (const q of visibleQuestions) {
-    const choiceIdStr = answerMap.get(q._id.toString());
+    const answer = answerMap.get(q._id.toString());
+    if (!answer) continue;
+
+    if (section.isText) {
+      snapshots.push({
+        questionId: q._id,
+        questionText: q.text,
+        answerText: answer.answerText?.trim() ?? "",
+        score: 0,
+        wasConditional: !!q.condition,
+      });
+      continue;
+    }
+
+    const choiceIdStr = answer.choiceId?.toString();
     if (!choiceIdStr) continue;
+
     const choice = q.choices.find((c) => c._id.toString() === choiceIdStr);
     if (!choice) continue;
 

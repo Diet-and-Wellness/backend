@@ -2177,56 +2177,9 @@ export const assessmentFormSeed = {
             "هل هناك أي ملاحظات إضافية أو معلومات مهمة تحب أن تعرفها الأخصائية قبل بداية الخطة",
           ),
           order: 1,
-          choices: [
-            {
-              text: localized("No additional notes", "لا توجد ملاحظات إضافية"),
-              score: 1,
-            },
-            {
-              text: localized(
-                "Yes, I have additional notes",
-                "نعم، لدي ملاحظات إضافية",
-              ),
-              score: 2,
-            },
-          ],
         },
       ],
-      resultRanges: [
-        {
-          minScore: 0,
-          maxScore: 1,
-          label: localized("No notes", "لا توجد ملاحظات"),
-          description: localized(
-            "No additional notes were provided.",
-            "لم يتم تقديم ملاحظات إضافية.",
-          ),
-          recommendations: [
-            localized(
-              "Continue with the standard assessment.",
-              "تابع مع التقييم القياسي.",
-            ),
-          ],
-        },
-        {
-          minScore: 2,
-          maxScore: 2,
-          label: localized(
-            "Additional notes provided",
-            "تم تقديم ملاحظات إضافية",
-          ),
-          description: localized(
-            "The client has extra notes for the specialist.",
-            "العميل لديه ملاحظات إضافية للأخصائية.",
-          ),
-          recommendations: [
-            localized(
-              "Review the notes before finalizing the plan.",
-              "راجع الملاحظات قبل إنهاء الخطة.",
-            ),
-          ],
-        },
-      ],
+      isText: true,
     },
   ],
 };

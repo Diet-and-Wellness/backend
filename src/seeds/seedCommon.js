@@ -361,6 +361,7 @@ async function createAssessmentForm(createdBy) {
       questions: sectionData.questions,
       visibilityCondition: sectionData.visibilityCondition,
       resultRanges: sectionData.resultRanges,
+      isText: sectionData.isText || false,
     });
     sections.push(section._id);
   }

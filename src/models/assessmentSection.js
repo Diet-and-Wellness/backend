@@ -85,10 +85,21 @@ const questionSchema = new mongoose.Schema(
     condition: { type: conditionSchema, default: null },
     choices: {
       type: [choiceSchema],
-      required: true,
+      default: [],
       validate: {
-        validator: (arr) => arr.length >= 2 && arr.length <= 10,
-        message: "A question must have between 2 and 10 choices",
+        validator: function (arr) {
+          // const section = this.ownerDocument();
+          const section = this.ownerDocument();
+          const isTextSection = section?.isText;
+          this.wasTextSection = isTextSection; // Store the value for use in the validator
+          if (isTextSection) {
+            return !arr || arr.length === 0;
+          }
+          return Array.isArray(arr) && arr.length >= 2 && arr.length <= 10;
+        },
+        message: function () {
+          return `Questions under text section should not have choices and each question should have at least 2 choices and at most 10 choices.`;
+        },
       },
     },
   },
@@ -141,6 +152,7 @@ const assessmentSectionSchema = new mongoose.Schema(
       ar: { type: String, trim: true, default: "" },
     },
     order: { type: Number, required: true, min: 1 },
+    isText: { type: Boolean, default: false },
     questions: { type: [questionSchema], default: [] },
     // Condition to determine if this section is visible/required for a user
     visibilityCondition: {
@@ -151,6 +163,12 @@ const assessmentSectionSchema = new mongoose.Schema(
       type: [resultRangeSchema],
       validate: {
         validator: function (ranges) {
+          if (this.isText) {
+            if (ranges && ranges.length > 0)
+              throw new Error("NO_RESULT_RANGES_FOR_TEXT_SECTION");
+            return true; // No ranges should be provided for text sections
+          }
+
           if (!ranges || ranges.length === 0) return false;
           const sorted = [...ranges].sort((a, b) => a.minScore - b.minScore);
           if (sorted[0].minScore !== 0) return false;
