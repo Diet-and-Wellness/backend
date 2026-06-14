@@ -69,6 +69,16 @@ const searchProfiles = async (query, requester, lang = "en") => {
       $options: "i",
     };
   }
+  // Filter by if assigned to a specialist (for customers)
+  if (query.assignedToSpecialist !== undefined) {
+    const isAssigned =
+      query.assignedToSpecialist === "true" ||
+      query.assignedToSpecialist === true;
+
+    filters.specialist = isAssigned
+      ? { $exists: true, $ne: null }
+      : { $exists: false };
+  }
 
   // If requester is a specialist, restrict results to their assigned customers only
   if (requester && requester.role === "specialist") {
@@ -99,6 +109,10 @@ const searchProfiles = async (query, requester, lang = "en") => {
         const userSubscription = await UserSubscription.findOne({
           user: user._id,
         }).populate("subscription");
+        const specialist = await User.findById(user.specialist).select(
+          "firstName lastName email",
+        );
+        userObj.specialist = specialist;
         userObj.subscription = {
           name: userSubscription?.subscription?.name ?? null,
           displayName:

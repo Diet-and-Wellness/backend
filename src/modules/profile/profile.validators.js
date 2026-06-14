@@ -140,6 +140,10 @@ const searchProfiles = [
     .optional()
     .isIn(["customer", "specialist", "admin"])
     .withMessage(["INVALID_ROLE"]),
+  query("assignedToSpecialist")
+    .optional()
+    .isBoolean()
+    .withMessage(["INVALID_ASSIGNED_TO_SPECIALIST_VALUE"]),
   query("specialistStatus")
     .optional()
     .isIn(["active", "inactive"])

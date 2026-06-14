@@ -207,6 +207,7 @@ export const ERROR_CODES = {
   INVALID_LOCALIZED_OBJECT: "INVALID_LOCALIZED_OBJECT",
   WEIGHT_UNCHANGED: "WEIGHT_UNCHANGED",
   NO_BODY_FIELDS_PROVIDED: "NO_BODY_FIELDS_PROVIDED",
+  INVALID_ASSIGNED_TO_SPECIALIST_VALUE: "INVALID_ASSIGNED_TO_SPECIALIST_VALUE",
 };
 
 // Translation dictionary - easily extensible
@@ -478,6 +479,8 @@ const translations = {
       "Either choiceId or answerText is required for each question",
     [ERROR_CODES.NO_RESULT_RANGES_FOR_TEXT_SECTION]:
       "No result ranges should be sent for text-based section.",
+    [ERROR_CODES.INVALID_ASSIGNED_TO_SPECIALIST_VALUE]:
+      "assignedToSpecialist must be a boolean value",
   },
 
   ar: {
@@ -732,6 +735,8 @@ const translations = {
       "إما choiceId أو answerText مطلوب لكل سؤال",
     [ERROR_CODES.NO_RESULT_RANGES_FOR_TEXT_SECTION]:
       "لا يجب إرسال نطاقات نتائج لأي قسم نصي.",
+    [ERROR_CODES.INVALID_ASSIGNED_TO_SPECIALIST_VALUE]:
+      "assignedToSpecialist يجب أن يكون قيمة منطقية",
   },
 };
 
