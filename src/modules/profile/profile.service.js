@@ -161,8 +161,8 @@ const updateProfile = async (userId, updateData) => {
 
   // init profile safely
   if (user.role === "customer") {
-    user.profile = user.profile || {};
-    user.profile.weightHistory = user.profile.weightHistory || [];
+    user.profile ??= {};
+    user.profile.weightHistory ??= [];
   }
 
   if (filteredData.avatarUrl && user.avatarUrl) {
@@ -243,7 +243,7 @@ const addWeightRecord = async (customerId, recordData, auth) => {
   }
   // admins can update any customer
 
-  customer.profile = customer.profile || {};
+  customer.profile ??= {};
   const weight = recordData.weight;
   const date = recordData.date ? new Date(recordData.date) : new Date();
   const note = recordData.note ?? null;
@@ -256,7 +256,7 @@ const addWeightRecord = async (customerId, recordData, auth) => {
   }
 
   customer.profile.currentWeight = weight;
-  customer.profile.weightHistory = customer.profile.weightHistory || [];
+  customer.profile.weightHistory ??= [];
   customer.profile.weightHistory.push({ weight, date, note });
 
   return await customer.save();
@@ -305,7 +305,7 @@ const updateSpecialistProfile = async (specialistId, updateData) => {
     throw error;
   }
 
-  specialist.specialistInfo = specialist.specialistInfo || {};
+  specialist.specialistInfo ??= {};
   if (updateData.specialization !== undefined) {
     specialist.specialistInfo.specialization = updateData.specialization;
   }
