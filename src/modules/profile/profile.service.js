@@ -129,15 +129,6 @@ const searchProfiles = async (query, requester, lang = "en") => {
 
 // Update user profile
 const updateProfile = async (userId, updateData) => {
-  // Prevent updating sensitive fields
-  const allowedFields = [
-    "firstName",
-    "lastName",
-    "phone",
-    "avatarUrl",
-    "profile",
-  ];
-
   const user = await User.findById(userId);
   if (!user) {
     const error = new Error(translate(ERROR_CODES.USER_NOT_FOUND, "en"));
@@ -145,6 +136,10 @@ const updateProfile = async (userId, updateData) => {
     error.status = 404;
     throw error;
   }
+
+  // Prevent updating sensitive fields
+  const allowedFields = ["firstName", "lastName", "phone", "avatarUrl"];
+  if (user.role === "customer") allowedFields.push("profile");
 
   // if (user.role === "specialist" && updateData.specialistInfo) {
   //   allowedFields.push(
@@ -165,8 +160,10 @@ const updateProfile = async (userId, updateData) => {
   const weightBeforeUpdate = user.profile?.currentWeight;
 
   // init profile safely
-  user.profile = user.profile || {};
-  user.profile.weightHistory = user.profile.weightHistory || [];
+  if (user.role === "customer") {
+    user.profile = user.profile || {};
+    user.profile.weightHistory = user.profile.weightHistory || [];
+  }
 
   if (filteredData.avatarUrl && user.avatarUrl) {
     cloudinaryService.deleteImage(user.avatarUrl).catch(() => {});
