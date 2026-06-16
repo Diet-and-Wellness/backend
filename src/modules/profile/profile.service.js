@@ -87,6 +87,13 @@ const searchProfiles = async (query, requester, lang = "en") => {
     filters.specialist = requester.id;
   }
 
+  if (requester && requester.role === "admin") {
+    // filter by specialist
+    if (query.assignedSpecialistId) {
+      filters.specialist = query.assignedSpecialistId;
+    }
+  }
+
   const skip = (query.page - 1) * query.limit || 0;
   const limit = query.limit || 10;
 

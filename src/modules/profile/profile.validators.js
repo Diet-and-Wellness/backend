@@ -152,6 +152,13 @@ const searchProfiles = [
     .optional()
     .isLength({ min: 1 })
     .withMessage(["INVALID_LENGTH", { field: "specialization", min: 1 }]),
+  query("assignedSpecialistId")
+    .optional()
+    .isMongoId()
+    .withMessage([
+      "INVALID_MONGO_ID_FORMAT",
+      { field: "assignedSpecialistId" },
+    ]),
   query("page")
     .optional()
     .isInt({ min: 1 })
