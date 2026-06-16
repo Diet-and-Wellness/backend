@@ -8,7 +8,10 @@ import { ERROR_CODES, translate, getLanguage } from "#utils/localization.js";
 
 // Get user's own profile
 const getProfile = async (userId, lang = "en") => {
-  const user = await User.findById(userId);
+  const user = await User.findById(userId).populate(
+    "specialist",
+    "id firstName lastName email",
+  );
   if (!user) {
     const error = new Error(translate(ERROR_CODES.USER_NOT_FOUND, "en"));
     error.code = ERROR_CODES.USER_NOT_FOUND;

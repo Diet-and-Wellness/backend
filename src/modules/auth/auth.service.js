@@ -134,7 +134,9 @@ const login = async ({ email, phone, password }) => {
     accessToken,
     refreshToken,
     user: {
-      ...user.toJSON(),
+      ...(
+        await user.populate("specialist", "id firstName lastName email")
+      ).toJSON(),
       assignedCustomersCount: user.assignedCustomersCount,
     },
   };
