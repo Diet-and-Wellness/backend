@@ -42,6 +42,7 @@ export const ERROR_CODES = {
   RECIPE_NOT_FOUND: "RECIPE_NOT_FOUND",
   ARTICLE_NOT_FOUND: "ARTICLE_NOT_FOUND",
   CATEGORY_NOT_FOUND: "CATEGORY_NOT_FOUND",
+  NOTE_NOT_FOUND: "NOTE_NOT_FOUND",
   FEEDBACK_NOT_FOUND: "FEEDBACK_NOT_FOUND",
 
   // Conflict errors (409)
@@ -254,6 +255,7 @@ const translations = {
     [ERROR_CODES.ARTICLE_NOT_FOUND]: "Article not found",
     [ERROR_CODES.CATEGORY_NOT_FOUND]: "Category not found",
     [ERROR_CODES.FEEDBACK_NOT_FOUND]: "Feedback not found",
+    [ERROR_CODES.NOTE_NOT_FOUND]: "Note not found",
 
     // Conflict errors
     [ERROR_CODES.DUPLICATE_ENTRY]: "This entry already exists",
@@ -526,6 +528,7 @@ const translations = {
     [ERROR_CODES.ARTICLE_NOT_FOUND]: "المقالة غير موجودة",
     [ERROR_CODES.CATEGORY_NOT_FOUND]: "الفئة غير موجودة",
     [ERROR_CODES.FEEDBACK_NOT_FOUND]: "الملاحظات غير موجودة",
+    [ERROR_CODES.NOTE_NOT_FOUND]: "الملاحظة غير موجودة",
 
     // Conflict errors
     [ERROR_CODES.DUPLICATE_ENTRY]: "هذا الإدخال موجود بالفعل",
@@ -847,6 +850,9 @@ export const fieldNames = {
     activeDays: "Active days",
     responseTimeInHours: "Response time in hours",
     planNote: "Plan note",
+    note: "Note",
+    noteId: "Note ID",
+    customer_id: "Customer ID",
   },
   ar: {
     firstName: "الاسم الأول",
@@ -936,6 +942,9 @@ export const fieldNames = {
     activeDays: "الأيام النشطة",
     responseTimeInHours: "وقت الاستجابة بالساعات",
     planNote: "ملاحظة الخطة",
+    note: "ملاحظة",
+    noteId: "معرف الملاحظة",
+    customer_id: "معرف العميل",
   },
 };
 

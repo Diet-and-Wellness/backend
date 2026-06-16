@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import env from "#config/env.js";
 import User from "#models/user.js";
+import Note from "#models/note.js";
 import Category from "#models/category.js";
 import Article from "#models/article.js";
 import Recipe from "#models/recipe.js";
@@ -34,7 +35,7 @@ async function ensureUser({
   specialist,
 }) {
   const existing = await User.findOne({ $or: [{ email }, { phone }] }).select(
-    "_id",
+    "_id firstName lastName",
   );
   if (existing) return existing;
 
@@ -61,6 +62,23 @@ async function ensureUser({
 
   await u.save();
   return u;
+}
+
+async function ensureNotes({ customers, specialists }) {
+  // create some notes for each customer from their assigned specialist
+  for (const customer of customers) {
+    const randomSpec =
+      specialists[Math.floor(Math.random() * specialists.length)];
+    const existing = await Note.findOne({ customer: customer._id });
+    if (!existing) {
+      await Note.create({
+        content: `Initial note for ${customer.firstName} from ${randomSpec.firstName}`,
+        customer: customer._id,
+        writer: randomSpec._id,
+        attachments: [],
+      });
+    }
+  }
 }
 
 async function ensureCategory({ name, displayName, type, isActive = true }) {
@@ -541,6 +559,9 @@ export const devSeed = async () => {
   }
 
   const users = { admin, specialists, customers };
+
+  // note
+  await ensureNotes({ customers, specialists });
 
   // Categories
   const articleCat = await ensureCategory({

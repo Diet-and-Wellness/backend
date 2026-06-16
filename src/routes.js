@@ -8,6 +8,7 @@ import subscriptionsRoutes from "#modules/subscriptions/subscriptions.routes.js"
 import feedbacksRoutes from "#modules/feedbacks/feedbacks.routes.js";
 import assessmentsRoutes from "#modules/assessments/assessments.routes.js";
 import contactUsRoutes from "#modules/contactus/contactus.routes.js";
+import notesRoutes from "#modules/notes/notes.routes.js";
 
 const router = express.Router();
 
@@ -20,6 +21,7 @@ router.use("/feedbacks", feedbacksRoutes);
 router.use("/subscriptions", subscriptionsRoutes);
 router.use("/assessments", assessmentsRoutes);
 router.use("/contact-us", contactUsRoutes);
+router.use("/notes", notesRoutes);
 
 // Health check route
 router.get("/health", (req, res) => {
