@@ -44,6 +44,18 @@ const getProfile = async (userId, lang = "en") => {
 const searchProfiles = async (query, requester, lang = "en") => {
   const filters = {};
 
+  // search query (matches firstName, lastName, email, or phone)
+  if (query.search) {
+    const terms = query.search.trim().split(/\s+/).filter(Boolean);
+    filters.$and = terms.map((term) => ({
+      $or: [
+        { firstName: { $regex: term, $options: "i" } },
+        { lastName: { $regex: term, $options: "i" } },
+        { email: { $regex: term, $options: "i" } },
+        { phone: { $regex: term, $options: "i" } },
+      ],
+    }));
+  }
   // Search by name (firstName or lastName)
   if (query.firstName) {
     filters.firstName = { $regex: query.firstName, $options: "i" };

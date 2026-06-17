@@ -120,6 +120,11 @@ const createSpecialistProfile = [
 ];
 
 const searchProfiles = [
+  query("search")
+    .optional()
+    .trim()
+    .isLength({ min: 1 })
+    .withMessage(["INVALID_LENGTH", { field: "search", min: 1 }]),
   query("firstName")
     .optional()
     .isLength({ min: 1 })
