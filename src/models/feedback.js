@@ -4,18 +4,18 @@ const feedbackSchema = new mongoose.Schema(
   {
     title: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
       index: true,
     },
     content: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
     },
     rating: {
       type: Number,
-      required: true,
+      // required: true,
       min: 1,
       max: 5,
       index: true,

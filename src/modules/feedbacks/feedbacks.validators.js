@@ -4,19 +4,22 @@ import { body, query, param } from "express-validator";
 const createFeedback = [
   body("title")
     .trim()
-    .notEmpty()
-    .withMessage(["REQUIRED_FIELD"])
+    // .notEmpty()
+    .optional()
+    // .withMessage(["REQUIRED_FIELD"])
     .isLength({ min: 5, max: 150 })
     .withMessage(["INVALID_LENGTH", { min: 5, max: 150 }]),
   body("content")
     .trim()
-    .notEmpty()
-    .withMessage(["REQUIRED_FIELD"])
+    // .notEmpty()
+    .optional()
+    // .withMessage(["REQUIRED_FIELD"])
     .isLength({ min: 10, max: 1000 })
     .withMessage(["INVALID_LENGTH", { min: 10, max: 1000 }]),
   body("rating")
-    .notEmpty()
-    .withMessage(["REQUIRED_FIELD"])
+    // .notEmpty()
+    .optional()
+    // .withMessage(["REQUIRED_FIELD"])
     .isInt({ min: 1, max: 5 })
     .withMessage(["INVALID_RATING", { min: 1, max: 5 }]),
   body("theme")
