@@ -6,19 +6,19 @@ const createArticle = [
   body("title")
     .trim()
     .notEmpty()
-    .withMessage("REQUIRED_FIELD")
+    .withMessage(["REQUIRED_FIELD", { field: "title" }])
     .isLength({ min: 5, max: 200 })
     .withMessage(["INVALID_LENGTH", { min: 5, max: 200 }]),
   body("description")
     .trim()
     .notEmpty()
-    .withMessage("REQUIRED_FIELD")
+    .withMessage(["REQUIRED_FIELD", { field: "description" }])
     .isLength({ min: 10, max: 500 })
     .withMessage(["INVALID_LENGTH", { min: 10, max: 500 }]),
   body("content")
     .trim()
     .notEmpty()
-    .withMessage("REQUIRED_FIELD")
+    .withMessage(["REQUIRED_FIELD", { field: "content" }])
     .isLength({ min: 50 })
     .withMessage(["INVALID_LENGTH", { min: 50, max: 10000 }]),
   body("language")
@@ -27,7 +27,7 @@ const createArticle = [
     .withMessage(["INVALID_LANGUAGE"]),
   body("category")
     .notEmpty()
-    .withMessage("REQUIRED_FIELD")
+    .withMessage(["REQUIRED_FIELD", { field: "category" }])
     .isMongoId()
     .withMessage(["INVALID_MONGO_ID_FORMAT", { field: "category" }]),
   body("tags")
