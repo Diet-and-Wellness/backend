@@ -26,8 +26,9 @@ const createArticle = [
     .isIn(["en", "ar"])
     .withMessage(["INVALID_LANGUAGE"]),
   body("category")
-    .notEmpty()
-    .withMessage(["REQUIRED_FIELD", { field: "category" }])
+    .optional()
+    // .notEmpty()
+    // .withMessage(["REQUIRED_FIELD", { field: "category" }])
     .isMongoId()
     .withMessage(["INVALID_MONGO_ID_FORMAT", { field: "category" }]),
   body("tags")

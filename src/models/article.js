@@ -50,19 +50,20 @@ const articleSchema = new mongoose.Schema(
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
-      required: true,
+      // required: true,
       index: true,
       validate: {
         validator: async function (value) {
           // Verify category exists and is for articles
           const category = await mongoose.models.Category.findById(value);
           if (!category) {
-            const error = new Error(
-              translate(ERROR_CODES.CATEGORY_NOT_FOUND, "en"),
-            );
-            error.code = ERROR_CODES.CATEGORY_NOT_FOUND;
-            error.status = 404;
-            throw error;
+            return true;
+            // const error = new Error(
+            //   translate(ERROR_CODES.CATEGORY_NOT_FOUND, "en"),
+            // );
+            // error.code = ERROR_CODES.CATEGORY_NOT_FOUND;
+            // error.status = 404;
+            // throw error;
           }
           if (category.type !== "article") {
             const error = new Error(
