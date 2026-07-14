@@ -5,6 +5,7 @@
     "#modules/*": "./src/modules/*",
     "#models/*": "./src/models/*",
     "#utils/*": "./src/utils/*",
+    "#serializers/*": "./src/serializers/*",
     "#middlewares/*": "./src/middlewares/*",
     "#config/*": "./src/config/*"
   },

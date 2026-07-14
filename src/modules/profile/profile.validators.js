@@ -72,6 +72,24 @@ const addWeightRecord = [
     .withMessage(["INVALID_LENGTH", { field: "note", max: 200 }]),
 ];
 
+const updateWeight = [
+  param("customerId")
+    .isMongoId()
+    .withMessage(["INVALID_MONGO_ID_FORMAT", { field: "customerId" }]),
+  body("weight")
+    .notEmpty()
+    .withMessage(["REQUIRED_FIELD", { field: "weight" }])
+    .isInt({ min: 1 })
+    .withMessage(["INVALID_INPUT"])
+    .toInt(),
+  body("date").optional().isISO8601().withMessage(["INVALID_DATE"]),
+  body("note")
+    .optional()
+    .trim()
+    .isLength({ max: 200 })
+    .withMessage(["INVALID_LENGTH", { field: "note", max: 200 }]),
+];
+
 const createSpecialistProfile = [
   body("firstName")
     .trim()
@@ -235,6 +253,7 @@ const userId = [
 
 export default {
   updateProfile,
+  updateWeight,
   addWeightRecord,
   createSpecialistProfile,
   updateSpecialistProfile,

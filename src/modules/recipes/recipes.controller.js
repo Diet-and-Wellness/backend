@@ -76,7 +76,7 @@ const getRecipeBySlug = async (req, res, next) => {
     const recipe = await recipesService.getRecipeBySlug(req.params.slug);
 
     // Increment view count asynchronously (don't wait)
-    recipesService.incrementViewCount(recipe._id);
+    recipesService.incrementViewCount(recipe.id);
 
     res.json(recipe);
   } catch (error) {

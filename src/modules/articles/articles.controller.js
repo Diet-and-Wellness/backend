@@ -74,7 +74,7 @@ const getArticleBySlug = async (req, res, next) => {
     const article = await articlesService.getArticleBySlug(req.params.slug);
 
     // Increment view count asynchronously (don't wait)
-    articlesService.incrementViewCount(article._id);
+    articlesService.incrementViewCount(article.id);
 
     res.json(article);
   } catch (error) {

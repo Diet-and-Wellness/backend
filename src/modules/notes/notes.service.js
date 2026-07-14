@@ -1,5 +1,9 @@
 import Note from "#models/note.js";
 import { ERROR_CODES, translate } from "#utils/localization.js";
+import {
+  serializeNote,
+  serializeNotes,
+} from "#serializers/note.serializer.js";
 
 const createNote = async (noteData) => {
   try {
@@ -23,7 +27,7 @@ const createNote = async (noteData) => {
     await note.save();
     await note.populate("customer", "firstName lastName email role");
     await note.populate("writer", "firstName lastName email role");
-    return note;
+    return serializeNote(note);
   } catch (error) {
     throw error;
   }
@@ -51,7 +55,7 @@ const createNotesBulk = async (notesArray) => {
     await Promise.all(
       result.map((d) => d.populate("writer", "firstName lastName email role")),
     );
-    return result;
+    return serializeNotes(result);
   } catch (error) {
     throw error;
   }
@@ -101,7 +105,7 @@ const getNotes = async (filters = {}, requester = {}) => {
     ]);
 
     return {
-      data: notes,
+      data: serializeNotes(notes),
       pagination: {
         currentPage: parseInt(page),
         totalPages: Math.ceil(totalCount / limit),
@@ -133,7 +137,7 @@ const getLastNoteForCustomer = async (customerId, requester = {}) => {
       .sort({ createdAt: -1 })
       .populate("customer", "firstName lastName email role")
       .populate("writer", "firstName lastName email role");
-    return note;
+    return serializeNote(note);
   } catch (error) {
     throw error;
   }
@@ -152,7 +156,7 @@ const getNoteById = async (noteId) => {
       throw err;
     }
 
-    return note;
+    return serializeNote(note);
   } catch (error) {
     throw error;
   }
@@ -189,7 +193,7 @@ const updateNote = async (noteId, updateData, requester = {}) => {
     await note.save();
     await note.populate("customer", "firstName lastName email role");
     await note.populate("writer", "firstName lastName email role");
-    return note;
+    return serializeNote(note);
   } catch (error) {
     throw error;
   }

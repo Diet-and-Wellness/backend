@@ -6,6 +6,7 @@ import jwt from "#utils/jwt.js";
 import sendEmail from "#utils/email.js";
 import { otpEmailTemplate } from "#utils/emailTemplates.js";
 import { ERROR_CODES, translate } from "#utils/localization.js";
+import { serializeUser } from "#serializers/user.serializer.js";
 
 const sendOtp = async ({ email }) => {
   // Delete any existing OTP for this user
@@ -92,7 +93,7 @@ const signup = async ({ firstName, lastName, email, password, phone }) => {
 
   await Otp.deleteMany({ email, purpose: "verify_account" });
 
-  return user.toJSON();
+  return serializeUser(user);
 };
 
 const login = async ({ email, phone, password }) => {
@@ -130,15 +131,17 @@ const login = async ({ email, phone, password }) => {
     });
   }
 
+  const serializedUser = await serializeUser(
+    await user.populate("specialist", "id firstName lastName email"),
+  );
+  if (user.assignedCustomersCount !== undefined) {
+    serializedUser.assignedCustomersCount = user.assignedCustomersCount;
+  }
+
   return {
     accessToken,
     refreshToken,
-    user: {
-      ...(
-        await user.populate("specialist", "id firstName lastName email")
-      ).toJSON(),
-      assignedCustomersCount: user.assignedCustomersCount,
-    },
+    user: serializedUser,
   };
 };
 
@@ -168,7 +171,7 @@ const refreshToken = async (token) => {
   return {
     accessToken: newAccessToken,
     refreshToken: newRefreshToken,
-    user: user.toJSON(),
+    user: await serializeUser(user),
   };
 };
 

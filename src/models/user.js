@@ -205,12 +205,18 @@ userSchema.methods.toJSON = function () {
     delete user.specialistInfo;
   }
 
-  // return only the last 5 weight history records
-  if (user.profile && user.profile.weightHistory) {
-    user.profile.weightHistory = user.profile.weightHistory
-      .sort((a, b) => new Date(b.date) - new Date(a.date))
-      .slice(0, 5);
+  if (user.role === "customer") {
+    if (user.profile?.weightHistory) {
+      user.profile.weightHistory = [...user.profile.weightHistory]
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, 5);
+    }
+  } else {
+    delete user.profile;
   }
+
+  delete user.weight;
+  delete user.lastNote;
 
   return user;
 };

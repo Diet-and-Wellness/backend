@@ -51,6 +51,17 @@ router.post(
   controller.addWeightRecord,
 );
 
+// Set current weight: admins may update any customer, specialists only their
+// assigned customers, and customers only themselves.
+router.patch(
+  "/:customerId/weight",
+  standardLimiter,
+  ensureRoles(["admin", "specialist", "customer"]),
+  validators.updateWeight,
+  handleValidationErrors,
+  controller.updateWeight,
+);
+
 // Search and filter profiles (admin/specialists only)
 router.get(
   "/search",

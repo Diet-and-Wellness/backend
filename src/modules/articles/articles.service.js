@@ -1,6 +1,15 @@
 import Article from "#models/article.js";
 import cloudinaryService from "#utils/cloudinary.js";
 import { ERROR_CODES, translate } from "#utils/localization.js";
+import {
+  serializeManyWithUserReferences,
+  serializeWithUserReferences,
+} from "#serializers/related-user.serializer.js";
+
+const serializeArticle = (article) =>
+  serializeWithUserReferences(article, ["author"]);
+const serializeArticles = (articles) =>
+  serializeManyWithUserReferences(articles, ["author"]);
 
 // Create a new article (admin only)
 const createArticle = async (articleData, userId) => {
@@ -16,7 +25,7 @@ const createArticle = async (articleData, userId) => {
       { path: "category", select: "name displayName arDisplayName" },
     ]);
 
-    return article;
+    return serializeArticle(article);
   } catch (error) {
     if (error.code === 11000) {
       const err = new Error(
@@ -99,7 +108,7 @@ const getArticles = async (filters = {}) => {
     const total = await Article.countDocuments(query);
 
     return {
-      data: articles,
+      data: serializeArticles(articles),
       pagination: {
         total,
         page: Number(page),
@@ -133,7 +142,7 @@ const getArticleById = async (articleId) => {
       throw err;
     }
 
-    return article;
+    return serializeArticle(article);
   } catch (error) {
     throw error;
   }
@@ -162,7 +171,7 @@ const getArticleBySlug = async (slug) => {
       throw error;
     }
 
-    return article;
+    return serializeArticle(article);
   } catch (error) {
     throw error;
   }
@@ -238,7 +247,7 @@ const updateArticle = async (articleId, updateData, user) => {
       { path: "category", select: "name displayName arDisplayName" },
     ]);
 
-    return updatedArticle;
+    return serializeArticle(updatedArticle);
   } catch (error) {
     throw error;
   }
@@ -287,7 +296,7 @@ const changeArticleStatus = async (articleId, isHidden) => {
       { path: "category", select: "name displayName arDisplayName" },
     ]);
 
-    return article;
+    return serializeArticle(article);
   } catch (error) {
     throw error;
   }
@@ -370,7 +379,7 @@ const getAdminArticles = async (filters = {}) => {
     const total = await Article.countDocuments(query);
 
     return {
-      data: articles,
+      data: serializeArticles(articles),
       pagination: {
         total,
         page: Number(page),
@@ -410,7 +419,7 @@ const getArticlesByCategory = async (
     });
 
     return {
-      data: articles,
+      data: serializeArticles(articles),
       pagination: {
         total,
         page: Number(page),

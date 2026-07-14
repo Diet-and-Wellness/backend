@@ -4,6 +4,11 @@ import Article from "#models/article.js";
 import Recipe from "#models/recipe.js";
 import Feedback from "#models/feedback.js";
 import cloudinaryService from "#utils/cloudinary.js";
+import {
+  serializeUser,
+  serializeUserSummary,
+  serializeUsers,
+} from "#serializers/user.serializer.js";
 import { ERROR_CODES, translate, getLanguage } from "#utils/localization.js";
 
 // Get user's own profile
@@ -18,7 +23,7 @@ const getProfile = async (userId, lang = "en") => {
     error.status = 404;
     throw error;
   }
-  const userObj = user.toJSON();
+  const userObj = await serializeUser(user);
   if (user.role === "specialist") {
     userObj.assignedCustomersCount = await User.countDocuments({
       specialist: user._id,
@@ -34,7 +39,7 @@ const getProfile = async (userId, lang = "en") => {
       price: userSubscription?.subscription?.price ?? null,
       durationInDays: userSubscription?.subscription?.durationInDays ?? null,
       active: userSubscription ? userSubscription.status === "active" : null,
-      subscriptionCount: userSubscription.subscriptionCount ?? null,
+      subscriptionCount: userSubscription?.subscriptionCount ?? null,
     };
   }
   return userObj;
@@ -119,9 +124,10 @@ const searchProfiles = async (query, requester, lang = "en") => {
 
   const total = await User.countDocuments(filters);
 
+  const serializedUsers = await serializeUsers(users);
   const data = await Promise.all(
-    users.map(async (user) => {
-      const userObj = user.toJSON();
+    users.map(async (user, index) => {
+      const userObj = serializedUsers[index];
       if (user.role === "specialist") {
         userObj.assignedCustomersCount = await User.countDocuments({
           specialist: user._id,
@@ -134,7 +140,7 @@ const searchProfiles = async (query, requester, lang = "en") => {
         const specialist = await User.findById(user.specialist).select(
           "firstName lastName email",
         );
-        userObj.specialist = specialist;
+        userObj.specialist = serializeUserSummary(specialist);
         userObj.subscription = {
           name: userSubscription?.subscription?.name ?? null,
           displayName:
@@ -145,7 +151,7 @@ const searchProfiles = async (query, requester, lang = "en") => {
           active: userSubscription
             ? userSubscription.status === "active"
             : null,
-          subscriptionCount: userSubscription.subscriptionCount ?? null,
+          subscriptionCount: userSubscription?.subscriptionCount ?? null,
         };
       }
       return userObj;
@@ -244,7 +250,27 @@ const updateProfile = async (userId, updateData) => {
 
   const updatedUser = await user.save();
 
-  return updatedUser;
+  return serializeUser(updatedUser);
+};
+
+const assertCanUpdateCustomerWeight = (customer, auth) => {
+  const requesterId = String(auth.requestingUserId);
+  const role = auth.requestingUserRole;
+  const isAllowed =
+    role === "admin" ||
+    (role === "specialist" &&
+      customer.specialist &&
+      String(customer.specialist) === requesterId) ||
+    (role === "customer" && String(customer._id) === requesterId);
+
+  if (!isAllowed) {
+    const error = new Error(
+      translate(ERROR_CODES.INSUFFICIENT_PERMISSIONS, "en"),
+    );
+    error.code = ERROR_CODES.INSUFFICIENT_PERMISSIONS;
+    error.status = 403;
+    throw error;
+  }
 };
 
 const addWeightRecord = async (customerId, recordData, auth) => {
@@ -264,20 +290,7 @@ const addWeightRecord = async (customerId, recordData, auth) => {
     throw error;
   }
 
-  // Authorization: specialists can only update assigned customers
-  if (auth.requestingUserRole === "specialist") {
-    if (
-      !customer.specialist ||
-      customer.specialist.toString() !== auth.requestingUserId
-    ) {
-      const error = new Error(
-        "You can only update weight for customers assigned to you",
-      );
-      error.status = 403;
-      throw error;
-    }
-  }
-  // admins can update any customer
+  assertCanUpdateCustomerWeight(customer, auth);
 
   customer.profile ??= {};
   const weight = recordData.weight;
@@ -295,8 +308,12 @@ const addWeightRecord = async (customerId, recordData, auth) => {
   customer.profile.weightHistory ??= [];
   customer.profile.weightHistory.push({ weight, date, note });
 
-  return await customer.save();
+  await customer.save();
+  return serializeUser(customer);
 };
+
+const updateWeight = async (customerId, recordData, auth) =>
+  addWeightRecord(customerId, recordData, auth);
 
 // Admin: Create specialist profile
 const createSpecialistProfile = async (specialistData, requesterRole) => {
@@ -322,7 +339,7 @@ const createSpecialistProfile = async (specialistData, requesterRole) => {
     },
   });
 
-  return specialist;
+  return serializeUser(specialist);
 };
 
 // Admin: Update specialist details
@@ -353,7 +370,7 @@ const updateSpecialistProfile = async (specialistId, updateData) => {
   }
 
   await specialist.save();
-  return specialist;
+  return serializeUser(specialist);
 };
 
 // Admin: Activate specialist
@@ -375,7 +392,7 @@ const activateSpecialist = async (specialistId, requesterRole) => {
   specialist.specialistInfo.status = "active";
   await specialist.save();
 
-  return specialist;
+  return serializeUser(specialist);
 };
 
 // Admin: Deactivate specialist
@@ -397,7 +414,7 @@ const deactivateSpecialist = async (specialistId, requesterRole) => {
   specialist.specialistInfo.status = "inactive";
   await specialist.save();
 
-  return specialist;
+  return serializeUser(specialist);
 };
 
 // Admin: Assign one or more customers to a specialist
@@ -735,5 +752,6 @@ export default {
   deactivateSpecialist,
   assignCustomersToSpecialist,
   getDashboardStats,
+  updateWeight,
   addWeightRecord,
 };

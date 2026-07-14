@@ -4,6 +4,10 @@ import AssessmentSection from "#models/assessmentSection.js";
 import AssessmentSubmission from "#models/assessmentSubmission.js";
 import User from "#models/user.js";
 import { ERROR_CODES, translate } from "#utils/localization.js";
+import {
+  serializeManyWithUserReferences,
+  serializeWithUserReferences,
+} from "#serializers/related-user.serializer.js";
 import { SUBMISSION_STATUS } from "./assessments.constants.js";
 import {
   validateResultRanges,
@@ -822,7 +826,7 @@ export async function listSubmissions(
   ]);
 
   return {
-    data: submissions,
+    data: serializeManyWithUserReferences(submissions),
     pagination: { page, limit, total, pages: Math.ceil(total / limit) },
   };
 }
@@ -852,5 +856,5 @@ export async function getUserSubmission(targetUserId, requestingUser) {
     }
   }
 
-  return submission;
+  return serializeWithUserReferences(submission);
 }

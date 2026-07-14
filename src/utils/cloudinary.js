@@ -26,7 +26,7 @@ const uploadImage = async (file, options = {}) => {
           resource_type: "auto",
           quality: "auto",
           fetch_format: "auto",
-          width: 800,
+          width: 1600,
           // height: 600,
           crop: "limit", // Don't distort, fit within dimensions
           ...options,
@@ -66,7 +66,7 @@ const uploadImageFromUrl = async (imageUrl, options = {}) => {
       resource_type: "auto",
       quality: "auto",
       fetch_format: "auto",
-      width: 800,
+      width: 1600,
       //   height: 600,
       crop: "limit",
       ...options,

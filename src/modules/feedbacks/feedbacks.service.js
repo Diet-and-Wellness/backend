@@ -1,5 +1,9 @@
 import Feedback from "#models/feedback.js";
 import { ERROR_CODES, translate } from "#utils/localization.js";
+import {
+  serializeFeedback,
+  serializeFeedbacks,
+} from "#serializers/feedback.serializer.js";
 
 // Create a new feedback
 const createFeedback = async (feedbackData) => {
@@ -12,7 +16,7 @@ const createFeedback = async (feedbackData) => {
       await feedback.populate("user", "firstName lastName email");
     }
 
-    return feedback;
+    return serializeFeedback(feedback);
   } catch (error) {
     throw error;
   }
@@ -75,7 +79,7 @@ const getAllFeedbacks = async (filters = {}) => {
     const totalPages = Math.ceil(totalCount / limit);
 
     return {
-      data: feedbacks,
+      data: serializeFeedbacks(feedbacks),
       pagination: {
         currentPage: parseInt(page),
         totalPages,
@@ -145,7 +149,7 @@ const getActiveFeedbacks = async (filters = {}) => {
     const totalPages = Math.ceil(totalCount / limit);
 
     return {
-      data: feedbacks,
+      data: serializeFeedbacks(feedbacks),
       pagination: {
         currentPage: parseInt(page),
         totalPages,
@@ -173,7 +177,7 @@ const getFeedbackById = async (feedbackId) => {
       throw err;
     }
 
-    return feedback;
+    return serializeFeedback(feedback);
   } catch (error) {
     throw error;
   }
@@ -194,7 +198,7 @@ const updateFeedback = async (feedbackId, updateData) => {
       throw err;
     }
 
-    return feedback;
+    return serializeFeedback(feedback);
   } catch (error) {
     throw error;
   }
@@ -234,7 +238,7 @@ const toggleFeedbackVisibility = async (feedbackId, isHidden) => {
       throw err;
     }
 
-    return feedback;
+    return serializeFeedback(feedback);
   } catch (error) {
     throw error;
   }

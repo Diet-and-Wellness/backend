@@ -1,6 +1,15 @@
 import Recipe from "#models/recipe.js";
 import cloudinaryService from "#utils/cloudinary.js";
 import { ERROR_CODES, translate } from "#utils/localization.js";
+import {
+  serializeManyWithUserReferences,
+  serializeWithUserReferences,
+} from "#serializers/related-user.serializer.js";
+
+const serializeRecipe = (recipe) =>
+  serializeWithUserReferences(recipe, ["author"]);
+const serializeRecipes = (recipes) =>
+  serializeManyWithUserReferences(recipes, ["author"]);
 
 // Create a new recipe (admin only)
 const createRecipe = async (recipeData, userId) => {
@@ -16,7 +25,7 @@ const createRecipe = async (recipeData, userId) => {
       { path: "category", select: "name displayName arDisplayName" },
     ]);
 
-    return recipe;
+    return serializeRecipe(recipe);
   } catch (error) {
     if (error.code === 11000) {
       const err = new Error(
@@ -107,7 +116,7 @@ const getRecipes = async (filters = {}) => {
     const total = await Recipe.countDocuments(query);
 
     return {
-      data: recipes,
+      data: serializeRecipes(recipes),
       pagination: {
         total,
         page: Number(page),
@@ -143,7 +152,7 @@ const getRecipeById = async (recipeId) => {
       throw error;
     }
 
-    return recipe;
+    return serializeRecipe(recipe);
   } catch (error) {
     throw error;
   }
@@ -172,7 +181,7 @@ const getRecipeBySlug = async (slug) => {
       throw error;
     }
 
-    return recipe;
+    return serializeRecipe(recipe);
   } catch (error) {
     throw error;
   }
@@ -235,7 +244,7 @@ const updateRecipe = async (recipeId, updateData, user) => {
       { path: "category", select: "name displayName arDisplayName" },
     ]);
 
-    return recipe;
+    return serializeRecipe(recipe);
   } catch (error) {
     throw error;
   }
@@ -284,7 +293,7 @@ const changeRecipeStatus = async (recipeId, isHidden) => {
       { path: "category", select: "name displayName arDisplayName" },
     ]);
 
-    return recipe;
+    return serializeRecipe(recipe);
   } catch (error) {
     throw error;
   }
@@ -350,7 +359,7 @@ const getAdminRecipes = async (filters = {}) => {
     const total = await Recipe.countDocuments(query);
 
     return {
-      data: recipes,
+      data: serializeRecipes(recipes),
       pagination: {
         total,
         page: Number(page),
@@ -390,7 +399,7 @@ const getRecipesByCategory = async (
     });
 
     return {
-      data: recipes,
+      data: serializeRecipes(recipes),
       pagination: {
         total,
         page: Number(page),
