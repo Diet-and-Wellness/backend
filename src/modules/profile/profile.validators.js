@@ -79,9 +79,9 @@ const updateWeight = [
   body("weight")
     .notEmpty()
     .withMessage(["REQUIRED_FIELD", { field: "weight" }])
-    .isInt({ min: 1 })
+    .isFloat({ min: 1 })
     .withMessage(["INVALID_INPUT"])
-    .toInt(),
+    .toFloat(),
   body("date").optional().isISO8601().withMessage(["INVALID_DATE"]),
   body("note")
     .optional()
