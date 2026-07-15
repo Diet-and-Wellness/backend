@@ -1,9 +1,24 @@
 import Note from "#models/note.js";
 import { ERROR_CODES, translate } from "#utils/localization.js";
-import {
-  serializeNote,
-  serializeNotes,
-} from "#serializers/note.serializer.js";
+import { serializeNote, serializeNotes } from "#serializers/note.serializer.js";
+
+const getRequesterId = (requester = {}) =>
+  requester.user_id || requester.id || requester._id;
+
+const buildVisibleNotesQuery = (customerId, requester = {}) => {
+  const query = {
+    customer: customerId,
+    isDeleted: false,
+  };
+
+  // Specialists only see notes they wrote. Admins (and customers viewing
+  // their own notes) keep the existing all-writers visibility.
+  if (requester.role === "specialist") {
+    query.writer = getRequesterId(requester);
+  }
+
+  return query;
+};
 
 const createNote = async (noteData) => {
   try {
@@ -63,7 +78,7 @@ const createNotesBulk = async (notesArray) => {
 
 const getNotes = async (filters = {}, requester = {}) => {
   const { page = 1, limit = 10, customer_id } = filters;
-  const requesterId = requester.user_id || requester.id || requester._id;
+  const requesterId = getRequesterId(requester);
   let customerId = customer_id;
 
   if (requester.role === "customer") {
@@ -88,10 +103,7 @@ const getNotes = async (filters = {}, requester = {}) => {
   }
 
   try {
-    const query = {
-      customer: customerId,
-      isDeleted: false,
-    };
+    const query = buildVisibleNotesQuery(customerId, requester);
     const skip = (page - 1) * limit;
 
     const [notes, totalCount] = await Promise.all([
@@ -133,10 +145,12 @@ const getLastNoteForCustomer = async (customerId, requester = {}) => {
       throw err;
     }
 
-    const note = await Note.findOne({ customer: customerId, isDeleted: false })
+    const query = buildVisibleNotesQuery(customerId, requester);
+    const note = await Note.findOne(query)
       .sort({ createdAt: -1 })
       .populate("customer", "firstName lastName email role")
       .populate("writer", "firstName lastName email role");
+
     return serializeNote(note);
   } catch (error) {
     throw error;
