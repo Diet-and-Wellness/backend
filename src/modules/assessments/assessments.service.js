@@ -683,29 +683,36 @@ export async function finalizeSubmission(userId, language = null) {
  * Creates or replaces a completed submission.
  */
 export async function submitAll(userId, formId, sectionsData, language = null) {
-  const form = await AssessmentForm.findOne({ isActive: true });
+  const user = await User.findById(userId).lean();
+  if (!user) throw createError(ERROR_CODES.USER_NOT_FOUND, 404);
+
+  const form = await AssessmentForm.findOne({ isActive: true }).populate(
+    "sections",
+  );
   if (!form) throw createError(ERROR_CODES.NO_ACTIVE_ASSESSMENT_FORM, 404);
 
   if (form._id.toString() !== formId.toString()) {
     throw createError(ERROR_CODES.ASSESSMENT_FORM_NOT_FOUND, 400);
   }
 
+  // Load all sections in one query
+  const visibleSections = form.sections.filter((section) =>
+    isSectionVisibleForUser(section.toJSON(), user),
+  );
+
   // Check all form sections are covered
+  const visibleSectionIds = visibleSections.map((s) => s._id.toString());
   const submittedSectionIds = new Set(
     sectionsData.map((s) => s.sectionId.toString()),
   );
-  const formSectionIds = form.sections.map((id) => id.toString());
-
-  const missing = formSectionIds.filter((id) => !submittedSectionIds.has(id));
+  const missing = visibleSectionIds.filter(
+    (id) => !submittedSectionIds.has(id),
+  );
   if (missing.length > 0) {
     throw createError(ERROR_CODES.ASSESSMENT_INCOMPLETE_SUBMISSION, 400);
   }
 
-  // Load all sections in one query
-  const sections = await AssessmentSection.find({
-    _id: { $in: formSectionIds },
-  });
-  const sectionMap = new Map(sections.map((s) => [s._id.toString(), s]));
+  const sectionMap = new Map(visibleSections.map((s) => [s._id.toString(), s]));
 
   // Score each section
   const sectionResults = [];
@@ -733,7 +740,7 @@ export async function submitAll(userId, formId, sectionsData, language = null) {
       sectionResults,
       submittedAt: new Date(),
     },
-    { upsert: true, new: true, setDefaultsOnInsert: true },
+    { upsert: true, returnDocument: "after", setDefaultsOnInsert: true },
   );
 
   // Link to user

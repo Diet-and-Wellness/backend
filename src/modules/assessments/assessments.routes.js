@@ -204,7 +204,7 @@ router.get(
   "/progress",
   authenticate,
   relaxedLimiter,
-  //   ensureRoles(["customer"]),
+  ensureRoles(["customer"]),
   controller.getProgress,
 );
 
@@ -213,7 +213,7 @@ router.post(
   "/sections/:sectionId/submit",
   authenticate,
   standardLimiter,
-  //   ensureRoles(["customer"]),
+  ensureRoles(["customer"]),
   validators.sectionId,
   validators.sectionAnswers,
   handleValidationErrors,
@@ -225,7 +225,7 @@ router.post(
   "/finalize",
   authenticate,
   standardLimiter,
-  //   ensureRoles(["customer"]),
+  ensureRoles(["customer"]),
   controller.finalizeSubmission,
 );
 
@@ -234,7 +234,7 @@ router.post(
   "/submit",
   authenticate,
   standardLimiter,
-  //   ensureRoles(["customer"]),
+  ensureRoles(["customer"]),
   validators.submitAllSections,
   handleValidationErrors,
   controller.submitAll,
@@ -245,7 +245,7 @@ router.get(
   "/result",
   authenticate,
   relaxedLimiter,
-  //   ensureRoles(["customer"]),
+  ensureRoles(["customer"]),
   controller.getOwnResult,
 );
 
