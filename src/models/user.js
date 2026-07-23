@@ -76,6 +76,10 @@ const userSchema = new mongoose.Schema(
           type: String,
           trim: true,
         },
+        activityLevel: {
+          type: String,
+          enum: ["low", "moderate", "high", "extreme"],
+        },
         weightHistory: [
           new mongoose.Schema(
             {

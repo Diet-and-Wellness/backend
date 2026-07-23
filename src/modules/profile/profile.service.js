@@ -226,6 +226,7 @@ const updateProfile = async (userId, updateData) => {
     "currentWeight",
     "height",
     "location",
+    "activityLevel",
   ];
 
   if (profile) {

@@ -31,7 +31,10 @@ const updateProfile = [
   body("profile.gender")
     .optional()
     .isIn(["male", "female"])
-    .withMessage(["INVALID_VALUE", { field: "gender" }]),
+    .withMessage([
+      "INVALID_ENUM_VALUE",
+      { field: "gender", allowed: ["male", "female"] },
+    ]),
   body("profile.age")
     .optional()
     .isInt({ min: 1, max: 120 })
@@ -47,12 +50,25 @@ const updateProfile = [
   body("profile.maritalStatus")
     .optional()
     .isIn(["single", "married", "other"])
-    .withMessage(["INVALID_VALUE", { field: "maritalStatus" }]),
+    .withMessage([
+      "INVALID_ENUM_VALUE",
+      { field: "maritalStatus", allowed: ["single", "married", "other"] },
+    ]),
   body("profile.location")
     .optional()
     .trim()
     .isLength({ min: 1 })
     .withMessage(["INVALID_LENGTH", { field: "location", min: 1 }]),
+  body("profile.activityLevel")
+    .optional()
+    .isIn(["low", "moderate", "high", "extreme"])
+    .withMessage([
+      "INVALID_ENUM_VALUE",
+      {
+        field: "activityLevel",
+        allowed: ["low", "moderate", "high", "extreme"],
+      },
+    ]),
 ];
 
 const addWeightRecord = [

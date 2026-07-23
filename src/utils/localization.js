@@ -142,6 +142,7 @@ export const ERROR_CODES = {
   RECIPE_NOT_AVAILABLE: "RECIPE_NOT_AVAILABLE",
   ARTICLE_NOT_AVAILABLE: "ARTICLE_NOT_AVAILABLE",
   INVALID_VALUE: "INVALID_VALUE",
+  INVALID_ENUM_VALUE: "INVALID_ENUM_VALUE",
   INVALID_RANGE_VALUE: "INVALID_RANGE_VALUE",
 
   // Subscription-specific errors
@@ -219,6 +220,8 @@ const translations = {
     [ERROR_CODES.MISSING_FIELD]: "Required field is missing: {{field}}",
     [ERROR_CODES.INVALID_FORMAT]: "Invalid format for {{field}}",
     [ERROR_CODES.INVALID_VALUE]: "Invalid value for {{field}}",
+    [ERROR_CODES.INVALID_ENUM_VALUE]:
+      "Invalid value for {{field}}. Must be one of {{allowed}}",
     [ERROR_CODES.INVALID_RANGE_VALUE]:
       "{{field}} must be between {{min}} and {{max}}",
     [ERROR_CODES.INVALID_MONGO_ID]: "Invalid ID format",
@@ -491,6 +494,8 @@ const translations = {
     [ERROR_CODES.MISSING_FIELD]: "الحقل المطلوب مفقود: {{field}}",
     [ERROR_CODES.INVALID_FORMAT]: "صيغة غير صحيحة للحقل {{field}}",
     [ERROR_CODES.INVALID_VALUE]: "قيمة غير صحيحة للحقل {{field}}",
+    [ERROR_CODES.INVALID_ENUM_VALUE]:
+      "قيمة غير صحيحة للحقل {{field}}. يجب أن تكون واحدة من {{allowed}}",
     [ERROR_CODES.INVALID_RANGE_VALUE]:
       "{{field}} يجب أن يكون بين {{min}} و{{max}}",
     [ERROR_CODES.INVALID_MONGO_ID]: "صيغة المعرف غير صحيحة",
