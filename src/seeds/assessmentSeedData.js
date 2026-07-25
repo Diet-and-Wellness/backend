@@ -216,8 +216,8 @@ export const assessmentFormSeed = {
           ),
         },
         priority: {
-          en: "Priority",
-          ar: "أولوية",
+          en: "Needs Attention",
+          ar: "يحتاج لاهتمام",
           min: 9,
           max: 9,
           recommendation: localized(
@@ -401,8 +401,8 @@ export const assessmentFormSeed = {
           ),
         },
         priority: {
-          en: "Priority",
-          ar: "أولوية",
+          en: "Needs Attention",
+          ar: "يحتاج لاهتمام",
           min: 11,
           max: 12,
           recommendation: localized(
@@ -558,8 +558,8 @@ export const assessmentFormSeed = {
           ),
         },
         priority: {
-          en: "Priority",
-          ar: "أولوية",
+          en: "Needs Attention",
+          ar: "يحتاج لاهتمام",
           min: 9,
           max: 9,
           recommendation: localized(
@@ -746,8 +746,8 @@ export const assessmentFormSeed = {
           ),
         },
         priority: {
-          en: "Priority",
-          ar: "أولوية",
+          en: "Needs Attention",
+          ar: "يحتاج لاهتمام",
           min: 11,
           max: 12,
           recommendation: localized(
@@ -906,8 +906,8 @@ export const assessmentFormSeed = {
           ),
         },
         priority: {
-          en: "Priority",
-          ar: "أولوية",
+          en: "Needs Attention",
+          ar: "يحتاج لاهتمام",
           min: 9,
           max: 9,
           recommendation: localized(
@@ -1042,8 +1042,8 @@ export const assessmentFormSeed = {
           ),
         },
         priority: {
-          en: "Priority",
-          ar: "أولوية",
+          en: "Needs Attention",
+          ar: "يحتاج لاهتمام",
           min: 9,
           max: 9,
           recommendation: localized(
@@ -1221,8 +1221,8 @@ export const assessmentFormSeed = {
           ),
         },
         priority: {
-          en: "Priority",
-          ar: "أولوية",
+          en: "Needs Attention",
+          ar: "يحتاج لاهتمام",
           min: 11,
           max: 12,
           recommendation: localized(
@@ -1400,8 +1400,8 @@ export const assessmentFormSeed = {
           ),
         },
         priority: {
-          en: "Priority",
-          ar: "أولوية",
+          en: "Needs Attention",
+          ar: "يحتاج لاهتمام",
           min: 11,
           max: 12,
           recommendation: localized(
@@ -1576,8 +1576,8 @@ export const assessmentFormSeed = {
           ),
         },
         priority: {
-          en: "Priority",
-          ar: "أولوية",
+          en: "Needs Attention",
+          ar: "يحتاج لاهتمام",
           min: 11,
           max: 12,
           recommendation: localized(
@@ -1724,8 +1724,8 @@ export const assessmentFormSeed = {
           ),
         },
         priority: {
-          en: "Priority",
-          ar: "أولوية",
+          en: "Needs Attention",
+          ar: "يحتاج لاهتمام",
           min: 9,
           max: 9,
           recommendation: localized(
@@ -1890,8 +1890,8 @@ export const assessmentFormSeed = {
           ),
         },
         priority: {
-          en: "Priority",
-          ar: "أولوية",
+          en: "Needs Attention",
+          ar: "يحتاج لاهتمام",
           min: 9,
           max: 9,
           recommendation: localized(
@@ -2026,8 +2026,8 @@ export const assessmentFormSeed = {
           ),
         },
         priority: {
-          en: "Priority",
-          ar: "أولوية",
+          en: "Needs Attention",
+          ar: "يحتاج لاهتمام",
           min: 6,
           max: 6,
           recommendation: localized(
@@ -2152,8 +2152,8 @@ export const assessmentFormSeed = {
           ),
         },
         priority: {
-          en: "Priority",
-          ar: "أولوية",
+          en: "Needs Attention",
+          ar: "يحتاج لاهتمام",
           min: 6,
           max: 6,
           recommendation: localized(

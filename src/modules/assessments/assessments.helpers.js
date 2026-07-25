@@ -90,13 +90,15 @@ export function calculateSectionScore(section, answers) {
     section.questions,
     answerMap,
   );
-  let score = 0;
 
   if (section.isText) {
     return 0;
   }
+  let score = 0;
+  let maxScore = 0;
 
   for (const q of visibleQuestions) {
+    maxScore += Math.max(...q.choices.map((c) => c.score));
     const answer = answerMap.get(q._id.toString());
     if (!answer?.choiceId) continue;
 
@@ -106,7 +108,7 @@ export function calculateSectionScore(section, answers) {
     if (choice) score += choice.score;
   }
 
-  return score;
+  return score / maxScore;
 }
 
 /**
