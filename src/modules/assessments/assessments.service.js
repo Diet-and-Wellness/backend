@@ -727,7 +727,14 @@ export async function submitAll(userId, formId, sectionsData, language = null) {
     sectionResults.push(result);
   }
 
-  const totalScore = sectionResults.reduce((sum, r) => sum + r.sectionScore, 0);
+  // calculate not text sections max possible score
+  const notTextSectionsCount = visibleSections.reduce(
+    (sum, s) => sum + (s.isText ? 0 : 1),
+    0,
+  );
+  const totalScore =
+    sectionResults.reduce((sum, r) => sum + r.sectionScore, 0) /
+    (notTextSectionsCount || 1);
 
   // Upsert submission — one per user per form
   const submission = await AssessmentSubmission.findOneAndUpdate(
