@@ -189,7 +189,7 @@ export const assessmentFormSeed = {
           en: "Excellent",
           ar: "ممتاز",
           min: 0,
-          max: 4,
+          max: 3,
           recommendation: localized(
             "At this level, your goal is clear and your body has the ability to respond well. Having a specific goal with a stable weight history makes evaluating your status easier and increases the chances of success. The advice here is to focus on steps that suit your goal, rather than trying to change everything all at once. If your goal is weight loss, identify the habit with the biggest impact and focus on it; if you are looking to gain weight or build muscle, the most important thing is to stabilize your eating and activity patterns.",
             "في هذا المستوى، يكون الهدف واضحاً وجسمك يمتلك القدرة على الاستجابة بشكل جيد. وجود هدف محدد مع تاريخ وزن مستقر يجعل تقييم الحالة أكثر سهولة ويزيد من فرص النجاح. النصيحة هنا تكمن في التركيز على خطوات ملائمة لهدفك، بدلاً من محاولة تغيير كل شيء دفعة واحدة. فإذا كان هدفك فقدان الوزن، فحدد العادة ذات التأثير الأكبر وركز عليها، أما إذا كنت تسعى لزيادة الوزن أو بناء العضلات، فالأهم هو تثبيت نمط الأكل والنشاط.",
@@ -198,8 +198,8 @@ export const assessmentFormSeed = {
         good: {
           en: "Good",
           ar: "جيد",
-          min: 5,
-          max: 6,
+          min: 4,
+          max: 5,
           recommendation: localized(
             "The level is good, but there are some details that might hinder achieving the desired results. The goal is clear, but past weight responsiveness requires a deeper analysis. Focus should be placed on recurring causes, such as rapid weight gain, which might be related to your daily routine and not just the quality of food. Understanding your body's trends helps reduce psychological stress and achieve better results.",
             "المستوى جيد، إلا أن هناك بعض التفاصيل التي قد تعيق تحقيق النتائج المرجوة. الهدف واضح، لكن استجابة الوزن السابقة تستدعي تحليلاً أعمق. ينبغي التركيز على الأسباب المتكررة، كزيادة الوزن السريعة، والتي قد تعود إلى روتنيك اليومي وليس فقط لنوعية الطعام. فهم اتجاه جسمك يساعد على تخفيف الضغط النفسي وتحقيق نتائج أفضل.",
@@ -208,8 +208,8 @@ export const assessmentFormSeed = {
         average: {
           en: "Average",
           ar: "متوسط",
-          min: 7,
-          max: 8,
+          min: 6,
+          max: 7,
           recommendation: localized(
             "This level indicates that your body needs finer regulation before starting a new plan. Having a goal along with unstable weight fluctuations shows the necessity of building a simple foundation that helps stabilize weight. Adjusting meal timings, daily activity, and improving sleep quality can have a deeper impact than making drastic, temporary decisions.",
             "هذا المستوى يشير إلى حاجة جسمك إلى تنظيم أدق قبل الشروع في خطة جديدة. وجود هدف مع تغير غير مستقر في الوزن يدل على ضرورة بناء أساس بسيط يساعد على استقرار الوزن. ضبط مواعيد الأكل، النشاط اليومي، وتحسين جودة النوم قد يكون لها تأثير أعمق من اتخاذ قرارات جذرية ومؤقتة.",
@@ -218,7 +218,7 @@ export const assessmentFormSeed = {
         priority: {
           en: "Needs Attention",
           ar: "يحتاج لاهتمام",
-          min: 9,
+          min: 8,
           max: 9,
           recommendation: localized(
             "At this level, the body needs utmost care, as weight may be difficult to control or changes in a frustrating manner. The solution is not always to reduce food intake; instead, you must first understand the root cause behind this condition, such as lack of movement, sleep disturbances, appetite, or the impact of past dieting experiences. Identifying the cause paves the way to modify the plan more effectively and achieve fruitful results.",
@@ -374,7 +374,7 @@ export const assessmentFormSeed = {
           en: "Excellent",
           ar: "ممتاز",
           min: 0,
-          max: 5,
+          max: 4,
           recommendation: localized(
             "At this level, your daily body movement is very good, which enhances your body's ability to consume energy effectively throughout the day, rather than relying solely on dietary adjustments for weight control. It is recommended to maintain this level of activity and link it to your health goals. For example, if you walk regularly, this supports achieving your goals, provided you maintain a balanced diet and adequate sleep to achieve tangible and clear results.",
             "في هذا المستوى، تكون حركة جسمك اليومية جيدة جداً، مما يعزز قدرة جسمك على استهلاك الطاقة بشكل فعال طوال اليوم، بدلاً من الاعتماد فقط على ضبط النظام الغذائي للتحكم في الوزن. يُنصح بالحفاظ على هذا المستوى من النشاط وربطه بأهدافك الصحية. على سبيل المثال، إذا كنت تمارس المشي بشكل منتظم، فإن ذلك يدعم تحقيق أهدافك، شرط مراعاة تناول غذاء متوازن ونوم كافٍ لتحقيق نتائج ملموسة وواضحة.",
@@ -383,8 +383,8 @@ export const assessmentFormSeed = {
         good: {
           en: "Good",
           ar: "جيد",
-          min: 6,
-          max: 7,
+          min: 5,
+          max: 6,
           recommendation: localized(
             "This level shows good physical activity, but there are periods of the day that require increased movement. You may exercise occasionally, but long periods of sitting during the rest of the day negatively impact results. It is recommended to focus on introducing small, frequent movements throughout the day, such as light walking after meals, as these continuous movements enhance the effectiveness of your physical activity and support a better weight balance, without the need to significantly increase exercise intensity.",
             "يظهر هذا المستوى وجود نشاط بدني جيد، لكن هناك فترات من اليوم تحتاج إلى زيادة الحركة. قد تمارس التمارين الرياضية أحياناً، إلا أن فترات الجلوس الطويلة خلال بقية اليوم تؤثر سلباً على النتائج. يُنصح بالتركيز على إدخال حركات صغيرة ومتكررة خلال اليوم، مثل المشي البسيط بعد الوجبات، حيث أن هذه التحركات المستمرة تعزز من فعالية نشاطك البدني وتدعم توازن وزنك بشكل أفضل، دون الحاجة إلى زيادة شدة التمارين بشكل ملحوظ.",
@@ -393,8 +393,8 @@ export const assessmentFormSeed = {
         average: {
           en: "Average",
           ar: "متوسط",
-          min: 8,
-          max: 10,
+          min: 7,
+          max: 9,
           recommendation: localized(
             "This level indicates that your daily movement rate is insufficient to achieve your health goals, as your body spends a long time in a low-activity state, which explains the slow progress in achieving the desired results. It is necessary to increase daily movement gradually and regularly before resorting to intense or complex exercises, because the goal is to stimulate the body to move continuously throughout the day, not just during a specific period of the week.",
             "يشير هذا المستوى إلى أن معدل الحركة اليومي غير كافٍ لتحقيق أهدافك الصحية، حيث يقضي جسمك وقتاً طويلاً في حالة نشاط منخفض، مما يفسر بطء تحقيق النتائج المرجوة. من الضروري زيادة الحركة اليومية بشكل تدريجي ومنتظم قبل اللجوء إلى تمارين مكثفة أو معقدة، لأن الهدف هو تحفيز الجسم على الحركة المستمرة طوال اليوم، وليس فقط خلال فترة زمنية محددة من الأسبوع.",
@@ -403,7 +403,7 @@ export const assessmentFormSeed = {
         priority: {
           en: "Needs Attention",
           ar: "يحتاج لاهتمام",
-          min: 11,
+          min: 10,
           max: 12,
           recommendation: localized(
             "This level expresses a clear decrease in your physical activity, where sitting for long periods reduces the body's energy consumption, even with a balanced diet. Therefore, your body needs simple and frequent daily stimulation for movement. It is recommended to focus on the simplest possible changes, such as walking for ten minutes after lunch, as this is considered more effective than waiting for the perfect time to exercise, and consistently helps improve energy consumption and overall body health.",
@@ -531,7 +531,7 @@ export const assessmentFormSeed = {
           en: "Excellent",
           ar: "ممتاز",
           min: 0,
-          max: 4,
+          max: 3,
           recommendation: localized(
             "At this level, your sleep quality, body hydration, and energy level are in a very good state, giving your body the ability to handle the demands of the day efficiently and without excess stress. These factors form a strong foundation that supports overall health and prepares the body for optimal performance in various activities.",
             "في هذا المستوى، تكون جودة نومك، وترطيب جسمك، ومستوى طاقتك في حالة جيدة جداً، مما يمنح جسمك القدرة على التعامل مع متطلبات اليوم بكفاءة وبدون ضغوط زائدة. هذه العوامل تشكل أساساً قوياً يدعم الصحة العامة ويهيئ الجسم لأداء مثالي في مختلف الأنشطة.",
@@ -540,8 +540,8 @@ export const assessmentFormSeed = {
         good: {
           en: "Good",
           ar: "جيد",
-          min: 5,
-          max: 6,
+          min: 4,
+          max: 5,
           recommendation: localized(
             "This level shows general acceptability, but there are fine details that may affect your focus and appetite, such as irregular water intake or reducing sleep duration by half an hour. It is recommended to focus on the aspect that shows the greatest impact on your day; if you wake up tired, start by improving sleep quality, but if you tend to forget to drink water, make a water bottle available in front of you throughout the day to enhance hydration.",
             "يظهر هذا المستوى قبولاً عاماً، إلا أن هناك تفاصيل دقيقة قد تؤثر على تركيزك وشهيتك، مثل عدم انتظام شرب المياه أو تقليل مدة النوم بمقدار نصف ساعة. يُنصح بالتركيز على الجانب الذي يظهر تأثيره الأكبر في يومك؛ فإذا كنت تستيقظ متعباً، فابدأ بتحسين جودة النوم، أما إذا كنت تميل إلى نسيان شرب الماء، فاجعل زجاجة الماء متاحة أمامك طوال اليوم لتعزيز الترطيب.",
@@ -550,8 +550,8 @@ export const assessmentFormSeed = {
         average: {
           en: "Average",
           ar: "متوسط",
-          min: 7,
-          max: 8,
+          min: 6,
+          max: 7,
           recommendation: localized(
             "This level indicates that your body may not be getting enough rest. Lack of sleep or poor hydration may manifest through increased feelings of hunger, low energy, or constant fatigue. It is essential to focus on stabilizing these vital foundations before getting preoccupied with the details of the diet, as an exhausted or unhydrated body finds it difficult to commit to a health plan, even if it is suitable.",
             "يدل هذا المستوى على أن جسمك قد لا يحصل على الراحة الكافية. نقص النوم أو ضعف الترطيب قد يظهران من خلال زيادة الشعور بالجوع، انخفاض الطاقة، أو التعب المستمر. من الضروري التركيز على استقرار هذه الأسس الحيوية قبل الانشغال بتفاصيل النظام الغذائي، إذ إن الجسم المرهق أو غير المرتوي يصعب عليه الالتزام بالخطة الصحية حتى لو كانت ملائمة.",
@@ -560,7 +560,7 @@ export const assessmentFormSeed = {
         priority: {
           en: "Needs Attention",
           ar: "يحتاج لاهتمام",
-          min: 9,
+          min: 8,
           max: 9,
           recommendation: localized(
             "At this level, your body needs rapid intervention in the areas of sleep, hydration, and energy. Often, your day begins when you are not sufficiently prepared for changes, which reflects in your feeling of exhaustion, fatigue, and difficulty adhering to the diet. It is recommended to focus initially on fixing just one aspect; if sleep is less than five hours, start by improving it, and if hydration is very weak, increase it gradually. This change will have a clear positive impact on the rest aspects of your health and performance.",
@@ -719,7 +719,7 @@ export const assessmentFormSeed = {
           en: "Excellent",
           ar: "ممتاز",
           min: 0,
-          max: 5,
+          max: 4,
           recommendation: localized(
             "At this level, your appetite is well-balanced, as you are usually able to distinguish between true hunger and emotional cravings for food, making it easier to control your daily eating pattern. It is recommended to maintain this delicate balance, and monitor the meals that precede periods of increased appetite instead of blaming willpower alone, especially if you notice an increase in hunger at certain times of the day.",
             "في هذا المستوى، تكون شهيتك متوازنة بشكل جيد، حيث تتمكن غالباً من التمييز بين الجوع الحقيقي والرغبة العاطفية في تناول الطعام، مما يسهل عليك التحكم في نمط تناولك اليومي. يُنصح بالحفاظ على هذا التوازن الدقيق، ومراقبة الوجبات التي تسبق فترات زيادة الشهية بدلاً من إلقاء اللوم على الإرادة فقط، خاصة إذا لاحظت زيادة في الشعور بالجوع في أوقات معينة من اليوم.",
@@ -728,8 +728,8 @@ export const assessmentFormSeed = {
         good: {
           en: "Good",
           ar: "جيد",
-          min: 6,
-          max: 7,
+          min: 5,
+          max: 6,
           recommendation: localized(
             "This level represents an acceptable state, but there are specific situations that may drive you to eat without a clear feeling of hunger, often happening while busy or late in the day. It is important to pay attention to the timing of hunger; for example, if it increases at night, the reason might be insufficient meals during the day or long intervals between meals.",
             "يمثل هذا المستوى حالة مقبولة، لكن هناك مواقف محددة قد تدفعك إلى تناول الطعام دون شعور واضح بالجوع، وغالباً ما يحدث ذلك أثناء الانشغال أو في أواخر اليوم. من المهم الانتباه إلى توقيت الشعور بالجوع، فمثلاً إذا كان يزيد في الليل، فقد يكون السبب عدم كفاية الوجبات خلال النهار أو وجود فترات طويلة بين الوجبات.",
@@ -738,8 +738,8 @@ export const assessmentFormSeed = {
         average: {
           en: "Average",
           ar: "متوسط",
-          min: 8,
-          max: 10,
+          min: 7,
+          max: 9,
           recommendation: localized(
             "This level indicates that the body's appetite needs better regulation, as hunger may appear strongly and variably, or disappear for a while and then return more intensely. It is necessary to focus on the regularity of meal timings rather than responding to hunger when it appears suddenly. Usually, it is easier to control food quantity and quality when the body gets used to fixed times for eating.",
             "يشير هذا المستوى إلى أن شهية الجسم بحاجة إلى تنظيم أفضل، حيث قد يظهر الجوع بشكل قوي ومتفاوت، أو يختفي لفترة ثم يعود بصورة أشد. من الضروري التركيز على انتظام مواعيد الوجبات بدلاً من الاستجابة للجوع عند ظهوره بشكل مفاجئ. عادة ما يسهل التحكم في كمية الطعام وجودته عندما يعتاد الجسم على مواعيد ثابتة للأكل.",
@@ -748,7 +748,7 @@ export const assessmentFormSeed = {
         priority: {
           en: "Needs Attention",
           ar: "يحتاج لاهتمام",
-          min: 11,
+          min: 10,
           max: 12,
           recommendation: localized(
             "At this level, the body's appetite and meal timing organization require urgent attention, as eating often occurs at times unrelated to true hunger, or after long periods of refraining from food. It is recommended to build a clear and regular daily schedule for meals, without the need for complex plans, so that the body is not left for long hours without food, which helps avoid overeating large quantities at late hours.",
@@ -879,7 +879,7 @@ export const assessmentFormSeed = {
           en: "Excellent",
           ar: "ممتاز",
           min: 0,
-          max: 4,
+          max: 3,
           recommendation: localized(
             "This level is characterized by a clear strength in control and commitment regarding your relationship with food, which makes executing any nutritional plan easier and more effective. It is recommended to utilize this strength in a realistic and balanced way; even if you tend to eat sweets, the awareness to control them and the ability to continue without allowing a single day to turn into a complete derailment is one of the fundamental pillars for maintaining healthy balance.",
             "يمتاز هذا المستوى بقوة واضحة في التحكم والالتزام بعلاقتك مع الطعام، مما يجعل تنفيذ أي خطة غذائية أكثر سهولة وفعالية. يُنصح بالاستفادة من هذه القوة بطريقة واقعية ومتزنة، فحتى إذا كنت تميل إلى تناول الحلويات، فإن الوعي بالتحكم فيها والقدرة على الاستمرار دون السماح ليوم واحد أن يتحول إلى انحراف كامل، يعد من الركائز الأساسية للحفاظ على التوازن الصحي.",
@@ -888,8 +888,8 @@ export const assessmentFormSeed = {
         good: {
           en: "Good",
           ar: "جيد",
-          min: 5,
-          max: 6,
+          min: 4,
+          max: 5,
           recommendation: localized(
             "This level reflects a good capacity for commitment, but certain situations appear that may negatively affect the continuity of progress, such as diminishing enthusiasm over time or increased consumption of sweets beyond the norm. Focus should be placed on the underlying causes behind the decline rather than the decline itself; for example, if boredom is the trigger, diversifying the dietary pattern is more effective than tightening restrictions, whereas if the cause is hunger, priority must be given to satiety instead of excessively reducing quantities.",
             "يعكس هذا المستوى وجود قدرة جيدة على الالتزام، لكن تظهر بعض المواقف التي قد تؤثر سلباً على استمرارية التقدم، مثل تقلص الحماس مع مرور الوقت أو زيادة استهلاك الحلويات بشكل يفوق المعتاد. ينبغي التركيز على الأسباب الكامنة وراء التراجع بدلاً من التراجع ذاته، فمثلاً إذا كان الملل هو المحفز، فإن تنويع النمط الغذائي يكون أكثر فاعلية من تشديد القيود، أما إذا كان السبب الجوع، فيجب إعطاء الأولوية للشبع بدلاً من تقليل الكميات بشكل مفرط.",
@@ -898,8 +898,8 @@ export const assessmentFormSeed = {
         average: {
           en: "Average",
           ar: "متوسط",
-          min: 7,
-          max: 8,
+          min: 6,
+          max: 7,
           recommendation: localized(
             "This level indicates a fragility in commitment, where you start with strong intentions but factors like a boring routine, dietary temptations like sweets, or the absence of quick results might push you back to old habits. It is recommended to set a sustainable plan that does not require excessive daily effort, and start with small, frequent adjustments that help with continuity without draining energy or willpower.",
             "يدل هذا المستوى على هشاشة الالتزام، حيث تبدأ بنية قوية ولكن العوامل مثل الروتين الممل، الإغراءات الغذائية كالحلويات، أو غياب النتائج السريعة، قد تدفعك للعودة إلى العادات القديمة. يُنصح بوضع خطة قابلة للاستمرار، بحيث لا تتطلب مجهوداً مفرطاً يومياً، والبدء بتعديلات صغيرة ومتكررة تساعد على الاستمرارية دون استنزاف الطاقة أو الإرادة.",
@@ -908,7 +908,7 @@ export const assessmentFormSeed = {
         priority: {
           en: "Needs Attention",
           ar: "يحتاج لاهتمام",
-          min: 9,
+          min: 8,
           max: 9,
           recommendation: localized(
             "At this level, the relationship with food requires urgent attention, as it may constitute a major obstacle to achieving your health goals, not due to weak character, but as a result of difficulties in continuity and commitment. It is recommended to focus on reducing points of friction; for example, if you stop after a few days, start with very small goals instead of comprehensive plans, as achieving repeated successes in simple goals enhances confidence and establishes a sustainable path toward progress.",
@@ -1015,7 +1015,7 @@ export const assessmentFormSeed = {
           en: "Excellent",
           ar: "ممتاز",
           min: 0,
-          max: 4,
+          max: 3,
           recommendation: localized(
             "This level is characterized by a clear strength in control and commitment regarding your relationship with food, which makes executing any nutritional plan easier and more effective. It is recommended to utilize this strength in a realistic and balanced way; even if you tend to eat sweets, the awareness to control them and the ability to continue without allowing a single day to turn into a complete derailment is one of the fundamental pillars for maintaining healthy balance.",
             "يمتاز هذا المستوى بقوة واضحة في التحكم والالتزام بعلاقتك مع الطعام، مما يجعل تنفيذ أي خطة غذائية أكثر سهولة وفعالية. يُنصح بالاستفادة من هذه القوة بطريقة واقعية ومتزنة، فحتى إذا كنت تميل إلى تناول الحلويات، فإن الوعي بالتحكم فيها والقدرة على الاستمرار دون السماح ليوم واحد أن يتحول إلى انحراف كامل، يعد من الركائز الأساسية للحفاظ على التوازن الصحي.",
@@ -1024,8 +1024,8 @@ export const assessmentFormSeed = {
         good: {
           en: "Good",
           ar: "جيد",
-          min: 5,
-          max: 6,
+          min: 4,
+          max: 5,
           recommendation: localized(
             "This level reflects a good capacity for commitment, but certain situations appear that may negatively affect the continuity of progress, such as diminishing enthusiasm over time or increased consumption of sweets beyond the norm. Focus should be placed on the underlying causes behind the decline rather than the decline itself; for example, if boredom is the trigger, diversifying the dietary pattern is more effective than tightening restrictions, whereas if the cause is hunger, priority must be given to satiety instead of excessively reducing quantities.",
             "يعكس هذا المستوى وجود قدرة جيدة على الالتزام، لكن تظهر بعض المواقف التي قد تؤثر سلباً على استمرارية التقدم، مثل تقلص الحماس مع مرور الوقت أو زيادة استهلاك الحلويات بشكل يفوق المعتاد. ينبغي التركيز على الأسباب الكامنة وراء التراجع بدلاً من التراجع ذاته، فمثلاً إذا كان الملل هو المحفز، فإن تنويع النمط الغذائي يكون أكثر فاعلية من تشديد القيود، أما إذا كان السبب الجوع، فيجب إعطاء الأولوية للشبع بدلاً من تقليل الكميات بشكل مفرط.",
@@ -1034,8 +1034,8 @@ export const assessmentFormSeed = {
         average: {
           en: "Average",
           ar: "متوسط",
-          min: 7,
-          max: 8,
+          min: 6,
+          max: 7,
           recommendation: localized(
             "This level indicates a fragility in commitment, where you start with strong intentions but factors like a boring routine, dietary temptations like sweets, or the absence of quick results might push you back to old habits. It is recommended to set a sustainable plan that does not require excessive daily effort, and start with small, frequent adjustments that help with continuity without draining energy or willpower.",
             "يدل هذا المستوى على هشاشة الالتزام، حيث تبدأ بنية قوية ولكن العوامل مثل الروتين الممل، الإغراءات الغذائية كالحلويات، أو غياب النتائج السريعة، قد تدفعك للعودة إلى العادات القديمة. يُنصح بوضع خطة قابلة للاستمرار، بحيث لا تتطلب مجهوداً مفرطاً يومياً، والبدء بتعديلات صغيرة ومتكررة تساعد على الاستمرارية دون استنزاف الطاقة أو الإرادة.",
@@ -1044,7 +1044,7 @@ export const assessmentFormSeed = {
         priority: {
           en: "Needs Attention",
           ar: "يحتاج لاهتمام",
-          min: 9,
+          min: 8,
           max: 9,
           recommendation: localized(
             "At this level, the relationship with food requires urgent attention, as it may constitute a major obstacle to achieving your health goals, not due to weak character, but as a result of difficulties in continuity and commitment. It is recommended to focus on reducing points of friction; for example, if you stop after a few days, start with very small goals instead of comprehensive plans, as achieving repeated successes in simple goals enhances confidence and establishes a sustainable path toward progress.",
@@ -1194,7 +1194,7 @@ export const assessmentFormSeed = {
           en: "Excellent",
           ar: "ممتاز",
           min: 0,
-          max: 5,
+          max: 4,
           recommendation: localized(
             "This level is characterized by largely comfortable digestion, as your body handles most meals without a clear feeling of heaviness or recurring discomfort. It is recommended to maintain the eating pattern that suits your body, as comfort after eating a meal is an important indicator that makes adhering to the dietary plan easier and reduces the need for random, unstudied changes in the diet.",
             "يتتميز هذا المستوى بهضم مريح إلى حد كبير، حيث يتعامل جسمك مع معظم الوجبات دون شعور بثقل واضح أو انزعاج متكرر. يُنصح بالحفاظ على نمط الأكل الذي يتناسب مع جسمك، إذ تُعد الراحة بعد تناول الوجبة مؤشراً مهماً يسهل الالتزام بالخطة الغذائية ويقلل من الحاجة إلى تغييرات عشوائية غير مدروسة في النظام الغذائي.",
@@ -1203,8 +1203,8 @@ export const assessmentFormSeed = {
         good: {
           en: "Good",
           ar: "جيد",
-          min: 6,
-          max: 7,
+          min: 5,
+          max: 6,
           recommendation: localized(
             "This level reflects good digestive performance, with the presence of certain types of food or situations that may cause a feeling of heaviness or bloating. The problem is usually limited to specific foods and not the diet as a whole. It is essential to link the symptoms you feel to the quality of the meal; for example, if bloating appears after eating fatty foods or dairy products, careful observation is better than abruptly deleting large amounts of food.",
             "يعكس هذا المستوى أداء هضمياً جيداً، مع وجود بعض أنواع الأطعمة أو المواقف التي قد تسبب شعوراً بالثقل أو الانتفاخ. وغالباً ما تكون المشكلة محصورة في أطعمة معينة وليس في النظام الغذائي ككل. من الضروري ربط الأعراض التي تشعر بها بنوعية الوجبة، فمثلاً إذا ظهر الانتفاخ بعد تناول الأطعمة الدسمة أو مشتقات الألبان، فتكوان الملاحظة الدقيقة أفضل من حذف كميات كبيرة من الأطعمة بشكل مفاجئ.",
@@ -1213,8 +1213,8 @@ export const assessmentFormSeed = {
         average: {
           en: "Average",
           ar: "متوسط",
-          min: 8,
-          max: 10,
+          min: 7,
+          max: 9,
           recommendation: localized(
             "This level indicates that digestion affects your comfort after meals, where you may feel heaviness, lethargy, or rapid hunger, which complicates the relationship between you and food. Focus should be placed on regulating eating speed, meal size, and its nutritional composition, as the same food has different effects depending on how it is consumed—whether quickly, in large quantities, or without getting enough protein.",
             "يشير هذا المستوى إلى أن الهضم يؤثر على راحتك بعد الوجبات، حيث قد تشعر بثقل، خمول أو جوع سريع، مما يعقد العلاقة بينك وبين الطعام. ينبغي التركيز على تنظيم سرعة تناول الطعام، حجم الوجبة، وتركيبها الغذائي، إذ أن لنفس الطعام تأثيرات مختلفة حسب طريقة تناوله، سواء بسرعة، بكميات كبيرة، أو دون الحصول على كميات كافية من البروتين.",
@@ -1223,7 +1223,7 @@ export const assessmentFormSeed = {
         priority: {
           en: "Needs Attention",
           ar: "يحتاج لاهتمام",
-          min: 11,
+          min: 10,
           max: 12,
           recommendation: localized(
             "At this level, digestion requires special attention, as recurring discomfort after eating food might push you to avoid important foods or resort to eating in a random and disorganized manner. It is recommended to document the quality of food and the sensations accompanying it over several days, aiming to identify the true triggers for these discomforts instead of random experimentation. If symptoms are severe or persistent, it is best to consult a health professional to evaluate the condition accurately.",
@@ -1373,7 +1373,7 @@ export const assessmentFormSeed = {
           en: "Excellent",
           ar: "ممتاز",
           min: 0,
-          max: 5,
+          max: 4,
           recommendation: localized(
             "This level is characterized by a balanced relationship between mood and eating habits, where emotions do not completely control food decisions, making the control and mastery of the dietary system easier. It is recommended to maintain this clear separation; if you go through a day full of psychological stress and consume larger amounts of food, the most important thing is to return to your normal path without continuous self-blame that might negatively affect the continuity of your commitment during the week.",
             "يتسم هذا المستوى بعلاقة متوازنة بين المزاج وعادات الأكل، حيث لا تسيطر المشاعر بشكل كامل على قرارات تناول الطعام، مما يسهل عملية التحكم والسيطرة على النظام الغذائي. يُنصح بالمحافظة على هذا الفصل الواضح، فإذا مررت بيوم مليء بالضغط النفسي وتناولت كميات أكبر من الطعام، فالأهم أن تعود إلى مسارك الطبيعي دون لوم ذاتي مستمر قد يؤثر سلباً على استمرارية التزامك خلال الأسبوع.",
@@ -1382,8 +1382,8 @@ export const assessmentFormSeed = {
         good: {
           en: "Good",
           ar: "جيد",
-          min: 6,
-          max: 8,
+          min: 5,
+          max: 6,
           recommendation: localized(
             "This level reflects an influence of stress or sadness on eating habits on some days, which is common and does not mean a loss of control. It is important to pay attention to the moment preceding eating; for example, if you tend to eat after work stress, ask yourself if you genuinely need food or just a short break, as such a question might change your decision and reduce emotional eating.",
             "يعكس هذا المستوى وجود تأثير للتوتر أو الحزن على عادات الأكل في بعض الأيام، وهو أمر شائع لا يعني فقدان السيطرة. من المهم الانتباه للحظة التي تسبق تناول الطعام، فمثلاً إذا كنت تميل لتناول الطعام بعد ضغوط العمل، اسأل نفسك إذا ما كنت بحاجة حقيقية للطعام أم لاستراحة قصيرة، فمثل هذا التساؤل قد يغير قرارك ويقلل من تناول الطعام العاطفي.",
@@ -1392,8 +1392,8 @@ export const assessmentFormSeed = {
         average: {
           en: "Average",
           ar: "متوسط",
-          min: 9,
-          max: 10,
+          min: 7,
+          max: 9,
           recommendation: localized(
             "This level indicates that mood plays a prominent role in eating behaviors, where food may be used as a quick way to relieve stress, followed by feelings of discomfort or guilt. Focus should be placed on finding realistic alternatives before resorting to eating; the body and mind need other soothing means such as a short walk or making a phone call, which might redirect your day positively without resorting to food consumption.",
             "يشير هذا المستوى إلى أن المزاج يلعب دوراً بارزاً في سلوكيات الأكل، حيث قد يُستخدم الطعام كوسيلة سريعة لتخفيف التوتر، تليها مشاعر انزعاج أو ذنب. ينبغي التركيز على إيجاد بدائل واقعية قبل اللجوء إلى الأكل، فالجسم والنفس بحاجة إلى وسائل تهدئة أخرى مثل المشي القصير أو إجراء مكالمة هاتفية، والتي قد تعيد توجيه يومك بشكل إيجابي دون اللجوء لتناول الطعام.",
@@ -1402,7 +1402,7 @@ export const assessmentFormSeed = {
         priority: {
           en: "Needs Attention",
           ar: "يحتاج لاهتمام",
-          min: 11,
+          min: 10,
           max: 12,
           recommendation: localized(
             "At this level, the relationship between emotions and eating constitutes a challenge that demands urgent attention, as food becomes a direct reaction to stress or sadness, making it difficult to control the quantities consumed. It is necessary to focus on identifying the triggers that start this cycle, without burdening yourself with blame, and work on understanding the emotions that drive the desire to eat and address them before they turn into unconscious dietary choices.",
@@ -1549,7 +1549,7 @@ export const assessmentFormSeed = {
           en: "Excellent",
           ar: "ممتاز",
           min: 0,
-          max: 5,
+          max: 4,
           recommendation: localized(
             "This level is characterized by very good organization in meal timings, providing your body with a clear routine that helps achieve a better sense of satiety and make calmer, more deliberate nutritional decisions. It is recommended to continue stabilizing this effective routine; having breakfast or regular meals reduces the appearance of sudden hunger and limits making random food choices during late hours of the day.",
             "يتسم هذا المستوى بتنظيم جيد جداً في مواعيد تناول الوجبات، حيث يتمتع جسمك بروتين واضح يساعد على تحقيق شعور أفضل بالشبع واتخاذ قرارات غذائية أكثر هدوءاً وتأنياً. يُنصح بالاستمرار في تثبيت هذا الروتين الفعال، فوجود وجبة فطور أو وجبات منتظمة يقلل من ظهور الجوع المفاجئ ويحد من اتخاذ قرارات عشوائية في تناول الطعام خلال أوقات متأخرة من اليوم.",
@@ -1558,8 +1558,8 @@ export const assessmentFormSeed = {
         good: {
           en: "Good",
           ar: "جيد",
-          min: 6,
-          max: 7,
+          min: 5,
+          max: 6,
           recommendation: localized(
             "This level shows acceptable regularity in meal organization, with some details requiring finer adjustment in food timing or satiety levels. Skipping some meals or needing larger quantities at certain times may occur occasionally. It is recommended to focus on meals that precede rapid increases in appetite, as they often need their protein or fiber content enhanced to support the feeling of fullness for longer periods.",
             "يظهر هذا المستوى انتظاماً مقبولاً في تنظيم الوجبات، مع وجود بعض التفاصيل التي تتطلب ضبطاً أدق في توقيت تناول الطعام أو مستوى الشبع. قد يحدث أحياناً تفويت لبعض الوجبات أو الحاجة إلى كميات أكبر في أوقات معينة. يُنصح بالتركيز على الوجبات التي تسبق زيادة الشهية السريعة، حيث غالباً ما تحتاج إلى تعزيز محتواها من البروتين أو الألياف لتدعيم الشعور بالشبع لفترات أطول.",
@@ -1568,8 +1568,8 @@ export const assessmentFormSeed = {
         average: {
           en: "Average",
           ar: "متوسط",
-          min: 8,
-          max: 10,
+          min: 7,
+          max: 9,
           recommendation: localized(
             "This level indicates insufficient stability in meal timings or the number of meals, which can lead to a strong feeling of hunger or an increase in quantities consumed at late hours. It is important to arrange your day's schedule before focusing on food types; your body needs to know specific eating times, and when these times improve, the feeling of fullness improves and quantities consumed adjust automatically.",
             "يشير هذا المستوى إلى عدم ثبات كافٍ في مواعيد تناول الطعام أو عدد الوجبات، مما قد يؤدي إلى ظهور شعور بالجوع بشكل قوي أو زيادة في الكميات المتناولة في أوقات متأخرة. من المهم ترتيب جدول اليوم قبل التركيز على نوع الطعام، إذ يحتاج جسمك إلى معرفة مواعيد الأكل المحددة، وعند تحسين هذه المواعيد يتحسن الشعور بالشبع وتضبط الكميات المتناولة تلقائياً.",
@@ -1578,7 +1578,7 @@ export const assessmentFormSeed = {
         priority: {
           en: "Needs Attention",
           ar: "يحتاج لاهتمام",
-          min: 11,
+          min: 10,
           max: 12,
           recommendation: localized(
             "At this level, meal organization requires clear and urgent intervention, as skipping meals or eating randomly can push the body to demand larger quantities at difficult times. It is recommended to focus on stabilizing the first two meals of the day, without needing them to be perfect; the important thing is that they are at specific and clear times, helping to reduce intense hunger and the urgent craving to eat quickly.",
@@ -1697,7 +1697,7 @@ export const assessmentFormSeed = {
           en: "Excellent",
           ar: "ممتاز",
           min: 0,
-          max: 4,
+          max: 3,
           recommendation: localized(
             "This level features very good control over sugar cravings; the desire exists naturally but does not completely control your daily trends. It is recommended to focus on maintaining fullness and organizing meal timings, as controlling sugar consumption becomes easier when the body avoids long periods of hunger or a lack of sleep.",
             "يتميز هذا المستوى بسيطرة جيدة جداً على الرغبة في تناول السكريات، حيث تكون الرغبة موجودة بشكل طبيعي ولكنها لا تتحكم في توجهاتك اليومية بشكل كامل. يُنصح بالتركيز على الحفاظ على الشعور بالشبع وتنظيم مواعيد الوجبات، إذ يصبح التحكم في استهلاك السكريات أكثر سهولة عندما يتجنب الجسم فترات الجوع الطويلة أو نقص النوم.",
@@ -1706,8 +1706,8 @@ export const assessmentFormSeed = {
         good: {
           en: "Good",
           ar: "جيد",
-          min: 5,
-          max: 6,
+          min: 4,
+          max: 5,
           recommendation: localized(
             "This level reflects a good capacity for control, with specific times when sugar cravings increase, often linked to fatigue or feeling hungry. It is important to review meal timings and sleep quality in these cases, rather than considering sweets as the sole problem, since nutritional balance and good sleep play a fundamental role in reducing this desire.",
             "يعكس هذا المستوى قدرة جيدة على التحكم، مع وجود أوقات محددة تزيد فيها الرغبة في السكريات، غالباً ما تكون مرتبطة بالتعب أو الشعور بالجوع. من المهم مراجعة توقيت تناول الوجبات وجودة النوم في هذه الحالات، بدلاً من اعتبار الحلويات هي المشكلة الوحيدة، إذ أن التوازن الغذائي والنوم الجيد يلعبان دوراً أساسياً في تقليل هذه الرغبة.",
@@ -1716,8 +1716,8 @@ export const assessmentFormSeed = {
         average: {
           en: "Average",
           ar: "متوسط",
-          min: 7,
-          max: 8,
+          min: 6,
+          max: 7,
           recommendation: localized(
             "This level indicates that sweets and snacking consumption might hinder part of the progress toward your goals, often due to frequent intake and an inability to stop after starting. It is recommended to focus on reducing random snacking by determining the portion size beforehand and eating them in bowls/plates instead of directly from the package; such a simple change can reduce the quantities consumed without a major psychological struggle.",
             "يشير هذا المستوى إلى أن تناول السكريات والوجبات الخفيفة قد يعيق جزءاً من التقدم نحو أهدافك، وغالباً ما يكون السبب تكرار الاستهلاك وعدم القدرة على التوقف بعد البدء. يُنصح بالتركيز على تقليل الاستهلاك العشوائي للوجبات الخفيفة، من خلال تحديد الكمية مسبقاً وتناولها في أطباق بدلاً من تناولها مباشرة من العبوة، فمثل هذا التغيير البسيط يمكن أن يقلل الكميات المستهلكة دون صراع نفسي كبير.",
@@ -1726,7 +1726,7 @@ export const assessmentFormSeed = {
         priority: {
           en: "Needs Attention",
           ar: "يحتاج لاهتمام",
-          min: 9,
+          min: 8,
           max: 9,
           recommendation: localized(
             "At this level, frequent sugar cravings demand special attention, as they may lead to unconscious increases in calorie consumption. Focus should be placed on addressing the root causes behind this desire, such as prolonged hunger, lack of sleep, and psychological stress, as improving the quality of a single main meal can be more effective in reducing snacking than relying solely on willpower.",
@@ -1863,7 +1863,7 @@ export const assessmentFormSeed = {
           en: "Excellent",
           ar: "ممتاز",
           min: 0,
-          max: 4,
+          max: 3,
           recommendation: localized(
             "This level is characterized by high readiness to begin and continue applying appropriate plans for your life and goals. You possess the ability to commit as long as the plan is suitable and your circumstances are fitting. It is recommended to utilize this readiness carefully and not rush progress; enthusiasm is important but it needs simple and clear steps to avoid turning into psychological stress over time.",
             "يتسم هذا المستوى باستعداد عالٍ للبدء والاستمرار في تطبيق الخطط المناسبة لحياتك وأهدافك. تمتلك القدرة على الالتزام طالما أن الخطة ملائمة وظروفك مناسبة. يُنصح بالاستفادة من هذه الجاهزية بحذر وعدم استعجال التقدم، فالحماس مهم لكنه يحتاج إلى خطوات بسيطة وواضحة لتجنب تحوله إلى ضغط نفسي مع مرور الأيام.",
@@ -1872,8 +1872,8 @@ export const assessmentFormSeed = {
         good: {
           en: "Good",
           ar: "جيد",
-          min: 5,
-          max: 6,
+          min: 4,
+          max: 5,
           recommendation: localized(
             "This level reflects a good capacity for continuity, with a notable need for designing an appropriate plan that supports your follow-up and clarity of goals. You might be ready to commit, but you need continuous tracking, diversification in methods, or greater clarity in steps. It is recommended to focus on factors that enhance continuity; if follow-up is important to you, do not rely on yourself alone, and if boredom is an obstacle, variety in the diet or activity is an essential part of the solution.",
             "يعكس هذا المستوى قدرة جيدة على الاستمرارية، مع حاجة ملحوظة لتصميم خطة ملائمة تدعم متابعتك ووضوح أهدافك. قد تكون مستعداً للالتزام، لكنك تحتاج إلى متابعة مستمرة، تنويع في الأساليب، أو وضوح أكبر في الخطوات. يُنصح بالتركيز على العوامل التي تعزز الاستمرارية، فإذا كانت المتابعة مهمة بالنسبة لك فلا تعتمد على الذات فقط، وإذا كان الملل عائقاً، فالتنوع في النظام الغذائي أو النشاط يُعد جزءاً أساسياً من الحل.",
@@ -1882,8 +1882,8 @@ export const assessmentFormSeed = {
         average: {
           en: "Average",
           ar: "متوسط",
-          min: 7,
-          max: 8,
+          min: 6,
+          max: 7,
           recommendation: localized(
             "This level indicates a clear desire to achieve results, but execution may falter quickly due to known obstacles that need practical strategies to overcome. It is important to simplify the starting phase; if time is an obstacle, easy-to-prepare meals can be chosen, and if hunger represents a problem, it is best to focus on achieving satiety. Every obstacle requires a different approach to deal with effectively.",
             "يشير هذا المستوى إلى وجود رغبة واضحة في تحقيق النتائج، لكن التنفيذ قد يتعثر بسرعة نتيجة معوقات معروفة تحتاج إلى استراتيجيات عملية للتغلب عليها. من المهم تبسيط مرحلة البداية، فإذا كان الوقت عائقاً، فيمكن اختيار وجبات سهلة التحضير، وإذا كان الجوع يمثل مشكلة، فالأفضل التركيز على تحقيق الشبع. كل عائق يتطلب مدخلاً مختلفاً للتعامل الفعال.",
@@ -1892,7 +1892,7 @@ export const assessmentFormSeed = {
         priority: {
           en: "Needs Attention",
           ar: "يحتاج لاهتمام",
-          min: 9,
+          min: 8,
           max: 9,
           recommendation: localized(
             "At this level, continuous commitment requires major attention; the desire to achieve results may be present, but traditional plans might clash with your daily life circumstances or psychological state. It is recommended to focus on very small goals that can be achieved even on the worst days, as the frequent repetition of small successes builds confidence gradually. Continuity starts with easy, doable steps, not with ideal plans that may seem complex or exhausting.",

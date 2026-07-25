@@ -108,7 +108,7 @@ export function calculateSectionScore(section, answers) {
     if (choice) score += choice.score;
   }
 
-  return score / maxScore;
+  return (maxScore - score) / maxScore;
 }
 
 /**
