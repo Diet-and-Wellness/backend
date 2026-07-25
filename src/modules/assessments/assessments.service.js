@@ -76,14 +76,14 @@ function validateSectionAnswers(section, answers, language = "en") {
 function scoreSectionResult(section, answers, language = "en") {
   validateSectionAnswers(section, answers, language);
 
-  const score = calculateSectionScore(section, answers);
+  const { percentage, score } = calculateSectionScore(section, answers);
   const snapshots = buildAnswerSnapshots(section, answers);
 
   if (section.isText) {
     return {
       section: section._id,
       sectionTitle: section.title,
-      sectionScore: score,
+      sectionScore: percentage,
       result: null,
       answers: snapshots,
     };
@@ -106,7 +106,7 @@ function scoreSectionResult(section, answers, language = "en") {
   return {
     section: section._id,
     sectionTitle: section.title,
-    sectionScore: score,
+    sectionScore: percentage,
     result: {
       label: range.label,
       description: range.description,

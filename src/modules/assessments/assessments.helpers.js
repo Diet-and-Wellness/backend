@@ -92,13 +92,15 @@ export function calculateSectionScore(section, answers) {
   );
 
   if (section.isText) {
-    return 0;
+    return { percentage: 0, score: 0 };
   }
   let score = 0;
   let maxScore = 0;
+  let minScore = 0;
 
   for (const q of visibleQuestions) {
     maxScore += Math.max(...q.choices.map((c) => c.score));
+    minScore += Math.min(...q.choices.map((c) => c.score));
     const answer = answerMap.get(q._id.toString());
     if (!answer?.choiceId) continue;
 
@@ -108,7 +110,7 @@ export function calculateSectionScore(section, answers) {
     if (choice) score += choice.score;
   }
 
-  return (maxScore - score) / maxScore;
+  return { percentage: (maxScore - score) / (maxScore - minScore), score };
 }
 
 /**
