@@ -25,7 +25,7 @@ PM2 manages both Node.js processes; Nginx is the only public HTTP/HTTPS endpoint
 | `nutrition-be`                    | Actual backend repository name                           |
 | `Diet-Wellness`                   | Actual frontend repository name                          |
 | Backend / frontend ports          | `5000` / `3000`                                          |
-| Backend / frontend directories    | `/var/www/example-backend` / `/var/www/example-frontend` |
+| Backend / frontend directories    | `/var/www/backend` / `/var/www/frontend` |
 | Node version                      | `20.19.5` (from `.nvmrc`)                                |
 
 ## 3. Initial root login
@@ -119,8 +119,8 @@ Copy and run exactly the sudo command printed by `pm2 startup`, then return to `
 As root:
 
 ```bash
-mkdir -p /var/www/example-backend /var/www/example-frontend
-chown -R deploy:deploy /var/www/example-backend /var/www/example-frontend
+mkdir -p /var/www/backend /var/www/frontend
+chown -R deploy:deploy /var/www/backend /var/www/frontend
 ```
 
 ## 11. Give the VPS read access to GitHub
@@ -155,28 +155,28 @@ Set `chmod 600 ~/.ssh/config`. Obtain GitHub's published SSH host-key fingerprin
 ## 12. Clone the repository
 
 ```bash
-git clone git@github-backend:GITHUB_OWNER/nutrition-be.git /var/www/example-backend
-git clone git@github-frontend:GITHUB_OWNER/Diet-Wellness.git /var/www/example-frontend
+git clone git@github-backend:GITHUB_OWNER/nutrition-be.git /var/www/backend
+git clone git@github-frontend:GITHUB_OWNER/Diet-Wellness.git /var/www/frontend
 ```
 
 ## 13. Create production environment files
 
-Backend uses `/var/www/example-backend/.env`:
+Backend uses `/var/www/backend/.env`:
 
 ```bash
-cd /var/www/example-backend
+cd /var/www/backend
 cp .env.example .env
 chmod 600 .env
 ```
 
 Edit it as `deploy`. Required production names are `NODE_ENV`, `ENVIRONMENT`, `HOST`, `PORT`, `MONGO_URI`, `DB_NAME`, `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, `FRONTEND_URL`, `BACKEND_URL`, `BUSINESS_EMAIL`, `GOOGLE_APP_PASSWORD`, `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`, and all six `PAYMOB_*` values in `.env.example`. Set `FRONTEND_URL=https://example.com`, `BACKEND_URL=https://api.example.com`, `HOST=127.0.0.1`, and `PORT=5000`. Production values stay on the VPS and `.env` is ignored.
 
-The frontend separately uses `/var/www/example-frontend/.env.production` containing `NEXT_PUBLIC_API_URL=https://api.example.com/api`. It is public and embedded at build time, so changes require rebuilding.
+The frontend separately uses `/var/www/frontend/.env.production` containing `NEXT_PUBLIC_API_URL=https://api.example.com/api`. It is public and embedded at build time, so changes require rebuilding.
 
 ## 14. First manual build and launch
 
 ```bash
-cd /var/www/example-backend
+cd /var/www/backend
 export NVM_DIR="$HOME/.nvm"; . "$NVM_DIR/nvm.sh"; nvm use
 npm ci --omit=dev
 npm run build
@@ -285,7 +285,7 @@ push/merge to main
 This is a simple in-place deployment, not an atomic release-directory deployment. Find a previous healthy SHA in GitHub, then as `deploy` run:
 
 ```bash
-cd /var/www/example-backend
+cd /var/www/backend
 git fetch origin
 git reset --hard HEALTHY_COMMIT_SHA
 npm ci --omit=dev
@@ -309,7 +309,7 @@ tail -f /var/log/nginx/access.log /var/log/nginx/error.log
 curl -v http://127.0.0.1:5000/api/health
 curl -v https://api.example.com/api/health
 dig +short example.com api.example.com
-git -C /var/www/example-backend remote -v
+git -C /var/www/backend remote -v
 ssh -T github-backend
 ss -ltnp | grep ':5000'
 ```
