@@ -5,6 +5,7 @@ dotenv.config();
 const env = {
   environment: process.env.ENVIRONMENT || "development",
   port: process.env.PORT || 5000,
+  host: process.env.HOST || "127.0.0.1",
   dbUrl: process.env.MONGO_URI,
   dbName: process.env.DB_NAME,
   jwtSecret: process.env.JWT_SECRET,
@@ -32,10 +33,6 @@ const env = {
   // allowedOrigins: [process.env.FRONTEND_URL || "http://localhost:3000"],
 };
 
-if (env.environment === "production") {
-  env.allowedOrigins = [env.frontendUrl, "http://localhost:3000"];
-} else {
-  env.allowedOrigins = [env.frontendUrl, "http://localhost:3000"];
-}
+env.allowedOrigins = [env.frontendUrl, "http://localhost:3000"].filter(Boolean);
 
 export default env;

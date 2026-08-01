@@ -7,17 +7,20 @@ import gracefulShutdown from "#utils/gracefulShutdown.js";
 import runBackup from "#utils/backup.js";
 
 const PORT = env.port;
+const HOST = env.host;
+let server;
+let backupTask;
 
 (async () => {
   try {
     await connectDB();
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
+    server = app.listen(PORT, HOST, () => {
+      console.log(`🚀 Server running at http://${HOST}:${PORT}`);
     });
 
     // Daily backup at 02:00 AM server time (not applicable in serverless environments)
     if (!process.env.VERCEL) {
-      cron.schedule("0 2 * * *", () => {
+      backupTask = cron.schedule("0 2 * * *", () => {
         console.log("⏰ Running daily backup...");
         runBackup();
       });
@@ -30,11 +33,8 @@ const PORT = env.port;
 
 // OS signals
 ["SIGINT", "SIGTERM", "SIGUSR2"].forEach((signal) => {
-  process.on(signal, gracefulShutdown);
+  process.once(signal, () => gracefulShutdown(signal, server, backupTask));
 });
-
-// Nodemon restart support
-process.on("SIGUSR2", gracefulShutdown);
 
 // Uncaught errors
 process.on("uncaughtException", (err) => {
@@ -44,7 +44,11 @@ process.on("uncaughtException", (err) => {
 
 process.on("unhandledRejection", (err) => {
   console.error("🔥 Unhandled Rejection:", err);
-  server.close(() => process.exit(1));
+  if (server) {
+    server.close(() => process.exit(1));
+  } else {
+    process.exit(1);
+  }
 });
 
 process.on("exit", () => {

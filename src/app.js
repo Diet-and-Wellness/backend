@@ -14,6 +14,11 @@ import env from "#config/env.js";
 
 const app = express();
 
+// Nginx is the only trusted reverse proxy in production. This keeps req.ip,
+// secure-cookie handling, and rate limiting accurate without trusting arbitrary
+// forwarded headers from the public internet.
+app.set("trust proxy", 1);
+
 // Middleware setup
 // Security: HTTP Security Headers via Helmet
 // Must be applied before CORS for proper header precedence
