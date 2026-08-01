@@ -18,7 +18,7 @@ module.exports = {
       merge_logs: true,
       watch: false, // Set to true only if you want auto-restart on file changes
       ignore_watch: ["node_modules", "logs"],
-      max_memory_restart: "1GB", // Auto-restart if memory exceeds 1GB
+      max_memory_restart: "1G", // Auto-restart if memory exceeds 1GB
       autorestart: true,
       restart_delay: 3000,
       kill_timeout: 10000,
