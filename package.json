@@ -21,11 +21,11 @@
     "build": "node --check src/server.js && node --check src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prod": "pm2 start ecosystem.config.cjs",
-    "prod:stop": "pm2 stop nutrition-api",
-    "prod:restart": "pm2 restart nutrition-api",
-    "prod:logs": "pm2 logs nutrition-api",
+    "prod:stop": "pm2 stop backend",
+    "prod:restart": "pm2 restart backend --update-env",
+    "prod:logs": "pm2 logs backend",
     "prod:monit": "pm2 monit",
-    "prod:delete": "pm2 delete nutrition-api"
+    "prod:delete": "pm2 delete backend"
   },
   "keywords": [],
   "author": "",

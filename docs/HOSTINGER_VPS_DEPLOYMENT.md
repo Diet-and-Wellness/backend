@@ -13,7 +13,7 @@ Nginx :80/:443
     `-- api.example.com  -> backend on 127.0.0.1:5000
 ```
 
-PM2 manages both Node.js processes; Nginx is the only public HTTP/HTTPS endpoint. This repository supplies `nutrition-api` on port 5000.
+PM2 manages both Node.js processes; Nginx is the only public HTTP/HTTPS endpoint. This repository supplies `backend` on port 5000.
 
 ## 2. Values the user must replace
 
@@ -184,7 +184,7 @@ mkdir -p logs backups
 pm2 start ecosystem.config.cjs
 pm2 save
 curl --fail http://127.0.0.1:5000/api/health
-pm2 logs nutrition-api --lines 100 --nostream
+pm2 logs backend --lines 100 --nostream
 ```
 
 There are no automated tests and no migration framework. Do not run development seeds in production. Prove this manual deployment before enabling Actions.
@@ -263,7 +263,7 @@ A direct push to `main` deploys. Merging a PR also produces a push to `main` and
 
 ## 21. First automated deployment
 
-Commit these files on a feature branch, push it, review the PR, and merge to `main`. Inspect Actions logs, then on the VPS run `pm2 status`, `pm2 logs nutrition-api`, `nginx -t`, and the local/public curl checks. Finally open both domains and exercise a frontend API request.
+Commit these files on a feature branch, push it, review the PR, and merge to `main`. Inspect Actions logs, then on the VPS run `pm2 status`, `pm2 logs backend`, `nginx -t`, and the local/public curl checks. Finally open both domains and exercise a frontend API request.
 
 ## 22. Deployment flow
 
@@ -300,8 +300,8 @@ This intentionally does not clean ignored `.env` or backups. Later pushes return
 
 ```bash
 pm2 status
-pm2 logs nutrition-api --lines 200
-pm2 describe nutrition-api
+pm2 logs backend --lines 200
+pm2 describe backend
 journalctl -u pm2-deploy --since today
 nginx -t
 systemctl status nginx

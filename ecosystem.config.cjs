@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "nutrition-api",
+      name: "backend",
       script: "./src/server.js",
       cwd: __dirname,
       instances: 1,
