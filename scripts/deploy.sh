@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-readonly APP_DIR="/var/www/backend"
+readonly SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+readonly APP_DIR="$(cd -- "$SCRIPT_DIR/.." && pwd)"
 readonly BRANCH="main"
 readonly HEALTH_URL="http://127.0.0.1:5000/api/health"
 
