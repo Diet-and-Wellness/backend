@@ -71,17 +71,17 @@ const signup = async ({ firstName, lastName, email, password, phone }) => {
     throw error;
   }
 
-  const otp = await Otp.findOne({
-    email,
-    purpose: "verify_account",
-    verified: true,
-  });
-  if (!otp) {
-    const error = new Error(translate(ERROR_CODES.EMAIL_NOT_VERIFIED, "en"));
-    error.code = ERROR_CODES.EMAIL_NOT_VERIFIED;
-    error.status = 400;
-    throw error;
-  }
+  // const otp = await Otp.findOne({
+  //   email,
+  //   purpose: "verify_account",
+  //   verified: true,
+  // });
+  // if (!otp) {
+  //   const error = new Error(translate(ERROR_CODES.EMAIL_NOT_VERIFIED, "en"));
+  //   error.code = ERROR_CODES.EMAIL_NOT_VERIFIED;
+  //   error.status = 400;
+  //   throw error;
+  // }
 
   const user = await User.create({
     firstName,
