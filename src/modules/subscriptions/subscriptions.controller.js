@@ -6,6 +6,7 @@ import {
   getUserSubscription,
   isUserSubscribed,
   getUserSubscriptionStatus,
+  getUserResultsAccess,
   getUserSubscriptionHistory,
   cancelUserSubscription,
   renewSubscription,
@@ -20,6 +21,7 @@ import {
   getPaymobTransaction,
 } from "#utils/paymob.js";
 import { ERROR_CODES, getLanguage, translate } from "#utils/localization.js";
+import { SUBSCRIPTION_PLAN_TYPES } from "./subscriptions.constants.js";
 
 // ============ PUBLIC ENDPOINTS ============
 
@@ -58,6 +60,23 @@ export const getMySubscriptionStatus = async (req, res, next) => {
       success: true,
       data: status,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getMyResultsAccess = async (req, res, next) => {
+  try {
+    const userId = req.user?.user_id;
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: translate(ERROR_CODES.UNAUTHORIZED, getLanguage(req)),
+      });
+    }
+
+    const access = await getUserResultsAccess(userId);
+    res.status(200).json({ success: true, data: access });
   } catch (error) {
     next(error);
   }
@@ -231,7 +250,7 @@ export const checkPaymentStatus = async (req, res, next) => {
       });
     }
 
-    if (userId != order.user._id) {
+    if (userId !== order.user._id.toString()) {
       return res.status(401).json({
         success: false,
         message: translate(ERROR_CODES.UNAUTHORIZED, getLanguage(req)),
@@ -251,13 +270,17 @@ export const checkPaymentStatus = async (req, res, next) => {
 
     // Webhook has been processed, return final status
     if (order.status === "success") {
+      const successCode =
+        order.subscription.type === SUBSCRIPTION_PLAN_TYPES.ONE_TIME_OFFER
+          ? ERROR_CODES.RESULTS_ACCESS_GRANTED
+          : ERROR_CODES.PAYMENT_SUCCESS;
       return res.status(200).json({
         success: true,
         status: "success",
-        message: translate(ERROR_CODES.PAYMENT_SUCCESS, getLanguage(req)),
+        message: translate(successCode, getLanguage(req)),
         orderId: order._id,
         subscriptionId: order.subscription._id,
-        expiryDate: order.subscription.expiryDate,
+        planType: order.subscription.type,
       });
     } else if (order.status === "failed") {
       return res.status(200).json({
@@ -406,7 +429,13 @@ export const adminCreateSubscription = async (req, res, next) => {
     } = req.body;
 
     // Validate required fields
-    if (!name || !displayName || !durationInDays || price === undefined) {
+    const isOneTimeOffer = type === SUBSCRIPTION_PLAN_TYPES.ONE_TIME_OFFER;
+    if (
+      !name ||
+      !displayName ||
+      (!isOneTimeOffer && !durationInDays) ||
+      price === undefined
+    ) {
       return res.status(400).json({
         success: false,
         message: translate(ERROR_CODES.INVALID_INPUT, getLanguage(req)),

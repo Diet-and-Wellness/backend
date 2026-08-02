@@ -19,6 +19,7 @@ export const SUBSCRIPTION_TYPES = {
   BASIC: "basic",
   STANDARD: "standard",
   PREMIUM: "premium",
+  ASSESSMENT_RESULTS: "assessment_results",
 };
 
 // Order status values

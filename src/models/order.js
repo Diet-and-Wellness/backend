@@ -16,6 +16,12 @@ const orderSchema = new mongoose.Schema(
       ref: "Subscription",
       required: true,
     },
+    // Stable entitlement snapshot. It remains valid if the plan is later
+    // deactivated or its metadata changes.
+    entitlement: {
+      type: String,
+      enum: ["assessment_results"],
+    },
     amount: {
       type: Number,
       required: true,
@@ -72,6 +78,7 @@ const orderSchema = new mongoose.Schema(
 // Compound index for efficient queries
 orderSchema.index({ user: 1, createdAt: -1 });
 orderSchema.index({ status: 1, createdAt: -1 });
+orderSchema.index({ user: 1, entitlement: 1, status: 1 });
 
 orderSchema.methods.toJSON = function () {
   const order = this.toObject();

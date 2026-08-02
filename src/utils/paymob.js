@@ -24,7 +24,10 @@ export const createPaymentIntention = async (
         payment_methods: [env.paymobPaymentIntegrationId],
         items: [
           {
-            name: `Subscription: ${subscription.name}`,
+            name:
+              subscription.type === "one_time_offer"
+                ? `One-time purchase: ${subscription.name}`
+                : `Subscription: ${subscription.name}`,
             amount: Math.round(amount * 100),
             quantity: 1,
             description:

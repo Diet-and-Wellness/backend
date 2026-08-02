@@ -212,7 +212,7 @@ export const getActiveFormSection = async (req, res, next) => {
 
 export const submitSection = async (req, res, next) => {
   try {
-    const { sectionResult, submission } = await service.submitSection(
+    const { submission } = await service.submitSection(
       req.user.user_id,
       req.params.sectionId,
       req.body.answers,
@@ -221,10 +221,8 @@ export const submitSection = async (req, res, next) => {
     res.json({
       success: true,
       data: {
-        sectionResult,
         status: submission.status,
         submittedCount: submission.sectionResults.length,
-        totalScore: submission.totalScore,
       },
     });
   } catch (err) {
@@ -238,7 +236,14 @@ export const finalizeSubmission = async (req, res, next) => {
       req.user.user_id,
       req.language,
     );
-    res.json({ success: true, data: submission });
+    res.json({
+      success: true,
+      data: {
+        id: submission.id,
+        status: submission.status,
+        submittedAt: submission.submittedAt,
+      },
+    });
   } catch (err) {
     next(err);
   }
@@ -252,7 +257,14 @@ export const submitAll = async (req, res, next) => {
       req.body.sections,
       req.language,
     );
-    res.status(201).json({ success: true, data: submission });
+    res.status(201).json({
+      success: true,
+      data: {
+        id: submission.id,
+        status: submission.status,
+        submittedAt: submission.submittedAt,
+      },
+    });
   } catch (err) {
     next(err);
   }

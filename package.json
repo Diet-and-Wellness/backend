@@ -19,7 +19,7 @@
     "start": "node src/server.js",
     "dev": "node src/seeds/seed.dev.js && nodemon src/server.js",
     "build": "node --check src/server.js && node --check src/app.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node --test",
     "prod": "pm2 start ecosystem.config.cjs",
     "prod:stop": "pm2 stop backend",
     "prod:restart": "pm2 restart backend --update-env",

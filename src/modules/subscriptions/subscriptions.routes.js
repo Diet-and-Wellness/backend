@@ -33,6 +33,14 @@ router.get(
   controller.getMySubscriptionStatus,
 );
 
+// GET /api/subscriptions/me/results-access
+router.get(
+  "/me/results-access",
+  authenticate,
+  standardLimiter,
+  controller.getMyResultsAccess,
+);
+
 // GET /api/subscriptions/me/history
 router.get(
   "/me/history",

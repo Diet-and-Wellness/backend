@@ -1,7 +1,9 @@
 import {
   isUserSubscribed,
+  getUserResultsAccess,
   getUserSubscriptionStatus,
 } from "#modules/subscriptions/subscriptions.service.js";
+import { ERROR_CODES, getLanguage, translate } from "#utils/localization.js";
 
 /**
  * SUBSCRIPTION MIDDLEWARE
@@ -37,6 +39,40 @@ export const requireSubscription = async (req, res, next) => {
     }
 
     // Subscription is valid, proceed
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Allow assessment results for an active subscriber or for a customer who
+ * completed the dedicated one-time results purchase.
+ */
+export const requireResultsAccess = async (req, res, next) => {
+  try {
+    const userId = req.user?.user_id;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "User not authenticated",
+      });
+    }
+
+    const access = await getUserResultsAccess(userId);
+    if (!access.hasAccess) {
+      return res.status(403).json({
+        success: false,
+        code: ERROR_CODES.RESULTS_ACCESS_REQUIRED,
+        message: translate(
+          ERROR_CODES.RESULTS_ACCESS_REQUIRED,
+          getLanguage(req),
+        ),
+      });
+    }
+
+    req.resultsAccess = access;
     next();
   } catch (error) {
     next(error);

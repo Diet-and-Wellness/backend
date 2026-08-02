@@ -96,6 +96,7 @@ async function ensureSubscription({
   description = "",
   features = [],
   mostPopular = false,
+  type = "subscription_plan",
   activeDays = [],
   responseTimeInHours = 1,
   planNote = "",
@@ -111,9 +112,46 @@ async function ensureSubscription({
     description,
     features,
     mostPopular,
+    type,
     activeDays,
     responseTimeInHours,
     planNote,
+  });
+}
+
+async function ensureAssessmentResultsPlan() {
+  return ensureSubscription({
+    name: "assessment_results",
+    displayName: localized(
+      "Nutrition Analysis Results",
+      "نتائج التحليل الغذائي",
+    ),
+    price: 25,
+    currency: "EGP",
+    description: localized(
+      "A one-time payment for permanent access to your nutrition assessment results and personalized recommendations.",
+      "دفعة واحدة للوصول الدائم إلى نتائج تقييمك الغذائي وتوصياتك المخصصة.",
+    ),
+    features: [
+      localized(
+        "Full nutrition assessment results",
+        "نتائج التقييم الغذائي كاملة",
+      ),
+      localized(
+        "Personalized health and nutrition insights",
+        "رؤى صحية وغذائية مخصصة",
+      ),
+      localized(
+        "Permanent access with one payment",
+        "وصول دائم بدفعة واحدة",
+      ),
+    ],
+    type: "one_time_offer",
+    responseTimeInHours: 0,
+    planNote: localized(
+      "Pay once and return to your results whenever you need them.",
+      "ادفع مرة واحدة وارجع إلى نتائجك وقتما تشاء.",
+    ),
   });
 }
 
@@ -320,6 +358,8 @@ async function createSubscriptionsAndUserSubscriptions(users) {
     }),
   );
 
+  await ensureAssessmentResultsPlan();
+
   // assign subscriptions to some customers: half active, half expired
   const customers = users.customers;
   const now = new Date();
@@ -514,6 +554,8 @@ export const prodSeed = async () => {
       "إذا أعجبك الحصول على الدعم اليومي أثناء التنفيذ وتريد توجيهًا أقرب.",
     ),
   });
+
+  await ensureAssessmentResultsPlan();
 
   await createAssessmentForm(admin);
 };

@@ -10,6 +10,12 @@ import {
   translateField,
 } from "./subscriptions.helpers.js";
 import { ERROR_CODES, createError } from "#utils/localization.js";
+import {
+  ORDER_STATUS,
+  SUBSCRIPTION_PLAN_TYPES,
+  SUBSCRIPTION_STATUS,
+  SUBSCRIPTION_TYPES,
+} from "./subscriptions.constants.js";
 
 // ============ SUBSCRIPTION PLANS ============
 
@@ -55,18 +61,15 @@ export const createSubscription = async (subscriptionData) => {
 export const updateSubscription = async (subscriptionId, updateData) => {
   const { name, ...allowedUpdates } = updateData;
 
-  const subscription = await Subscription.findByIdAndUpdate(
-    subscriptionId,
-    allowedUpdates,
-    { new: true, runValidators: true },
-  );
+  const subscription = await Subscription.findById(subscriptionId);
 
   if (!subscription) {
     const error = createError(ERROR_CODES.SUBSCRIPTION_NOT_FOUND, 404, "en");
     throw error;
   }
 
-  return subscription;
+  Object.assign(subscription, allowedUpdates);
+  return await subscription.save();
 };
 
 export const deleteSubscription = async (subscriptionId) => {
@@ -140,6 +143,25 @@ export const createSubscriptionOrder = async (userId, subscriptionId) => {
       throw error;
     }
 
+    if (
+      subscription.type === SUBSCRIPTION_PLAN_TYPES.ONE_TIME_OFFER &&
+      subscription.name === SUBSCRIPTION_TYPES.ASSESSMENT_RESULTS
+    ) {
+      const existingPurchase = await Order.exists({
+        user: userId,
+        subscription: subscriptionId,
+        status: ORDER_STATUS.SUCCESS,
+      }).session(session);
+
+      if (existingPurchase) {
+        throw createError(
+          ERROR_CODES.RESULTS_ACCESS_ALREADY_GRANTED,
+          409,
+          "en",
+        );
+      }
+    }
+
     // Validate user exists
     const User = await import("#models/user.js")
       .then((m) => m.default)
@@ -154,6 +176,11 @@ export const createSubscriptionOrder = async (userId, subscriptionId) => {
     const order = new Order({
       user: userId,
       subscription: subscriptionId,
+      entitlement:
+        subscription.type === SUBSCRIPTION_PLAN_TYPES.ONE_TIME_OFFER &&
+        subscription.name === SUBSCRIPTION_TYPES.ASSESSMENT_RESULTS
+          ? SUBSCRIPTION_TYPES.ASSESSMENT_RESULTS
+          : undefined,
       amount: subscription.price,
       currency: subscription.currency || "EGP",
       status: "pending",
@@ -205,7 +232,7 @@ export const initiatePayment = async (orderId, user_id) => {
     const order = await Order.findById(orderId)
       .populate(
         "subscription",
-        "id name displayName price durationInDays description isActive features currency",
+        "id name displayName price durationInDays description isActive features currency type",
       )
       .session(session);
 
@@ -281,7 +308,7 @@ const handlePaymentSuccess = async (orderId) => {
     const order = await Order.findById(orderId)
       .populate(
         "subscription",
-        "id displayName price currency durationInDays description isActive features responseTimeInHours planNote",
+        "id name displayName price currency durationInDays description isActive features responseTimeInHours planNote type",
       )
       .populate("user", "id firstName lastName email phone")
       .session(session);
@@ -291,18 +318,31 @@ const handlePaymentSuccess = async (orderId) => {
       throw error;
     }
 
+    if (order.status === ORDER_STATUS.SUCCESS) {
+      await session.commitTransaction();
+      return { success: true, userSubscription: null };
+    }
+
     // The webhook has already been HMAC verified, so we can trust the payment success
     // Update order status
-    order.status = "success";
+    order.status = ORDER_STATUS.SUCCESS;
     order.paymentMethod = "card";
     await order.save({ session });
+
+    const subscription = order.subscription;
+
+    // A one-time results purchase is a permanent order entitlement. It must not
+    // replace or extend the user's separately managed recurring subscription.
+    if (subscription.type === SUBSCRIPTION_PLAN_TYPES.ONE_TIME_OFFER) {
+      await session.commitTransaction();
+      return { success: true, userSubscription: null };
+    }
 
     // Create or update user subscription
     let userSubscription = await UserSubscription.findOne({
       user: order.user._id,
     }).session(session);
 
-    const subscription = order.subscription;
     const startDate = new Date();
     const expiryDate = calculateExpiryDate(
       subscription.durationInDays,
@@ -314,7 +354,7 @@ const handlePaymentSuccess = async (orderId) => {
     if (userSubscription) {
       // User already has a subscription - increment count and update expiry
       userSubscription.subscription = subscription._id;
-      userSubscription.status = "active";
+      userSubscription.status = SUBSCRIPTION_STATUS.ACTIVE;
       userSubscription.expiryDate = expiryDate;
       userSubscription.subscriptionCount += 1;
       userSubscription.currentOrder = order._id;
@@ -427,6 +467,50 @@ export const isUserSubscribed = async (userId) => {
     console.error("Error checking user subscription:", error);
     return false;
   }
+};
+
+export const hasOneTimeResultsAccess = async (userId) => {
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    return false;
+  }
+
+  // The subscription lookup keeps successful purchases made before the
+  // entitlement snapshot field was introduced valid as permanent access.
+  const legacyPlanIds = await Subscription.find({
+    name: SUBSCRIPTION_TYPES.ASSESSMENT_RESULTS,
+    type: SUBSCRIPTION_PLAN_TYPES.ONE_TIME_OFFER,
+  }).distinct("_id");
+
+  const entitlementConditions = [
+    { entitlement: SUBSCRIPTION_TYPES.ASSESSMENT_RESULTS },
+  ];
+  if (legacyPlanIds.length > 0) {
+    entitlementConditions.push({ subscription: { $in: legacyPlanIds } });
+  }
+
+  const purchase = await Order.exists({
+    user: userId,
+    status: ORDER_STATUS.SUCCESS,
+    $or: entitlementConditions,
+  });
+
+  return Boolean(purchase);
+};
+
+export const getUserResultsAccess = async (userId) => {
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    throw createError(ERROR_CODES.INVALID_INPUT, 400, "en");
+  }
+
+  if (await isUserSubscribed(userId)) {
+    return { hasAccess: true, accessType: "subscription" };
+  }
+
+  if (await hasOneTimeResultsAccess(userId)) {
+    return { hasAccess: true, accessType: "one_time" };
+  }
+
+  return { hasAccess: false, accessType: null };
 };
 
 // Get subscription status for a user
@@ -656,6 +740,7 @@ export const processPaymentCallback = async (callbackData, isVerified) => {
     }
 
     // Mark webhook as received and save transaction details
+    const wasAlreadySuccessful = order.status === ORDER_STATUS.SUCCESS;
     order.webhookReceived = true;
     order.webhookData = callbackData;
     if (transactionId) {
@@ -665,6 +750,10 @@ export const processPaymentCallback = async (callbackData, isVerified) => {
       order.paymobOrderId = paymobOrderId;
     }
     await order.save();
+
+    // Paymob can retry webhooks. Never apply an entitlement twice or let a
+    // later failure callback downgrade an already successful order.
+    if (wasAlreadySuccessful) return true;
 
     // Process based on payment success status
     if (callbackData.obj?.success === true) {

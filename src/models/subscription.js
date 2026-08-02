@@ -27,8 +27,19 @@ const subscriptionSchema = new mongoose.Schema(
     },
     durationInDays: {
       type: Number,
-      required: true,
+      required() {
+        return this.type !== SUBSCRIPTION_PLAN_TYPES.ONE_TIME_OFFER;
+      },
       enum: Object.values(SUBSCRIPTION_DURATIONS),
+      validate: {
+        validator(value) {
+          return (
+            this.type !== SUBSCRIPTION_PLAN_TYPES.ONE_TIME_OFFER ||
+            value == null
+          );
+        },
+        message: "One-time offers cannot have a subscription duration",
+      },
     },
     price: {
       type: Number,
@@ -70,6 +81,15 @@ const subscriptionSchema = new mongoose.Schema(
       type: String,
       enum: Object.values(SUBSCRIPTION_PLAN_TYPES),
       default: SUBSCRIPTION_PLAN_TYPES.SUBSCRIPTION_PLAN,
+      validate: {
+        validator(value) {
+          return (
+            this.name !== SUBSCRIPTION_TYPES.ASSESSMENT_RESULTS ||
+            value === SUBSCRIPTION_PLAN_TYPES.ONE_TIME_OFFER
+          );
+        },
+        message: "The assessment results plan must be a one-time offer",
+      },
     },
     activeDays: {
       type: [String],

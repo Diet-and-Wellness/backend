@@ -82,11 +82,19 @@ export const validateCreateSubscription = [
     .withMessage([ERROR_CODES.SUBSCRIPTION_DISPLAY_NAME_REQUIRED]),
 
   body("durationInDays")
-    .isInt()
-    .withMessage([ERROR_CODES.SUBSCRIPTION_DURATION_INVALID])
-    .custom((value) =>
-      Object.values(SUBSCRIPTION_DURATIONS).includes(Number(value)),
-    )
+    .custom((value, { req }) => {
+      const type =
+        req.body.type ?? SUBSCRIPTION_PLAN_TYPES.SUBSCRIPTION_PLAN;
+
+      if (type === SUBSCRIPTION_PLAN_TYPES.ONE_TIME_OFFER) {
+        return value === undefined || value === null;
+      }
+
+      return (
+        Number.isInteger(Number(value)) &&
+        Object.values(SUBSCRIPTION_DURATIONS).includes(Number(value))
+      );
+    })
     .withMessage([ERROR_CODES.SUBSCRIPTION_DURATION_INVALID]),
   body("price")
     .isFloat({ min: 0 })
@@ -206,6 +214,16 @@ export const validateCreateSubscription = [
         max: 200,
       },
     ]),
+  body().custom((_, { req }) => {
+    if (req.body.name !== SUBSCRIPTION_TYPES.ASSESSMENT_RESULTS) return true;
+    return req.body.type === SUBSCRIPTION_PLAN_TYPES.ONE_TIME_OFFER;
+  }).withMessage([
+    ERROR_CODES.INVALID_VALUE,
+    {
+      field: "type",
+      values: SUBSCRIPTION_PLAN_TYPES.ONE_TIME_OFFER,
+    },
+  ]),
 ];
 
 export const validateUpdateSubscription = [
@@ -236,11 +254,16 @@ export const validateUpdateSubscription = [
 
   body("durationInDays")
     .optional()
-    .isInt()
-    .withMessage([ERROR_CODES.SUBSCRIPTION_DURATION_INVALID])
-    .custom((value) =>
-      Object.values(SUBSCRIPTION_DURATIONS).includes(Number(value)),
-    )
+    .custom((value, { req }) => {
+      if (req.body.type === SUBSCRIPTION_PLAN_TYPES.ONE_TIME_OFFER) {
+        return value === undefined || value === null;
+      }
+
+      return (
+        Number.isInteger(Number(value)) &&
+        Object.values(SUBSCRIPTION_DURATIONS).includes(Number(value))
+      );
+    })
     .withMessage([ERROR_CODES.SUBSCRIPTION_DURATION_INVALID]),
 
   body("price")
