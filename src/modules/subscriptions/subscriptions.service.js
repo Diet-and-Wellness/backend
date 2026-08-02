@@ -205,7 +205,7 @@ export const initiatePayment = async (orderId, user_id) => {
     const order = await Order.findById(orderId)
       .populate(
         "subscription",
-        "id displayName price durationInDays description isActive features currency",
+        "id name displayName price durationInDays description isActive features currency",
       )
       .session(session);
 

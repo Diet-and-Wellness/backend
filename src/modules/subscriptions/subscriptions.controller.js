@@ -29,7 +29,12 @@ export const getSubscriptions = async (req, res, next) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const type = req.query.type || null;
-    const result = await getAllSubscriptions(page, limit, type, getLanguage(req));
+    const result = await getAllSubscriptions(
+      page,
+      limit,
+      type,
+      getLanguage(req),
+    );
     res.status(200).json(result);
   } catch (error) {
     next(error);
