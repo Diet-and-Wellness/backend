@@ -27,7 +27,10 @@ export const createPaymentIntention = async (
             name: `Subscription: ${subscription.name}`,
             amount: Math.round(amount * 100),
             quantity: 1,
-            description: subscription.description || "Subscription Plan",
+            description:
+              subscription.description?.en ||
+              subscription.description?.ar ||
+              "Subscription Plan",
           },
         ],
         billing_data: {
