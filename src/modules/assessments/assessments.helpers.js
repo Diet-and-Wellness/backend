@@ -5,6 +5,20 @@ import {
 } from "./assessments.constants.js";
 
 /**
+ * Keep the completed-assessment summary public to the owning customer while
+ * reserving per-section results, answers, and recommendations for paid access.
+ */
+export function filterResultForAccess(result, hasAccess) {
+  const filteredResult = { ...result };
+
+  if (!hasAccess) {
+    delete filteredResult.sectionResults;
+  }
+
+  return filteredResult;
+}
+
+/**
  * Validate that result ranges are:
  * - Non-empty array
  * - Sorted ascending by minScore

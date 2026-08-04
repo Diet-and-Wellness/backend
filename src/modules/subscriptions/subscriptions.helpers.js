@@ -1,6 +1,20 @@
 import { subscriptionConfirmationEmailTemplate } from "../../utils/emailTemplates.js";
 import sendEmail from "#utils/email.js";
 
+export const resolveResultsAccess = ({
+  isSubscribed = false,
+  hasOneTimeAccess = false,
+  hasResult = false,
+}) => ({
+  hasAccess: isSubscribed || hasOneTimeAccess,
+  accessType: isSubscribed
+    ? "subscription"
+    : hasOneTimeAccess
+      ? "one_time"
+      : null,
+  hasResult: Boolean(hasResult),
+});
+
 // Calculate subscription expiry date
 export const calculateExpiryDate = (durationInDays, oldExpiryDate = null) => {
   if (!Number.isInteger(durationInDays) || durationInDays < 0) {

@@ -18,6 +18,7 @@ import {
   stripScoresFromForm,
   localizeContent,
   isSectionVisibleForUser,
+  filterResultForAccess,
 } from "./assessments.helpers.js";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -757,7 +758,11 @@ export async function submitAll(userId, formId, sectionsData, language = null) {
   return language ? localizeContent(plain, language) : plain;
 }
 
-export async function getOwnResult(userId, language = null) {
+export async function getOwnResult(
+  userId,
+  language = null,
+  hasDetailedAccess = false,
+) {
   const submission = await AssessmentSubmission.findOne({
     user: userId,
     status: SUBMISSION_STATUS.COMPLETED,
@@ -765,8 +770,13 @@ export async function getOwnResult(userId, language = null) {
 
   if (!submission) throw createError(ERROR_CODES.ASSESSMENT_NOT_FOUND, 404);
 
-  const plain = submission.toJSON();
-  return language ? localizeContent(plain, language) : plain;
+  const filteredResult = filterResultForAccess(
+    submission.toJSON(),
+    hasDetailedAccess,
+  );
+  return language
+    ? localizeContent(filteredResult, language)
+    : filteredResult;
 }
 
 export async function getProgress(userId, language = null) {

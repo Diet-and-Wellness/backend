@@ -2,12 +2,14 @@ import mongoose from "mongoose";
 import Subscription from "#models/subscription.js";
 import Order from "#models/order.js";
 import UserSubscription from "#models/userSubscription.js";
+import AssessmentSubmission from "#models/assessmentSubmission.js";
 import { createPaymentIntention, generateCheckoutUrl } from "#utils/paymob.js";
 import {
   calculateExpiryDate,
   getDaysRemaining,
   sendSubscriptionConfirmationEmail,
   translateField,
+  resolveResultsAccess,
 } from "./subscriptions.helpers.js";
 import { ERROR_CODES, createError } from "#utils/localization.js";
 import {
@@ -16,6 +18,7 @@ import {
   SUBSCRIPTION_STATUS,
   SUBSCRIPTION_TYPES,
 } from "./subscriptions.constants.js";
+import { SUBMISSION_STATUS } from "#modules/assessments/assessments.constants.js";
 
 // ============ SUBSCRIPTION PLANS ============
 
@@ -502,15 +505,24 @@ export const getUserResultsAccess = async (userId) => {
     throw createError(ERROR_CODES.INVALID_INPUT, 400, "en");
   }
 
-  if (await isUserSubscribed(userId)) {
-    return { hasAccess: true, accessType: "subscription" };
-  }
+  const [isSubscribed, result] = await Promise.all([
+    isUserSubscribed(userId),
+    AssessmentSubmission.exists({
+      user: userId,
+      status: SUBMISSION_STATUS.COMPLETED,
+    }),
+  ]);
+  const hasResult = Boolean(result);
 
-  if (await hasOneTimeResultsAccess(userId)) {
-    return { hasAccess: true, accessType: "one_time" };
-  }
+  const hasOneTimeAccess = isSubscribed
+    ? false
+    : await hasOneTimeResultsAccess(userId);
 
-  return { hasAccess: false, accessType: null };
+  return resolveResultsAccess({
+    isSubscribed,
+    hasOneTimeAccess,
+    hasResult,
+  });
 };
 
 // Get subscription status for a user

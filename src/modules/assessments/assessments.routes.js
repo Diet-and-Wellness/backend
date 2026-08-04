@@ -5,7 +5,7 @@ import { ensureRoles } from "#middlewares/guards.js";
 import { standardLimiter, relaxedLimiter } from "#middlewares/rateLimiter.js";
 import validators from "./assessments.validators.js";
 import * as controller from "./assessments.controller.js";
-import { requireResultsAccess } from "#middlewares/subscription.js";
+import { attachResultsAccess } from "#middlewares/subscription.js";
 
 const router = express.Router();
 
@@ -247,7 +247,7 @@ router.get(
   authenticate,
   relaxedLimiter,
   ensureRoles(["customer"]),
-  requireResultsAccess,
+  attachResultsAccess,
   controller.getOwnResult,
 );
 

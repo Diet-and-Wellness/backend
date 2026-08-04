@@ -275,6 +275,7 @@ export const getOwnResult = async (req, res, next) => {
     const submission = await service.getOwnResult(
       req.user.user_id,
       req.language,
+      req.resultsAccess?.hasAccess === true,
     );
     res.json({ success: true, data: submission });
   } catch (err) {

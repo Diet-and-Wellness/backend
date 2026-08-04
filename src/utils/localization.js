@@ -164,7 +164,6 @@ export const ERROR_CODES = {
   WEBHOOK_PROCESSED: "WEBHOOK_PROCESSED",
   SUBSCRIPTION_ALREADY_EXISTS: "SUBSCRIPTION_ALREADY_EXISTS",
   RESULTS_ACCESS_ALREADY_GRANTED: "RESULTS_ACCESS_ALREADY_GRANTED",
-  RESULTS_ACCESS_REQUIRED: "RESULTS_ACCESS_REQUIRED",
   RESULTS_ACCESS_GRANTED: "RESULTS_ACCESS_GRANTED",
   SUBSCRIPTION_EXPIRED: "SUBSCRIPTION_EXPIRED",
   SUBSCRIPTION_NAME_INVALID: "SUBSCRIPTION_NAME_INVALID",
@@ -415,8 +414,6 @@ const translations = {
       "Subscription plan with this name already exists",
     [ERROR_CODES.RESULTS_ACCESS_ALREADY_GRANTED]:
       "You already have permanent access to your assessment results",
-    [ERROR_CODES.RESULTS_ACCESS_REQUIRED]:
-      "An active subscription or one-time results purchase is required",
     [ERROR_CODES.RESULTS_ACCESS_GRANTED]:
       "Payment successful and permanent results access activated",
     [ERROR_CODES.SUBSCRIPTION_EXPIRED]: "Subscription has expired",
@@ -686,8 +683,6 @@ const translations = {
       "خطة اشتراك بهذا الاسم موجودة بالفعل",
     [ERROR_CODES.RESULTS_ACCESS_ALREADY_GRANTED]:
       "لديك بالفعل وصول دائم إلى نتائج تقييمك",
-    [ERROR_CODES.RESULTS_ACCESS_REQUIRED]:
-      "يلزم اشتراك نشط أو شراء نتائج التقييم لمرة واحدة",
     [ERROR_CODES.RESULTS_ACCESS_GRANTED]:
       "تم الدفع بنجاح وتفعيل الوصول الدائم إلى النتائج",
     [ERROR_CODES.SUBSCRIPTION_EXPIRED]: "انتهت صلاحية الاشتراك",
